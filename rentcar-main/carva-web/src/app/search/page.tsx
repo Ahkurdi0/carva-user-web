@@ -73,7 +73,7 @@ export default function SearchPage() {
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-xl font-extrabold">{t("web.filters")}</h1>
           <button onClick={() => setShowFilters((s) => !s)} className="flex items-center gap-2 text-sm font-medium text-primary md:hidden">
-            <Icon name="filter" size={16} color="#3957d7" /> {t("web.filters")}
+            <Icon name="filter" size={16} color="#B51219" /> {t("web.filters")}
           </button>
         </div>
 

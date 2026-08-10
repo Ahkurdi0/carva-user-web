@@ -102,7 +102,7 @@ export function Header() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={imageUrl(user.image)} alt="" className="h-full w-full object-cover" />
                 ) : (
-                  <Icon name="profile" size={18} color="#3957d7" />
+                  <Icon name="profile" size={18} color="#B51219" />
                 )}
               </span>
               <span className="hidden max-w-[120px] truncate text-sm font-medium sm:inline">
@@ -131,7 +131,7 @@ export function BottomNav() {
       <div className="mx-auto flex max-w-md items-stretch">
         {TABS.map((tab, i) => {
           const active = isActive(pathname, tab.href);
-          const color = i % 2 === 0 ? "#3957d7" : "#23262e";
+          const color = i % 2 === 0 ? "#B51219" : "#23262e";
           return (
             <Link
               key={tab.href}

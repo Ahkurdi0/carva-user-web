@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "appSetting"."Slider" ADD COLUMN     "available" BOOLEAN NOT NULL DEFAULT true,
-ADD COLUMN     "deletedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP;

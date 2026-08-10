@@ -589,7 +589,9 @@
     "overview": "گشتی",
     "getTheApp": "ئەپی Carva دابەزێنە بۆ ئەزموونی تەواو لەسەر iOS و Android.",
     "downloadOn": "دایبگرە لە",
-    "getItOn": "بیگرە لە"
+    "getItOn": "بیگرە لە",
+    "getAppTitle": "ئەپی کارڤا دابگرە",
+    "getAppSubtitle": "لە ئەپەکەدا خێراتر سەیارە ببینە و حجز بکە"
   },
   "analytics": {
     "title": "سەردانکەران و هاتوچۆ",

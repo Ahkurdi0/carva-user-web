@@ -589,7 +589,9 @@
     "overview": "نظرة عامة",
     "getTheApp": "حمّل تطبيق Carva لتجربة كاملة على iOS و Android.",
     "downloadOn": "حمّله من",
-    "getItOn": "احصل عليه من"
+    "getItOn": "احصل عليه من",
+    "getAppTitle": "حمّل تطبيق كارفا",
+    "getAppSubtitle": "تصفح واحجز السيارات أسرع في التطبيق"
   },
   "analytics": {
     "title": "الزوار وحركة المرور",

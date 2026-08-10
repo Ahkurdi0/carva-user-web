@@ -589,7 +589,9 @@
     "overview": "Overview",
     "getTheApp": "Download the Carva app for the full experience on iOS and Android.",
     "downloadOn": "Download on the",
-    "getItOn": "Get it on"
+    "getItOn": "Get it on",
+    "getAppTitle": "Get the Carva app",
+    "getAppSubtitle": "Browse and reserve cars faster in the app"
   },
   "analytics": {
     "title": "Visitors & Traffic",

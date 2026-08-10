@@ -19,7 +19,7 @@ import type { Lang, Support } from "@/lib/types";
 function Row({ icon, label, onClick, href, danger }: { icon: IconName; label: string; onClick?: () => void; href?: string; danger?: boolean }) {
   const inner = (
     <div className={`flex items-center gap-3 rounded-xl px-3 py-3.5 transition hover:bg-surface-lowest ${danger ? "text-danger" : "text-on-surface"}`}>
-      <Icon name={icon} size={20} color={danger ? "#ef4444" : "#3957d7"} />
+      <Icon name={icon} size={20} color={danger ? "#ef4444" : "#B51219"} />
       <span className="flex-1 text-sm font-medium">{label}</span>
       <Icon name="arrow_tail" size={16} color="#c4c4c4" />
     </div>
@@ -61,8 +61,6 @@ export default function SettingsPage() {
   const user = useAuth((s) => s.user);
   const setUser = useAuth((s) => s.setUser);
   const logout = useAuth((s) => s.logout);
-  const isAdmin = useAuth((s) => s.isAdmin)();
-  const isCompany = useAuth((s) => s.isCompany)();
 
   const [modal, setModal] = useState<null | "profile" | "password" | "lang" | "support">(null);
   const [name, setName] = useState(user?.name ?? "");
@@ -135,7 +133,7 @@ export default function SettingsPage() {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={imageUrl(user.image)} alt="" className="h-full w-full object-cover" />
             ) : (
-              <span className="grid h-full w-full place-items-center"><Icon name="profile" size={26} color="#3957d7" /></span>
+              <span className="grid h-full w-full place-items-center"><Icon name="profile" size={26} color="#B51219" /></span>
             )}
             <span className="absolute bottom-0 right-0 grid h-6 w-6 place-items-center rounded-full bg-primary text-white">
               <Icon name="edit" size={12} color="#fff" />
@@ -155,14 +153,6 @@ export default function SettingsPage() {
           <Row icon="receipt" label={t("web.myTrips")} href="/trips" />
           <Row icon="language" label={`${t("web.language")} · ${LANG_NAMES[lang]}`} onClick={() => setModal("lang")} />
           <Row icon="support" label={t("web.support")} onClick={() => setModal("support")} />
-
-          {(isCompany || isAdmin) && (
-            <>
-              <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase text-muted">{t("buttons.dashbord")}</p>
-              {isCompany && <Row icon="company" label={t("web.dashboard")} href="/dashboard" />}
-              {isAdmin && <Row icon="settings" label={t("web.adminPanel")} href="/admin" />}
-            </>
-          )}
 
           <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase text-muted"> </p>
           <Row icon="logout" label={t("web.logout")} onClick={doLogout} danger />
@@ -203,7 +193,7 @@ export default function SettingsPage() {
               className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-start hover:bg-surface-lowest ${l === lang ? "font-semibold text-primary" : ""}`}
             >
               {LANG_NAMES[l]}
-              {l === lang && <Icon name="check" size={18} color="#3957d7" />}
+              {l === lang && <Icon name="check" size={18} color="#B51219" />}
             </button>
           ))}
         </div>

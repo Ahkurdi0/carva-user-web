@@ -64,7 +64,7 @@ export function ReviewList({ kind, id }: { kind: "car" | "company"; id: string }
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={imageUrl(r.profile.image)} alt="" className="h-full w-full object-cover" />
               ) : (
-                <span className="grid h-full w-full place-items-center"><Icon name="profile" size={16} color="#3957d7" /></span>
+                <span className="grid h-full w-full place-items-center"><Icon name="profile" size={16} color="#B51219" /></span>
               )}
             </span>
             <div className="flex-1">

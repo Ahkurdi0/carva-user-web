@@ -26,7 +26,7 @@ export function CompanyCard({ company }: { company: Company }) {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={imageUrl(company.image)} alt="" className="h-full w-full object-cover" />
           ) : (
-            <span className="grid h-full w-full place-items-center"><Icon name="company" size={20} color="#3957d7" /></span>
+            <span className="grid h-full w-full place-items-center"><Icon name="company" size={20} color="#B51219" /></span>
           )}
         </span>
         <div className="pt-9">

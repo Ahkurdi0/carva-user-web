@@ -40,8 +40,8 @@
 
 /* ---- Design tokens copied from the Flutter app's ColorScheme ---- */
 @theme {
-  --color-primary: #3957d7;
-  --color-primary-container: #f1f4fd;
+  --color-primary: #B51219;
+  --color-primary-container: #FBEDEE;
   --color-secondary: #23262e;
   --color-on-surface: #23262e;
   --color-surface: #ffffff;
