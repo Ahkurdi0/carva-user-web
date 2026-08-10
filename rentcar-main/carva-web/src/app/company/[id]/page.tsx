@@ -43,6 +43,56 @@ export async function generateMetadata({
   };
 }
 
-export default function CompanyDetailsPage() {
-  return <CompanyDetailsClient />;
+export default async function CompanyDetailsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const company = await serverApi<Company>("/user/company", { id });
+
+  // AutoRental structured data — a real local rental office with a place.
+  const jsonLd = company
+    ? {
+        "@context": "https://schema.org",
+        "@type": "AutoRental",
+        name: company.name,
+        url: `${SITE.url}/company/${id}`,
+        ...(company.image
+          ? { image: absoluteImageUrl(company.image) }
+          : {}),
+        ...(company.desc ? { description: company.desc } : {}),
+        ...(company.location?.lat != null && company.location?.long != null
+          ? {
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: company.location.lat,
+                longitude: company.location.long,
+              },
+            }
+          : {}),
+        ...(company.location?.city?.en
+          ? {
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: company.location.city.en,
+                addressCountry: "IQ",
+              },
+            }
+          : {}),
+        parentOrganization: { "@type": "Organization", name: SITE.name },
+      }
+    : null;
+
+  return (
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <CompanyDetailsClient />
+    </>
+  );
 }

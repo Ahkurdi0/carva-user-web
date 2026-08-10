@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useI18n } from "@/i18n";
+import { SITE } from "@/lib/seo";
 
 export const APP_STORE_URL = "https://apps.apple.com/app/carva/id6753580784";
 export const PLAY_STORE_URL =
@@ -68,8 +70,35 @@ export function Footer() {
           <StoreButton href={PLAY_STORE_URL} top={t("web.getItOn")} bottom="Google Play" mark={<PlayMark />} />
         </div>
       </div>
+      {/* Internal links: homepage ↔ sections ↔ city-filtered listings */}
+      <div className="mx-auto grid max-w-6xl gap-8 border-t border-surface-low px-4 py-8 sm:grid-cols-3">
+        <div>
+          <p className="mb-3 text-sm font-bold text-on-surface">Carva</p>
+          <ul className="space-y-2 text-sm text-muted">
+            <li><Link className="hover:text-primary" href="/">{t("bottomNavigation.cars")}</Link></li>
+            <li><Link className="hover:text-primary" href="/reels">{t("web.reels")}</Link></li>
+            <li><Link className="hover:text-primary" href="/companies">{t("bottomNavigation.companies")}</Link></li>
+            <li><Link className="hover:text-primary" href="/search">{t("inputHintText.searchCar")}</Link></li>
+          </ul>
+        </div>
+        <div>
+          <p className="mb-3 text-sm font-bold text-on-surface">{t("labels.city")}</p>
+          <ul className="space-y-2 text-sm text-muted">
+            <li><Link className="hover:text-primary" href="/?city=Erbil">Rent a car in Erbil</Link></li>
+            <li><Link className="hover:text-primary" href="/?city=Sulaymaniyah">Rent a car in Sulaymaniyah</Link></li>
+            <li><Link className="hover:text-primary" href="/?city=Duhok">Rent a car in Duhok</Link></li>
+          </ul>
+        </div>
+        <div>
+          <p className="mb-3 text-sm font-bold text-on-surface">{t("bottomNavigation.companies")}</p>
+          <ul className="space-y-2 text-sm text-muted">
+            <li><Link className="hover:text-primary" href="/companies">Car rental companies in Iraq</Link></li>
+            <li><Link className="hover:text-primary" href="/companies">Car rental companies in Kurdistan</Link></li>
+          </ul>
+        </div>
+      </div>
       <div className="border-t border-surface-low py-4 text-center text-xs text-muted">
-        © {new Date().getFullYear()} Carva
+        © {new Date().getFullYear()} {SITE.name} — Car rental in Iraq &amp; Kurdistan
       </div>
     </footer>
   );

@@ -183,6 +183,18 @@ function AllCars() {
   const { data: filters } = useAsync<FiltersData>(() => userApi.filters(), []);
   const [cityEn, setCityEn] = useState<string | null>(null);
   const [cityId, setCityId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get("city");
+    if (!wanted || !filters?.cities) return;
+    const match = filters.cities.find(
+      (c) => (c.en ?? "").toLowerCase() === wanted.toLowerCase(),
+    );
+    if (match) {
+      setCityEn(match.en ?? null);
+      setCityId(match.id);
+    }
+  }, [filters]);
   const cityKey = (v?: string | null) => (v ?? "").trim().toLowerCase();
   const shown = cityEn
     ? cars.filter(
