@@ -3,17 +3,17 @@
 import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { CompanyCard } from "@/components/CompanyCard";
-import { Chip, EmptyState, PageLoading } from "@/components/ui";
+import { EmptyState, PageLoading } from "@/components/ui";
+import { CityChips } from "@/components/CityChips";
 import { useAsync } from "@/lib/useAsync";
 import { userApi } from "@/lib/services";
 import { useI18n } from "@/i18n";
 import type { FiltersData } from "@/lib/types";
 
 export default function CompaniesPage() {
-  const { t, tr } = useI18n();
-  const [intl, setIntl] = useState<boolean | undefined>(undefined);
+  const { t } = useI18n();
   const [cityId, setCityId] = useState<string | null>(null);
-  const { data, loading } = useAsync(() => userApi.companies(undefined, intl), [intl]);
+  const { data, loading } = useAsync(() => userApi.companies(), []);
   // Same city list the car filters use — the app's companies filter fix.
   const { data: filters } = useAsync<FiltersData>(() => userApi.filters(), []);
 
@@ -25,26 +25,13 @@ export default function CompaniesPage() {
     <AppShell>
       <div className="px-4 py-5">
         <h1 className="mb-4 text-xl font-extrabold">{t("web.companiesTitle")}</h1>
-        <div className="mb-3 flex gap-2">
-          <Chip label={t("labels.all")} selected={intl === undefined} onClick={() => setIntl(undefined)} />
-          <Chip label={t("tabViews.local")} selected={intl === false} onClick={() => setIntl(false)} />
-          <Chip label={t("tabViews.international")} selected={intl === true} onClick={() => setIntl(true)} />
-        </div>
         {(filters?.cities?.length ?? 0) > 0 && (
-          <div className="no-scrollbar mb-5 flex gap-2 overflow-x-auto">
-            <Chip
-              label={t("labels.all")}
-              selected={cityId === null}
-              onClick={() => setCityId(null)}
+          <div className="-mx-4 mb-5">
+            <CityChips
+              cities={filters!.cities}
+              selectedId={cityId}
+              onSelect={(city) => setCityId(city?.id ?? null)}
             />
-            {filters!.cities.map((city) => (
-              <Chip
-                key={city.id}
-                label={tr(city)}
-                selected={cityId === city.id}
-                onClick={() => setCityId(cityId === city.id ? null : city.id)}
-              />
-            ))}
           </div>
         )}
         {loading ? (

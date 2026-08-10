@@ -6,13 +6,13 @@ import { AppShell } from "@/components/AppShell";
 import { CarRail } from "@/components/CarRail";
 import { CarCard, CarCardSkeleton } from "@/components/CarCard";
 import { SliderCarousel } from "@/components/SliderCarousel";
-import { Chip, SectionHeader, Spinner } from "@/components/ui";
+import { SectionHeader, Spinner } from "@/components/ui";
+import { CityChips } from "@/components/CityChips";
 import { Icon } from "@/components/Icon";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useAsync } from "@/lib/useAsync";
 import { userApi } from "@/lib/services";
 import { uniqueById } from "@/lib/format";
-import { useAuth } from "@/lib/auth-store";
 import { useI18n } from "@/i18n";
 import type { BrandWithCars, Car, FiltersData } from "@/lib/types";
 
@@ -182,6 +182,7 @@ function AllCars() {
 
   const { data: filters } = useAsync<FiltersData>(() => userApi.filters(), []);
   const [cityEn, setCityEn] = useState<string | null>(null);
+  const [cityId, setCityId] = useState<string | null>(null);
   const cityKey = (v?: string | null) => (v ?? "").trim().toLowerCase();
   const shown = cityEn
     ? cars.filter(
@@ -195,20 +196,15 @@ function AllCars() {
     <section className="py-3">
       <SectionHeader title={t("labels.cars")} />
       {(filters?.cities?.length ?? 0) > 0 && (
-        <div className="no-scrollbar mb-4 flex gap-2 overflow-x-auto px-4">
-          <Chip
-            label={t("web.allCities")}
-            selected={cityEn === null}
-            onClick={() => setCityEn(null)}
+        <div className="mb-4">
+          <CityChips
+            cities={filters!.cities}
+            selectedId={cityId}
+            onSelect={(city) => {
+              setCityId(city?.id ?? null);
+              setCityEn(city?.en ?? null);
+            }}
           />
-          {filters!.cities.map((city) => (
-            <Chip
-              key={city.id}
-              label={tr(city)}
-              selected={cityEn === city.en}
-              onClick={() => setCityEn(cityEn === city.en ? null : (city.en ?? null))}
-            />
-          ))}
         </div>
       )}
       <div className="grid grid-cols-2 gap-x-3 gap-y-5 px-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -228,13 +224,11 @@ function AllCars() {
 
 export default function HomePage() {
   const { t } = useI18n();
-  const user = useAuth((s) => s.user);
   // The hero rail mirrors the app: featured (paid) cars first, falling
   // back to suggested when nothing is featured.
   const featured = useAsync(() => userApi.featuredCars(), []);
   const suggested = useAsync(() => userApi.suggestedCars(), []);
   const sliders = useAsync(() => userApi.sliders(), []);
-  const recently = useAsync(() => userApi.recentlyViewed(), [!!user], !!user);
 
   return (
     <AppShell>
@@ -260,9 +254,6 @@ export default function HomePage() {
       <BrandSection />
       {sliders.data && sliders.data.length > 0 && (
         <SliderCarousel slides={sliders.data} />
-      )}
-      {user && recently.data && recently.data.length > 0 && (
-        <CarRail title={t("labels.recentlyViewed")} cars={recently.data} />
       )}
       <NearbySection />
       <AllCars />
