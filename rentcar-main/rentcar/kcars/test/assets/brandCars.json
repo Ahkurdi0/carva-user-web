@@ -1,0 +1,82 @@
+[
+  {
+    "id": "A",
+    "en": "E",
+    "ku": "K",
+    "ar": "A",
+    "image": "https://kcars.com/bmw.png",
+    "cars": [
+      {
+        "id": "A",
+        "title": "title",
+        "listedAt": "2025-06-07T14:36:06.200Z",
+        "trips": 1,
+        "review": 1,
+        "rate": 0,
+        "company": { "id": "C", "name": "test", "review": 0, "rate": 0 },
+        "brand": {
+          "id": "A",
+          "en": "test",
+          "ku": "A",
+          "ar": "A",
+          "image": "",
+          "sort": 0,
+          "cars": []
+        },
+        "images": [
+          {
+            "image": "http://kcars.com/1.jpg",
+            "id": "A",
+            "carId": "A",
+            "sort": 1,
+            "companyId": "A"
+          }
+        ],
+        "feature": {
+          "id": "A",
+          "carId": "A",
+          "year": 2025,
+          "fuel": "diesel",
+          "transmission": "automatic",
+          "seat": 1,
+          "hp": 1,
+          "speed": 1,
+          "type": { "id": "A", "en": "suv", "ar": "suv", "ku": "suv" }
+        },
+        "location": {
+          "lat": 0,
+          "long": 0,
+          "companyId": "C",
+          "townId": "T",
+          "radiusKm": 1,
+          "city": { "id": "A", "en": "Test", "ku": "Test", "ar": "Test" },
+          "town": { "id": "T", "en": "test", "ku": "test", "ar": "test" }
+        },
+        "type": {
+          "id": "A",
+          "en": "en",
+          "ar": "ar",
+          "ku": "ku",
+          "sort": 1,
+          "car": [],
+          "available": true
+        },
+        "isFavorite": false,
+        "isViwed": false,
+        "promotion": {
+          "id": "A",
+          "carId": "A",
+          "companyId": "A",
+          "priceType": "percentage",
+          "type": "car",
+          "value": 20,
+          "startDate": "2025-06-07T14:36:06.200Z",
+          "endDate": "2025-08-07T14:36:06.200Z",
+          "usesCount": 0,
+          "maxUsePerUser": 100,
+          "available": true
+        }
+      }
+    ]
+  }
+]

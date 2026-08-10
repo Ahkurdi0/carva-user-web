@@ -1,0 +1,35 @@
+# MacOS files
+.DS_Store
+__MACOSX/
+
+# Claude config/agent files
+.claude/
+AGENTS.md
+CLAUDE.md
+
+# Archives
+*.tar.gz
+*.zip
+*.rar
+
+# Dependencies & Build Artifacts
+**/node_modules/
+**/.next/
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+
+# Credentials and keys (CRITICAL SECURITY)
+**/rentcar/files/AuthKey_*.p8
+**/rentcar/files/*.json
+**/rentcar/files/keys/
+**/*.jks
+**/*.keystore
+
+# Local environment configuration (Secrets)
+**/.env
+**/.env.local
+**/.env.production
+**/.env.development
+**/.env.dev

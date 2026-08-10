@@ -1,0 +1,26 @@
+[
+  {
+    "id": "AAAABBBBDD",
+    "userId": "1",
+    "name": "Test User",
+    "email": "test@gmail.com",
+    "phoneNumber": "",
+    "countryCode": "",
+    "accessToken": "AABBDD",
+    "refreshToken": "AABBDD",
+    "role": { "roleId": "AABBDD", "roleName": "user" },
+    "permissions": [],
+    "company": {
+      "id": "AABBDD",
+      "name": "Test Company",
+      "image": "https://kcars.com/1.png",
+      "activeDate": "2025-06-07T14:36:06.200Z",
+      "contacts": [],
+      "desc": "A",
+      "location": { "id": "A", "lat": 0, "long": 0 },
+      "rate": 0,
+      "review": 0,
+      "expiresAt": "2025-06-07T14:36:06.200Z"
+    }
+  }
+]

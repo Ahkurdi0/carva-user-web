@@ -1,0 +1,199 @@
+model Book {
+    id                  String                @id @unique @default(uuid(7))
+    bookId              String                @default(cuid(2))
+    userId              String?
+    profile             Profile?              @relation(fields: [userId], references: [userId], onDelete: SetNull)
+    carId               String?
+    car                 Car?                  @relation(fields: [carId], references: [id], onDelete: SetNull)
+    companyId           String?
+    company             Company?              @relation(fields: [companyId], references: [id], onDelete: SetNull)
+    status              BookStaus             @default(pending)
+    isCompleted         Boolean?
+    cancelReason        String?               @db.Text()
+    rentalPlanId        String?
+    rentalPlan          RentalPlan?           @relation(fields: [rentalPlanId], references: [id])
+    startDate           DateTime
+    endDate             DateTime
+    basePrice           Decimal               @db.Decimal(18, 3)
+    totalPrice          Decimal               @db.Decimal(18, 3)
+    finalPrice          Decimal               @db.Decimal(18, 3)
+    discountAmount      Decimal               @default(0) @db.Decimal(18, 3)
+    duration            Int?
+    promotionId         String?
+    promotion           Promotion?            @relation(fields: [promotionId], references: [id], onDelete: SetNull)
+    promtionType        PromotionType?
+    planId              String?
+    plan                Plan?                 @relation(fields: [planId], references: [id], onDelete: SetNull)
+    contact             String?
+    bookedAt            DateTime              @default(now())
+    updatedAt           DateTime              @updatedAt
+    promotionRedemption PromotionRedemption[]
+    usedPromotion       UsedPromotion?
+    carReviews          CarReview[]
+
+    @@index([userId])
+    @@index([carId])
+    @@index([companyId])
+    @@index([startDate])
+    @@index([endDate])
+    @@index([bookedAt])
+    @@index([totalPrice])
+    @@index([basePrice])
+    @@map("book")
+    @@schema("book")
+}
+
+model RentalPlan {
+    id                  String                @id @unique @default(uuid(7))
+    carId               String?
+    car                 Car?                  @relation(fields: [carId], references: [id])
+    price               Decimal               @db.Decimal(18, 3)
+    max                 Int?
+    min                 Int?
+    planId              String
+    plan                Plan                  @relation(fields: [planId], references: [id], onDelete: Cascade)
+    periodType          RentalPeriodType      @default(hourly)
+    currency            Currency              @default(iqd)
+    book                Book[]
+    available           Boolean               @default(true)
+    promotions          Promotion[]
+    companyId           String?
+    company             Company?              @relation(fields: [companyId], references: [id], onDelete: SetNull)
+    deletedAt           DateTime?
+    usedPromotion       UsedPromotion[]
+    promotionRedemption PromotionRedemption[]
+
+    @@map("rental_plan")
+    @@schema("book")
+}
+
+model Plan {
+    id                  String                @id @unique @default(uuid(7))
+    en                  String
+    ku                  String?
+    ar                  String?
+    periodType          RentalPeriodType      @unique @default(hourly)
+    sort                Int                   @default(0)
+    rentalPlan          RentalPlan[]
+    promotions          Promotion[]
+    book                Book[]
+    usedPromotion       UsedPromotion[]
+    promotionRedemption PromotionRedemption[]
+
+    @@schema("book")
+}
+
+model Promotion {
+    id                  String                @id @unique @default(uuid(7))
+    code                String                @unique
+    name                String?               @db.VarChar(200)
+    description         String?               @db.Text()
+    priceType           PromotionPriceType    @default(fixed)
+    type                PromotionType         @default(car)
+    value               Decimal               @db.Decimal(18, 3)
+    minOrderValue       Decimal?              @db.Decimal(18, 3)
+    maxDiscountAmount   Decimal?              @db.Decimal(18, 3)
+    startDate           DateTime
+    endDate             DateTime
+    maxUses             Int?
+    usesCount           Int                   @default(0)
+    maxUsePerUser       Int                   @default(1)
+    companyId           String?
+    company             Company?              @relation(fields: [companyId], references: [id], onDelete: SetNull)
+    carId               String?
+    car                 Car?                  @relation(fields: [carId], references: [id], onDelete: SetNull)
+    rentalPlanId        String?
+    rentalPlan          RentalPlan?           @relation(fields: [rentalPlanId], references: [id], onDelete: SetNull)
+    available           Boolean               @default(true)
+    planId              String?
+    plan                Plan?                 @relation(fields: [planId], references: [id], onDelete: SetDefault)
+    deletedAt           DateTime?
+    promotedAt          DateTime              @default(now())
+    books               Book[]
+    usedPromotion       UsedPromotion[]
+    promotionRedemption PromotionRedemption[]
+
+    @@index([code])
+    @@index([usesCount])
+    @@index([maxUses])
+    @@index([carId])
+    @@index([companyId])
+    @@map("promotion")
+    @@schema("book")
+}
+
+model UsedPromotion {
+    id          String     @id @default(uuid())
+    promotionId String?
+    promotion   Promotion? @relation(fields: [promotionId], references: [id], onDelete: SetNull)
+
+    userId  String?
+    profile Profile? @relation(fields: [userId], references: [userId], onDelete: SetNull)
+
+    carId String?
+    car   Car?    @relation(fields: [carId], references: [id], onDelete: SetNull)
+
+    companyId String?
+    company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+    rentalPlanId String?
+    rentalPlan   RentalPlan? @relation(fields: [rentalPlanId], references: [id], onDelete: SetNull)
+
+    planId String?
+    plan   Plan?   @relation(fields: [planId], references: [id], onDelete: SetNull)
+
+    used Int @default(1)
+
+    bookId String? @unique
+    book   Book?   @relation(fields: [bookId], references: [id], onDelete: SetNull)
+
+    postedAt  DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([userId, promotionId, carId])
+    @@unique([userId, promotionId, companyId])
+    @@unique([userId, promotionId, planId])
+    @@unique([userId, promotionId, rentalPlanId])
+    @@unique([userId, promotionId])
+    @@index([userId])
+    @@index([promotionId])
+    @@index([planId])
+    @@index([rentalPlanId])
+    @@index([companyId])
+    @@map("usedPromotion")
+    @@schema("book")
+}
+
+model PromotionRedemption {
+    id          String     @id @default(uuid())
+    promotionId String?
+    promotion   Promotion? @relation(fields: [promotionId], references: [id])
+
+    userId  String?
+    profile Profile? @relation(fields: [userId], references: [userId], onDelete: SetNull)
+
+    carId String?
+    car   Car?    @relation(fields: [carId], references: [id], onDelete: SetNull)
+
+    rentalPlanId String?
+    rentalPlan   RentalPlan? @relation(fields: [rentalPlanId], references: [id], onDelete: SetNull)
+
+    planId String?
+    plan   Plan?   @relation(fields: [planId], references: [id], onDelete: SetNull)
+
+    companyId String?
+    company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+    usedAt DateTime @default(now())
+
+    bookId String?
+    book   Book?   @relation(fields: [bookId], references: [id], onDelete: SetNull)
+
+    @@index([promotionId])
+    @@index([userId])
+    @@index([carId])
+    @@index([rentalPlanId])
+    @@index([planId])
+    @@map("promotionRedemption")
+    @@schema("book")
+}

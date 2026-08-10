@@ -1,0 +1,23 @@
+name: flutter_kurdish_localization
+description: Flutter Central Kurdish Localization (vendored & patched for Flutter 3.32).
+version: 1.1.2
+homepage: https://github.com/aminsamad/flutter_kurdish_localization
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+# Pure-Dart localization package (no native plugin code), so it does not
+# require Windows symlink/plugin support.
+flutter:

@@ -1,0 +1,12 @@
+{
+  "id": "AAAABBBBDD",
+  "userId": "1",
+  "name": "Tester",
+  "email": "test@gmail.com",
+  "phoneNumber": "77012345678",
+  "role": { "roleId": "AABBDD", "roleName": "user" },
+  "countryCode": "+964",
+  "permissions": [],
+  "accessToken": "AABBDD",
+  "refreshToken": "AABBDD"
+}

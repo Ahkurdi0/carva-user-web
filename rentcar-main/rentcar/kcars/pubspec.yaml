@@ -1,0 +1,182 @@
+name: kcars
+description: "KCars"
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+3
+
+environment:
+  sdk: ^3.8.1
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  app_links: ^6.4.1
+  auto_route: ^10.1.0+1
+  cached_network_image: ^3.4.1
+  carousel_slider: ^5.1.1
+  collection: ^1.19.1
+  connectivity_plus: ^6.1.5
+  cupertino_icons: ^1.0.8
+  dart_mappable: ^4.5.0
+  device_info_plus: ^11.5.0
+  dio: ^5.8.0+1
+  dotlottie_loader: ^0.0.5
+  easy_localization: ^3.0.8
+  envied: ^1.2.0
+  equatable: ^2.0.7
+  flutter:
+    sdk: flutter
+  flutter_datetime_picker_plus: ^2.0.0
+  flutter_hooks: ^0.21.2
+  # Vendored & patched fork of flutter_kurdish_localization: the public 1.1.2
+  # predates Flutter 3.32's localization API and newer versions need a newer
+  # Dart SDK. See vendor/flutter_kurdish_localization.
+  flutter_kurdish_localization:
+    path: vendor/flutter_kurdish_localization
+  flutter_linkify: ^6.0.0
+  flutter_map: ^8.1.1
+  flutter_picker_plus: ^1.5.2
+  flutter_riverpod: ^2.6.1
+  flutter_secure_storage: ^9.2.4
+  flutter_svg: ^2.1.0
+  fpdart: ^1.1.1
+  gap: ^3.0.1
+  geolocator: ^14.0.2
+  get_it: ^8.0.3
+  hooks_riverpod: ^2.6.1
+  http: ^1.4.0
+  http_parser: ^4.1.2
+  image_picker: ^1.1.2
+  intl: ^0.20.2
+  jwt_decoder: ^2.0.1
+  latlong2: ^0.9.1
+  linkify: ^5.0.0
+  lottie: ^3.3.1
+  onesignal_flutter: ^5.3.4
+  permission_handler: ^12.0.1
+  photo_view: ^0.15.0
+  retry: ^3.1.2
+  riverpod_annotation: ^2.6.1
+  sizer: ^3.0.5
+  skeletonizer: ^2.0.1
+  smooth_page_indicator: ^1.2.1
+  smooth_sheets: ^0.13.0
+  swipe_image_gallery: ^0.10.2
+  syncfusion_flutter_charts: ^30.1.42
+  syncfusion_flutter_datepicker: ^30.1.37
+  syncfusion_flutter_sliders: ^30.1.38
+  upgrader: ^11.4.0
+  url_launcher: ^6.3.1
+dependency_overrides:
+  intl: ^0.20.2
+dev_dependencies:
+  auto_route_generator: ^10.2.3
+  build_runner: ^2.5.0
+  custom_lint: ^0.7.5
+  dart_mappable_builder: ^4.5.0
+  envied_generator: ^1.1.0
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.4.6
+  riverpod_generator: ^2.6.5
+  riverpod_lint: ^2.6.5
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+# The following section is specific to Flutter packages.
+flutter:
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/
+    - assets/icons/
+    - assets/images/
+    - assets/animations/
+    - test/assets/
+  #   - images/a_dot_ham.jpeg
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: plus-jakarta
+      fonts:
+        # - asset: assets/fonts/plus-jakarta/URWThin.ttf
+        #   weight: 100
+        - asset: assets/fonts/plus-jakarta/PlusJakartaSans-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/plus-jakarta/PlusJakartaSans-Light.ttf
+          weight: 300
+        - asset: assets/fonts/plus-jakarta/PlusJakartaSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/plus-jakarta/PlusJakartaSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/plus-jakarta/PlusJakartaSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/plus-jakarta/PlusJakartaSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/plus-jakarta/PlusJakartaSans-ExtraBold.ttf
+          weight: 800
+
+    - family: urw
+      fonts:
+        - asset: assets/fonts/urw/URWThin.ttf
+          weight: 100
+        - asset: assets/fonts/urw/URWExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/urw/URWLight.ttf
+          weight: 300
+        - asset: assets/fonts/urw/URWRegular.ttf
+          weight: 400
+        - asset: assets/fonts/urw/URWMedium.ttf
+          weight: 500
+        - asset: assets/fonts/urw/URWSemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/urw/URWBold.ttf
+          weight: 700
+        - asset: assets/fonts/urw/URWExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/urw/URWBlack.ttf
+          weight: 900
+        # - asset: assets/fonts/plus-jakarta/URWBlack.ttf
+        #   weight: 900
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package

@@ -1,0 +1,209 @@
+model User {
+    id          String    @id @unique @default(uuid(7))
+    serial      Int       @default(autoincrement())
+    userId      String    @unique @default(cuid(2)) @db.VarChar(50)
+    email       String    @unique @db.VarChar(200)
+    password    String    @db.VarChar(500)
+    userName    String?   @unique
+    joinedAt    DateTime  @default(now())
+    deletedAt   DateTime?
+    countryCode String    @default("+964")
+    phoneNumber String?   @db.VarChar(50)
+    platform    String?
+    profile     Profile?
+
+    @@unique([countryCode, phoneNumber])
+    @@index([userId])
+    @@index([email])
+    @@index([email, phoneNumber])
+    @@map("user")
+    @@schema("user")
+}
+
+model Profile {
+    id                  String                @id @unique @default(uuid(7)) @db.VarChar(50)
+    serial              Int                   @unique @default(autoincrement())
+    userId              String                @unique @db.VarChar(50)
+    email               String                @unique @db.VarChar(200)
+    phoneNumber         String?               @unique @db.VarChar(50)
+    image               String?               @db.VarChar(1000)
+    name                String                @db.VarChar(100)
+    userName            String?               @unique @db.VarChar(100)
+    user                User                  @relation(references: [userId], fields: [userId], onDelete: Cascade)
+    countryCode         String                @default("+964")
+    company             Company?
+    platform            String?
+    joinedAt            DateTime              @default(now())
+    emailVerifiedAt     DateTime?
+    phoneVerifiedAt     DateTime?
+    deletedAt           DateTime?
+    accountInfo         AccountInfo?
+    accountStatus       AccountStatus[]
+    sessions            Session[]
+    roleId              String
+    role                Role                  @relation(fields: [roleId], references: [roleId])
+    prefLang            String?
+    tourist             Boolean?              @default(false)
+    iraqi               Boolean?              @default(true)
+    favroiteCars        FavoriteCars[]
+    books               Book[]
+    companyReviews      CompanyReview[]
+    carReviews          CarReview[]
+    viewdCars           RecentlyViewedCar[]
+    activiyLog          UserActivityLog[]
+    rolePersmission     RolePermission[]
+    permissions         UserPermissions[]
+    usedPromotion       UsedPromotion[]
+    promotionRedemption PromotionRedemption[]
+    contactStatistic    ContactStatistic[]
+    viewedCars          ViewedCars[]
+
+    @@unique([countryCode, phoneNumber])
+    @@index([userId])
+    @@index([phoneNumber])
+    @@index([name])
+    @@index([email])
+    @@index([roleId])
+    @@map("profile")
+    @@schema("user")
+}
+
+model AccountStatus {
+    id          String   @id @unique @default(uuid(7)) @db.VarChar(50)
+    userId      String   @db.VarChar(50)
+    profile     Profile  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+    title       String   @db.Text()
+    description String   @db.Text()
+    bannedAt    DateTime @default(now())
+    bannedUntil DateTime
+
+    @@index([userId])
+    @@map("accountStatus")
+    @@schema("user")
+}
+
+model Session {
+    id                  String    @id @default(uuid(7)) @db.VarChar(50)
+    sessionId           String    @unique @default(cuid(2))
+    userId              String    @db.VarChar(50)
+    profile             Profile   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+    systemName          String?
+    isPhysicalDevice    String?
+    model               String?
+    localizedModel      String?
+    systemVersion       String?
+    name                String?
+    identifierForVendor String?
+    ip                  String?
+    platform            String?
+    lastLogin           DateTime  @default(now())
+    token               String?
+    revoked             Boolean?
+    expiresAt           DateTime?
+    deletedAt           DateTime?
+
+    @@index([sessionId])
+    @@index([userId])
+    @@map("session")
+    @@schema("user")
+}
+
+model UserActivityLog {
+    id        String    @id @default(uuid(7))
+    userId    String
+    action    String
+    details   Json?
+    ip        String?
+    createdAt DateTime  @default(now())
+    profile   Profile   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+    deletedAt DateTime?
+
+    @@index([userId])
+    @@map("userActivityLog")
+    @@schema("user")
+}
+
+model Role {
+    roleId          String           @id @unique @default(cuid(2)) @db.VarChar(50)
+    roleName        String
+    description     String?
+    rolePermissions RolePermission[]
+    user            Profile[]
+
+    @@index([roleName])
+    @@map("role")
+    @@schema("user")
+}
+
+model Permission {
+    permissionId    String            @id @unique @default(cuid(2)) @db.VarChar(50)
+    permissionName  String
+    description     String?
+    rolePermissions RolePermission[]
+    userPermissions UserPermissions[]
+
+    @@index([permissionName])
+    @@map("permission")
+    @@schema("user")
+}
+
+model UserPermissions {
+    id           String     @id @unique @default(cuid(2)) @db.VarChar(50)
+    userId       String     @db.VarChar(50)
+    user         Profile    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+    permissionId String     @db.VarChar(50)
+    permission   Permission @relation(fields: [permissionId], references: [permissionId], onDelete: Cascade)
+
+    @@unique([userId, permissionId])
+    @@schema("user")
+}
+
+model RolePermission {
+    id           String     @id @default(cuid(2)) @db.VarChar(50)
+    roleId       String     @db.VarChar(50)
+    permissionId String     @db.VarChar(50)
+    role         Role       @relation(fields: [roleId], references: [roleId], onDelete: Cascade)
+    permission   Permission @relation(fields: [permissionId], references: [permissionId], onDelete: Cascade)
+
+    assignedBy String?  @db.VarChar(50)
+    profile    Profile? @relation(fields: [assignedBy], references: [userId])
+    createdAt  DateTime @default(now())
+
+    @@unique([roleId, permissionId])
+    @@index([roleId])
+    @@map("rolePermission")
+    @@schema("user")
+}
+
+model ResetPassword {
+    id           String            @id @default(uuid(7))
+    email        String?
+    countryCode  String?           @default("+964")
+    phoneNumber  String?
+    code         String            @unique
+    verifyStatus VerifyStatus      @default(pending)
+    type         ResetPasswordType @default(phone)
+    ip           String?
+    attempts     Int               @default(0)
+    expireAt     DateTime          @default(now())
+    postedAt     DateTime          @default(now())
+
+    @@index([phoneNumber])
+    @@index([email])
+    @@index([code])
+    @@index([postedAt])
+    @@index([expireAt])
+    @@map("resetPassword")
+    @@schema("user")
+}
+
+model AccountInfo {
+    id      String   @id @unique @default(uuid(7))
+    lat     Float?   @db.DoublePrecision
+    long    Float?   @db.DoublePrecision
+    userId  String?  @unique
+    profile Profile? @relation(fields: [userId], references: [userId], onDelete: SetNull)
+
+    @@index([userId])
+    @@schema("user")
+}

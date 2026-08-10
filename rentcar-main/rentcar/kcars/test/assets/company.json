@@ -1,0 +1,32 @@
+[
+  {
+    "id": "A",
+    "name": "Test",
+    "image": "https://kcars.com/1.png",
+    "review": 0,
+    "rate": 0,
+    "contacts": [
+      {
+        "id": "A",
+        "countrCode": "+964",
+        "value": "7701234568",
+        "sort": 0,
+        "available": true,
+        "type": "phone"
+      }
+    ],
+    "desc": "Test",
+    "location": { "id": "A", "lat": 0, "long": 0 },
+    "profile": {
+      "userId": "A",
+      "name": "A",
+      "email": "test@gmail.com",
+      "phoneNumber": "0",
+      "role": { "roleName": "user" },
+      "countryCode": "+964",
+      "permissions": []
+    },
+    "activeDate": "2025-06-07T14:36:06.200Z",
+    "expiresAt": "2025-06-07T14:36:06.200Z"
+  }
+]

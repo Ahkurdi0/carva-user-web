@@ -1,0 +1,40 @@
+# systemd unit for the Carva Next.js web app.
+# Install: copy to /etc/systemd/system/carva-web.service, then
+#   sudo systemctl daemon-reload && sudo systemctl enable --now carva-web
+# Adjust WorkingDirectory / User / the node path to match your server.
+
+[Unit]
+Description=Carva web (Next.js)
+After=network.target
+# Backend runs on :3000; start the web app after it if both are systemd-managed.
+# Wants=kcars-server.service
+
+[Service]
+Type=simple
+# The standalone build output. server.js expects to run from this dir.
+WorkingDirectory=/var/www/carva-web/.next/standalone
+# Run as a non-root user that owns the directory:
+User=www-data
+Group=www-data
+
+Environment=NODE_ENV=production
+# server.js listens here; Nginx proxies to it. Keep it bound to localhost.
+Environment=PORT=3001
+Environment=HOSTNAME=127.0.0.1
+# Visitor-analytics log lives OUTSIDE the standalone build dir so it survives
+# rebuilds (npm run build regenerates .next/standalone). build.sh creates it.
+Environment=ANALYTICS_DATA_DIR=/var/www/carva-web/data
+# .env.production is traced into the standalone folder and loaded automatically.
+
+# Full path to node (find it with: which node). nvm users: point at the
+# versioned path, e.g. /home/<user>/.nvm/versions/node/vXX/bin/node
+ExecStart=/usr/bin/node server.js
+
+Restart=on-failure
+RestartSec=5
+# Keep logs in the journal: journalctl -u carva-web -f
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

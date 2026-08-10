@@ -1,0 +1,15 @@
+[
+  {
+    "id": "A",
+    "carId": "A",
+    "companyId": "A",
+    "priceType": "percentage",
+    "type": "car",
+    "value": 20,
+    "startDate": "2025-06-07T14:36:06.200Z",
+    "endDate": "2025-08-07T14:36:06.200Z",
+    "usesCount": 0,
+    "maxUsePerUser": 100,
+    "available": true
+  }
+]

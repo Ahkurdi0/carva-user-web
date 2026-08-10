@@ -1,0 +1,22 @@
+[
+  {
+    "id": "A",
+    "userId": "A",
+    "title": "Test",
+    "description": "Test",
+    "bannedAt": "2025-06-07T14:36:06.200Z",
+    "bannedUntil": "2025-06-07T14:36:06.200Z",
+    "profile": {
+      "id": "AAAABBBBDD",
+      "userId": "1",
+      "name": "Test User",
+      "email": "test@gmail.com",
+      "phoneNumber": "",
+      "countryCode": "",
+      "accessToken": "AABBDD",
+      "refreshToken": "AABBDD",
+      "role": { "roleId": "AABBDD", "roleName": "user" },
+      "permissions": []
+    }
+  }
+]

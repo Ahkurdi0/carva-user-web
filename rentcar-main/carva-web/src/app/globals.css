@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/* ---- Plus Jakarta Sans (same family the app uses for English) ---- */
+@font-face {
+  font-family: "Plus Jakarta";
+  src: url("/fonts/plus-jakarta/PlusJakartaSans-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Plus Jakarta";
+  src: url("/fonts/plus-jakarta/PlusJakartaSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Plus Jakarta";
+  src: url("/fonts/plus-jakarta/PlusJakartaSans-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Plus Jakarta";
+  src: url("/fonts/plus-jakarta/PlusJakartaSans-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Plus Jakarta";
+  src: url("/fonts/plus-jakarta/PlusJakartaSans-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Plus Jakarta";
+  src: url("/fonts/plus-jakarta/PlusJakartaSans-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-display: swap;
+}
+
+/* ---- Design tokens copied from the Flutter app's ColorScheme ---- */
+@theme {
+  --color-primary: #3957d7;
+  --color-primary-container: #f1f4fd;
+  --color-secondary: #23262e;
+  --color-on-surface: #23262e;
+  --color-surface: #ffffff;
+  --color-surface-lowest: #f7f7f7;
+  --color-surface-low: #ededed;
+  --color-muted: #9e9e9e;
+  --color-outline: #9e9e9e;
+  --color-tint: #25d366;
+  --color-danger: #ef4444;
+
+  --font-sans: "Plus Jakarta", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 16px;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #23262e;
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide scrollbars on horizontal car rails, like the app's smooth lists */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Subtle skeleton shimmer matching skeletonizer */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #ececec;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
