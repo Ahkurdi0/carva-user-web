@@ -6,7 +6,7 @@ import { AppShell } from "@/components/AppShell";
 import { CarRail } from "@/components/CarRail";
 import { CarCard, CarCardSkeleton } from "@/components/CarCard";
 import { SliderCarousel } from "@/components/SliderCarousel";
-import { SectionHeader, Spinner } from "@/components/ui";
+import { Chip, SectionHeader, Spinner } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useAsync } from "@/lib/useAsync";
@@ -14,7 +14,7 @@ import { userApi } from "@/lib/services";
 import { uniqueById } from "@/lib/format";
 import { useAuth } from "@/lib/auth-store";
 import { useI18n } from "@/i18n";
-import type { BrandWithCars, Car } from "@/lib/types";
+import type { BrandWithCars, Car, FiltersData } from "@/lib/types";
 
 function BrandSection() {
   const { t, tr } = useI18n();
@@ -142,7 +142,7 @@ function NearbySection() {
 }
 
 function AllCars() {
-  const { t } = useI18n();
+  const { t, tr } = useI18n();
   const [cars, setCars] = useState<Car[]>([]);
   const [cursor, setCursor] = useState<string | undefined>();
   const [hasMore, setHasMore] = useState(true);
@@ -180,11 +180,39 @@ function AllCars() {
     return () => obs.disconnect();
   }, [load]);
 
+  const { data: filters } = useAsync<FiltersData>(() => userApi.filters(), []);
+  const [cityEn, setCityEn] = useState<string | null>(null);
+  const cityKey = (v?: string | null) => (v ?? "").trim().toLowerCase();
+  const shown = cityEn
+    ? cars.filter(
+        (car) =>
+          cityKey(car.location?.city?.en ?? car.company?.location?.city?.en) ===
+          cityKey(cityEn),
+      )
+    : cars;
+
   return (
     <section className="py-3">
       <SectionHeader title={t("labels.cars")} />
+      {(filters?.cities?.length ?? 0) > 0 && (
+        <div className="no-scrollbar mb-4 flex gap-2 overflow-x-auto px-4">
+          <Chip
+            label={t("web.allCities")}
+            selected={cityEn === null}
+            onClick={() => setCityEn(null)}
+          />
+          {filters!.cities.map((city) => (
+            <Chip
+              key={city.id}
+              label={tr(city)}
+              selected={cityEn === city.en}
+              onClick={() => setCityEn(cityEn === city.en ? null : (city.en ?? null))}
+            />
+          ))}
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-x-3 gap-y-5 px-4 sm:grid-cols-3 lg:grid-cols-4">
-        {cars.map((car) => (
+        {shown.map((car) => (
           <CarCard key={car.id} car={car} />
         ))}
         {loading &&

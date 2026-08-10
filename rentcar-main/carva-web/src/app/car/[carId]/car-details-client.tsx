@@ -13,6 +13,7 @@ import { Modal } from "@/components/Modal";
 import { GetAppBanner } from "@/components/GetAppBanner";
 import { ShareButton } from "@/components/ShareButton";
 import { DetailSponsorStrip } from "@/components/DetailSponsorStrip";
+import { SimilarCars } from "@/components/SimilarCars";
 import { MiniMap } from "@/components/MiniMap";
 import { ReviewList } from "@/components/ReviewList";
 import { useAsync } from "@/lib/useAsync";
@@ -202,6 +203,8 @@ export function CarDetailsClient() {
             </a>
           </section>
         )}
+
+        <SimilarCars car={car} />
 
         <GetAppBanner />
 

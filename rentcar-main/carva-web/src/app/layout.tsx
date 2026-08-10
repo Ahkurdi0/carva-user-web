@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   creator: SITE.name,
   publisher: SITE.name,
   alternates: { canonical: "/" },
-  icons: { icon: SITE.logo, apple: SITE.logo },
   manifest: "/manifest.webmanifest",
   openGraph: {
     type: "website",

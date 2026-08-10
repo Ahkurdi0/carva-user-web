@@ -595,7 +595,9 @@
     "share": "مشاركة",
     "linkCopied": "تم نسخ الرابط",
     "reels": "ريلز",
-    "details": "التفاصيل"
+    "details": "التفاصيل",
+    "similarCars": "سيارات مشابهة",
+    "allCities": "كل المدن"
   },
   "analytics": {
     "title": "الزوار وحركة المرور",

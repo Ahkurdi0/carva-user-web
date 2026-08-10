@@ -595,7 +595,9 @@
     "share": "Share",
     "linkCopied": "Link copied",
     "reels": "Reels",
-    "details": "Details"
+    "details": "Details",
+    "similarCars": "Similar cars",
+    "allCities": "All cities"
   },
   "analytics": {
     "title": "Visitors & Traffic",
