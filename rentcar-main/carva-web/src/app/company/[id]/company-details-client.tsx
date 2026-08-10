@@ -7,6 +7,8 @@ import { Icon, type IconName } from "@/components/Icon";
 import { ImageHolder } from "@/components/ImageHolder";
 import { CarCard, CarCardSkeleton } from "@/components/CarCard";
 import { MiniMap } from "@/components/MiniMap";
+import { ShareButton } from "@/components/ShareButton";
+import { SocialLinks } from "@/components/SocialLinks";
 import { GetAppBanner } from "@/components/GetAppBanner";
 import { ReviewList } from "@/components/ReviewList";
 import { Rating, PageLoading, EmptyState, SectionHeader, Spinner } from "@/components/ui";
@@ -105,13 +107,13 @@ function CompanyCars({ companyId }: { companyId: string }) {
 
 export function CompanyDetailsClient() {
   const { id } = useParams<{ id: string }>();
-  const { t } = useI18n();
+  const { t, tr } = useI18n();
   const { data: company, loading, error } = useAsync<Company>(() => userApi.company(id), [id]);
 
   if (loading) return <AppShell><PageLoading /></AppShell>;
   if (error || !company) return <AppShell><EmptyState icon="company" title={t("alertMessages.someThingWentWrong")} /></AppShell>;
 
-  const loc = company.location as { lat?: number; long?: number } | null;
+  const loc = company.location ?? null;
 
   return (
     <AppShell>
@@ -142,6 +144,14 @@ export function CompanyDetailsClient() {
               <Rating rate={company.rate} review={company.review} />
               {company.cars != null && <span className="text-sm text-muted">· {company.cars} {t("labels.cars")}</span>}
             </div>
+            {(loc?.city || loc?.town) && (
+              <p className="mt-1 truncate text-sm text-muted">
+                {[tr(loc.city), tr(loc.town)].filter(Boolean).join("، ")}
+              </p>
+            )}
+          </div>
+          <div className="pt-3">
+            <ShareButton title={company.name} />
           </div>
         </div>
 
@@ -152,6 +162,8 @@ export function CompanyDetailsClient() {
             {company.contacts.map((c) => <ContactButton key={c.id} c={c} companyId={company.id} />)}
           </div>
         )}
+
+        <SocialLinks company={company} />
 
         {loc?.lat && loc?.long && (
           <div className="mt-5">

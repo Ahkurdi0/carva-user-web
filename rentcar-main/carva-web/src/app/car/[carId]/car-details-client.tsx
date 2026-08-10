@@ -9,6 +9,8 @@ import { Button, Rating, PageLoading, EmptyState, useEnumLabel, SectionHeader } 
 import { FavoriteButton } from "@/components/CarCard";
 import { CarGallery } from "@/components/CarGallery";
 import { GetAppBanner } from "@/components/GetAppBanner";
+import { ShareButton } from "@/components/ShareButton";
+import { DetailSponsorStrip } from "@/components/DetailSponsorStrip";
 import { MiniMap } from "@/components/MiniMap";
 import { ReviewList } from "@/components/ReviewList";
 import { useAsync } from "@/lib/useAsync";
@@ -50,7 +52,9 @@ export function CarDetailsClient() {
 
   const images = car.images ?? [];
   const f = car.feature;
-  const loc = car.location;
+  // Cars without their own location fall back to the company office,
+  // exactly like the app's details map.
+  const loc = car.location?.lat != null ? car.location : car.company?.location;
 
   async function whatsapp() {
     if (!car) return;
@@ -94,6 +98,7 @@ export function CarDetailsClient() {
           <div>
             <div className="flex items-start justify-between gap-3">
               <h1 className="text-2xl font-extrabold text-on-surface">{car.title}</h1>
+              <ShareButton title={car.title} />
             </div>
             <div className="mt-2 flex items-center gap-3">
               <Rating rate={car.rate} review={car.review} size={16} />
@@ -129,6 +134,8 @@ export function CarDetailsClient() {
             </div>
           </div>
         </div>
+
+        <DetailSponsorStrip />
 
         {/* Features */}
         <section className="mt-8">

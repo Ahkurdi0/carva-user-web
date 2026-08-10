@@ -591,7 +591,9 @@
     "downloadOn": "حمّله من",
     "getItOn": "احصل عليه من",
     "getAppTitle": "حمّل تطبيق كارفا",
-    "getAppSubtitle": "تصفح واحجز السيارات أسرع في التطبيق"
+    "getAppSubtitle": "تصفح واحجز السيارات أسرع في التطبيق",
+    "share": "مشاركة",
+    "linkCopied": "تم نسخ الرابط"
   },
   "analytics": {
     "title": "الزوار وحركة المرور",

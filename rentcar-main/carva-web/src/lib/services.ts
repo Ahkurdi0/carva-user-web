@@ -67,6 +67,7 @@ export const userApi = {
   suggestedCars: () => api.json<Car[]>("/user/suggestedCars"),
   brands: () => api.json<BrandWithCars[]>("/user/brands"),
   sliders: () => api.json<Slider[]>("/user/sliders"),
+  detailSponsors: () => api.json<Slider[]>("/user/sliders", { placement: "detailCar" }),
   slider: (id: string) => api.json("/user/slider", { id }),
   recentlyViewed: () => api.json<Car[]>("/user/recentlyViewed"),
   nearByCars: (lat: number, long: number) =>

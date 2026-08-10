@@ -591,7 +591,9 @@
     "downloadOn": "Download on the",
     "getItOn": "Get it on",
     "getAppTitle": "Get the Carva app",
-    "getAppSubtitle": "Browse and reserve cars faster in the app"
+    "getAppSubtitle": "Browse and reserve cars faster in the app",
+    "share": "Share",
+    "linkCopied": "Link copied"
   },
   "analytics": {
     "title": "Visitors & Traffic",
