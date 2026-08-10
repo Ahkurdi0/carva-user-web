@@ -73,7 +73,7 @@ export function CarGallery({
           className="block w-full cursor-zoom-in"
           aria-label={title}
         >
-          <ImageHolder src={current} alt={title} className="aspect-[16/10] w-full" />
+          <ImageHolder src={current} alt={title} className="aspect-[16/10] max-h-[420px] w-full" />
         </button>
 
         {count > 1 && (

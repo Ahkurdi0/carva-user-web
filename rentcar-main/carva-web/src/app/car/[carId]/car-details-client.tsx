@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { Icon, type IconName } from "@/components/Icon";
 import { Button, Rating, PageLoading, EmptyState, useEnumLabel, SectionHeader } from "@/components/ui";
 import { FavoriteButton } from "@/components/CarCard";
 import { CarGallery } from "@/components/CarGallery";
+import { ContactButton } from "@/components/ContactButtons";
+import { Modal } from "@/components/Modal";
 import { GetAppBanner } from "@/components/GetAppBanner";
 import { ShareButton } from "@/components/ShareButton";
 import { DetailSponsorStrip } from "@/components/DetailSponsorStrip";
@@ -38,9 +40,9 @@ export function CarDetailsClient() {
   const { carId } = useParams<{ carId: string }>();
   const { t, tr, num } = useI18n();
   const e = useEnumLabel();
-  const router = useRouter();
   const { data: car, loading, error } = useAsync<Car>(() => userApi.carDetails(carId), [carId]);
   const [contacting, setContacting] = useState(false);
+  const [contactsOpen, setContactsOpen] = useState(false);
 
   if (loading) return <AppShell><PageLoading /></AppShell>;
   if (error || !car)
@@ -125,8 +127,8 @@ export function CarDetailsClient() {
             </div>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <Button onClick={() => router.push(`/booking?car=${car.carId}`)} className="flex-1">
-                {t("buttons.reserveNow")}
+              <Button onClick={() => setContactsOpen(true)} className="flex-1">
+                {t("buttons.contact")}
               </Button>
               <Button variant="secondary" onClick={whatsapp} loading={contacting} className="bg-tint hover:bg-tint/90">
                 <Icon name="whatsapp" size={18} color="#fff" /> {t("buttons.whatsapp")}
@@ -209,6 +211,17 @@ export function CarDetailsClient() {
           <ReviewList kind="car" id={car.id} />
         </section>
       </div>
+
+      <Modal open={contactsOpen} onClose={() => setContactsOpen(false)} title={t("buttons.contact")}>
+        <div className="flex flex-wrap gap-2">
+          {(car.company?.contacts ?? []).map((c) => (
+            <ContactButton key={c.id} c={c} companyId={car.companyId} />
+          ))}
+          {(car.company?.contacts ?? []).length === 0 && (
+            <p className="text-sm text-muted">{t("empty.noData")}</p>
+          )}
+        </div>
+      </Modal>
     </AppShell>
   );
 }

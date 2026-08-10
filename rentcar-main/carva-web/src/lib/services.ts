@@ -65,6 +65,8 @@ export const otpApi = {
 /* ----------------------------- Customer ----------------------------- */
 export const userApi = {
   suggestedCars: () => api.json<Car[]>("/user/suggestedCars"),
+  featuredCars: () => api.json<Car[]>("/user/featuredCars"),
+  reelsCars: () => api.json<Car[]>("/user/reelsCars"),
   brands: () => api.json<BrandWithCars[]>("/user/brands"),
   sliders: () => api.json<Slider[]>("/user/sliders"),
   detailSponsors: () => api.json<Slider[]>("/user/sliders", { placement: "detailCar" }),

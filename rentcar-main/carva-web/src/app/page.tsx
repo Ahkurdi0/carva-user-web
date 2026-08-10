@@ -201,6 +201,9 @@ function AllCars() {
 export default function HomePage() {
   const { t } = useI18n();
   const user = useAuth((s) => s.user);
+  // The hero rail mirrors the app: featured (paid) cars first, falling
+  // back to suggested when nothing is featured.
+  const featured = useAsync(() => userApi.featuredCars(), []);
   const suggested = useAsync(() => userApi.suggestedCars(), []);
   const sliders = useAsync(() => userApi.sliders(), []);
   const recently = useAsync(() => userApi.recentlyViewed(), [!!user], !!user);
@@ -218,9 +221,13 @@ export default function HomePage() {
       </div>
 
       <CarRail
-        title={t("labels.suggested")}
-        cars={suggested.data}
-        loading={suggested.loading}
+        title={t("labels.featured")}
+        cars={
+          featured.data && featured.data.length > 0
+            ? featured.data
+            : suggested.data
+        }
+        loading={featured.loading}
       />
       <BrandSection />
       {sliders.data && sliders.data.length > 0 && (

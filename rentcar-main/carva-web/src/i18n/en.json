@@ -593,7 +593,9 @@
     "getAppTitle": "Get the Carva app",
     "getAppSubtitle": "Browse and reserve cars faster in the app",
     "share": "Share",
-    "linkCopied": "Link copied"
+    "linkCopied": "Link copied",
+    "reels": "Reels",
+    "details": "Details"
   },
   "analytics": {
     "title": "Visitors & Traffic",

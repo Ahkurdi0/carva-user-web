@@ -12,6 +12,7 @@ import type { Lang } from "@/lib/types";
 
 const TABS: { href: string; key: string; icon: IconName; active: IconName }[] = [
   { href: "/", key: "bottomNavigation.cars", icon: "car", active: "car_active" },
+  { href: "/reels", key: "web.reels", icon: "star", active: "star_active" },
   { href: "/favorites", key: "bottomNavigation.Favorites", icon: "heart", active: "heart_active" },
   { href: "/companies", key: "bottomNavigation.companies", icon: "company", active: "company_fill" },
   { href: "/settings", key: "bottomNavigation.settings", icon: "settings", active: "settings_active" },

@@ -7,6 +7,7 @@ import { Icon, type IconName } from "@/components/Icon";
 import { ImageHolder } from "@/components/ImageHolder";
 import { CarCard, CarCardSkeleton } from "@/components/CarCard";
 import { MiniMap } from "@/components/MiniMap";
+import { ContactButton } from "@/components/ContactButtons";
 import { ShareButton } from "@/components/ShareButton";
 import { SocialLinks } from "@/components/SocialLinks";
 import { GetAppBanner } from "@/components/GetAppBanner";
@@ -17,46 +18,6 @@ import { userApi } from "@/lib/services";
 import { useI18n } from "@/i18n";
 import { imageUrl } from "@/lib/api";
 import type { Car, Company, Contact } from "@/lib/types";
-
-const CONTACT_ICON: Record<string, IconName> = {
-  phone: "call",
-  whatsapp: "whatsapp",
-  viber: "phone",
-  email: "mail",
-};
-
-function ContactButton({ c, companyId }: { c: Contact; companyId: string }) {
-  function open() {
-    const num = `${c.countrCode ?? ""}${c.value}`.replace(/\s/g, "");
-    if (c.type === "whatsapp") {
-      // Open synchronously so mobile browsers keep the user-gesture; redirect
-      // that tab once the contact URL resolves (fall back to a wa.me link).
-      const win = window.open("", "_blank");
-      const navigate = (url: string) => {
-        if (win) win.location.href = url;
-        else window.location.href = url;
-      };
-      const fallback = `https://wa.me/${num.replace("+", "")}`;
-      userApi.contact({ type: "whatsapp", companyId, contactId: c.id })
-        .then((url) => navigate(url || fallback))
-        .catch(() => navigate(fallback));
-    } else if (c.type === "email") {
-      window.location.href = `mailto:${c.value}`;
-    } else {
-      window.location.href = `tel:${num}`;
-    }
-  }
-  const isWa = c.type === "whatsapp";
-  return (
-    <button
-      onClick={open}
-      className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${isWa ? "bg-tint text-white" : "border border-surface-low text-on-surface"}`}
-    >
-      <Icon name={CONTACT_ICON[c.type] ?? "call"} size={16} color={isWa ? "#fff" : "#23262e"} />
-      {c.value}
-    </button>
-  );
-}
 
 function CompanyCars({ companyId }: { companyId: string }) {
   const { t } = useI18n();
