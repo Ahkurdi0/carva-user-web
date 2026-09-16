@@ -221,6 +221,7 @@ export interface Profile {
   permissions?: { permission: Permission }[];
   kycStatus?: KycStatus;
   kycDocumentType?: KycDocumentType | null;
+  isPersonal?: boolean;
   kycSubmittedAt?: string | null;
   kycReviewedAt?: string | null;
   kycRejectionReason?: string | null;
