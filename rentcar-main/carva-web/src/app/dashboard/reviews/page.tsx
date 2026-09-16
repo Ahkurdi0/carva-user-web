@@ -10,6 +10,7 @@ import { companyApi } from "@/lib/services";
 import { useI18n } from "@/i18n";
 import { formatDate } from "@/lib/format";
 import type { Review } from "@/lib/types";
+import { KycBadge } from "@/components/KycBadge";
 
 function ReviewRow({ r }: { r: Review }) {
   return (
@@ -22,7 +23,7 @@ function ReviewRow({ r }: { r: Review }) {
           ) : <span className="grid h-full w-full place-items-center"><Icon name="profile" size={16} color="#3957d7" /></span>}
         </span>
         <div className="flex-1">
-          <p className="text-sm font-semibold">{r.profile?.name ?? "User"}</p>
+          <div className="flex items-center gap-2"><p className="text-sm font-semibold">{r.profile?.name ?? "User"}</p><KycBadge status={r.profile?.kycStatus} label={false} /></div>
           <p className="text-[11px] text-muted">{formatDate(r.reviewedAt)}</p>
         </div>
         <span className="inline-flex gap-0.5">
