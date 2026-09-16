@@ -40,12 +40,13 @@ export default function AdminKycPage() {
                 <div>
                   <div className="flex items-center gap-2"><h2 className="font-bold">{item.name}</h2><KycBadge status={item.kycStatus} /></div>
                   <p className="text-sm text-muted">{item.email}{item.phoneNumber ? ` · ${item.phoneNumber}` : ""}</p>
+                  <p className="mt-1 text-sm font-medium text-primary">{item.kycDocumentType === "passport" ? t("web.kycPassport") : item.kycDocumentType === "driving_license" ? t("web.kycDrivingLicense") : t("web.kycNationalId")}</p>
                   <p className="mt-1 text-xs text-muted">{item.kycSubmittedAt ? new Date(item.kycSubmittedAt).toLocaleString() : ""}</p>
                 </div>
                 <div className="flex gap-2"><Button variant="outline" className="h-9 px-3 text-xs" loading={busy === item.userId} onClick={() => review(item, "rejected")}>{t("web.reject")}</Button><Button className="h-9 px-3 text-xs" loading={busy === item.userId} onClick={() => review(item, "approved")}>{t("web.approve")}</Button></div>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                {[item.kycDocumentFront, item.kycDocumentBack, item.kycSelfie].map((src, i) => src ? <a key={src} href={imageUrl(src)} target="_blank" rel="noreferrer" className="overflow-hidden rounded-xl border border-surface-low"><img src={imageUrl(src)} alt={[t("web.kycFront"), t("web.kycBack"), t("web.kycSelfie")][i]} className="h-40 w-full object-cover" /></a> : null)}
+                {[[item.kycDocumentFront, t("web.kycFront")], [item.kycDocumentBack, t("web.kycBack")], [item.kycSelfie, t("web.kycSelfie")]].map(([src, label]) => src ? <a key={src} href={imageUrl(src)} target="_blank" rel="noreferrer" className="overflow-hidden rounded-xl border border-surface-low"><img src={imageUrl(src)} alt={label ?? ""} className="h-40 w-full object-cover" /></a> : null)}
               </div>
             </Card>
           ))}

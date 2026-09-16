@@ -25,6 +25,7 @@ export type PromotionPriceType = "percentage" | "fixed";
 export type PromotionType = "car" | "company" | "plan" | "rentalPlan";
 export type SlideType = "car" | "company" | "url";
 export type KycStatus = "unverified" | "pending" | "approved" | "rejected";
+export type KycDocumentType = "national_id" | "passport" | "driving_license";
 
 /** Multi-language label used across brands, types, cities, towns, plans */
 export interface Localized {
@@ -219,6 +220,7 @@ export interface Profile {
   role?: Role | null;
   permissions?: { permission: Permission }[];
   kycStatus?: KycStatus;
+  kycDocumentType?: KycDocumentType | null;
   kycSubmittedAt?: string | null;
   kycReviewedAt?: string | null;
   kycRejectionReason?: string | null;
@@ -231,6 +233,7 @@ export interface KycApplication {
   phoneNumber?: string | null;
   image?: string | null;
   kycStatus: KycStatus;
+  kycDocumentType?: KycDocumentType | null;
   kycDocumentFront?: string | null;
   kycDocumentBack?: string | null;
   kycSelfie?: string | null;

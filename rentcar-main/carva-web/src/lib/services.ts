@@ -143,7 +143,7 @@ export const userApi = {
 
   explorerMap: (b: { west: number; east: number; north: number; south: number }) =>
     api.json<Car[]>("/user/explorerMap", b),
-  kycStatus: () => api.json<Pick<Profile, "kycStatus" | "kycSubmittedAt" | "kycReviewedAt" | "kycRejectionReason">>("/user/kyc/status"),
+  kycStatus: () => api.json<Pick<Profile, "kycStatus" | "kycDocumentType" | "kycSubmittedAt" | "kycReviewedAt" | "kycRejectionReason">>("/user/kyc/status"),
   submitKyc: (form: FormData) => api.form<{ kycStatus: "pending" }>("/user/kyc/submit", form),
 };
 
