@@ -227,6 +227,9 @@ export function CarFormModal({
                 periodType: p.periodType,
                 price: Number(p.price) || 0,
                 currency: p.currency,
+                // The company update schema requires this flag for every
+                // rental plan that is created or replaced.
+                available: true,
               })),
             ),
           );
@@ -249,6 +252,7 @@ export function CarFormModal({
               periodType: p.periodType,
               price: Number(p.price) || 0,
               currency: p.currency,
+              available: true,
             })),
           ),
         );
