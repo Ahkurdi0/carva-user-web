@@ -14,7 +14,7 @@ import { authApi, userApi } from "@/lib/services";
 import { imageUrl } from "@/lib/api";
 import { toast } from "@/components/toast";
 import { useAsync } from "@/lib/useAsync";
-import type { Lang, Support } from "@/lib/types";
+import type { KycDocumentType, Lang, Support } from "@/lib/types";
 import { KycBadge } from "@/components/KycBadge";
 
 function Row({ icon, label, onClick, href, danger }: { icon: IconName; label: string; onClick?: () => void; href?: string; danger?: boolean }) {
@@ -69,7 +69,8 @@ export default function SettingsPage() {
   const [newPwd, setNewPwd] = useState("");
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const [kycFiles, setKycFiles] = useState<{ front?: File; back?: File; selfie?: File }>({});
+  const [kycType, setKycType] = useState<KycDocumentType>("national_id");
+  const [kycFiles, setKycFiles] = useState<{ front?: File; back?: File }>({});
 
   if (!user) return <AppShell><AuthPrompt /></AppShell>;
 
@@ -124,18 +125,18 @@ export default function SettingsPage() {
   }
 
   async function submitKyc() {
-    if (!kycFiles.front || !kycFiles.back || !kycFiles.selfie) {
+    if (!kycFiles.front || (kycType !== "passport" && !kycFiles.back)) {
       toast(t("web.kycDocumentsRequired"), "error");
       return;
     }
     setBusy(true);
     try {
       const form = new FormData();
+      form.append("documentType", kycType);
       form.append("documentFront", kycFiles.front);
-      form.append("documentBack", kycFiles.back);
-      form.append("selfie", kycFiles.selfie);
+      if (kycFiles.back) form.append("documentBack", kycFiles.back);
       await userApi.submitKyc(form);
-      setUser({ ...user!, kycStatus: "pending", kycRejectionReason: null });
+      setUser({ ...user!, kycStatus: "pending", kycDocumentType: kycType, kycRejectionReason: null });
       setKycFiles({});
       setModal(null);
       toast(t("web.kycSubmitted"), "success");
@@ -234,9 +235,15 @@ export default function SettingsPage() {
           ) : (
             <>
               <p className="text-sm text-muted">{t("web.kycInstructions")}</p>
+              <Field label={t("web.kycDocumentType")}>
+                <select value={kycType} onChange={(e) => { setKycType(e.target.value as KycDocumentType); setKycFiles({}); }} className="h-12 w-full rounded-xl border border-surface-low bg-white px-3 text-sm">
+                  <option value="national_id">{t("web.kycNationalId")}</option>
+                  <option value="passport">{t("web.kycPassport")}</option>
+                  <option value="driving_license">{t("web.kycDrivingLicense")}</option>
+                </select>
+              </Field>
               <Field label={t("web.kycFront")}><Input type="file" accept="image/*" onChange={(e) => setKycFiles((v) => ({ ...v, front: e.target.files?.[0] }))} /></Field>
-              <Field label={t("web.kycBack")}><Input type="file" accept="image/*" onChange={(e) => setKycFiles((v) => ({ ...v, back: e.target.files?.[0] }))} /></Field>
-              <Field label={t("web.kycSelfie")}><Input type="file" accept="image/*" onChange={(e) => setKycFiles((v) => ({ ...v, selfie: e.target.files?.[0] }))} /></Field>
+              {kycType !== "passport" && <Field label={t("web.kycBack")}><Input type="file" accept="image/*" onChange={(e) => setKycFiles((v) => ({ ...v, back: e.target.files?.[0] }))} /></Field>}
               {user.kycStatus === "rejected" && <p className="text-sm text-danger">{user.kycRejectionReason || t("web.kycRejected")}</p>}
               <Button full loading={busy} onClick={submitKyc}>{t("web.submitKyc")}</Button>
             </>
