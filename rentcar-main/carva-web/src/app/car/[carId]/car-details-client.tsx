@@ -12,6 +12,7 @@ import { ContactButton } from "@/components/ContactButtons";
 import { Modal } from "@/components/Modal";
 import { GetAppBanner } from "@/components/GetAppBanner";
 import { ShareButton } from "@/components/ShareButton";
+import { KycBadge } from "@/components/KycBadge";
 import { DetailSponsorStrip } from "@/components/DetailSponsorStrip";
 import { SimilarCars } from "@/components/SimilarCars";
 import { MiniMap } from "@/components/MiniMap";
@@ -171,7 +172,7 @@ export function CarDetailsClient() {
                 )}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold text-on-surface">{car.company.name}</p>
+                <div className="flex items-center gap-2"><p className="truncate font-semibold text-on-surface">{car.company.name}</p><KycBadge status={car.company.profile?.kycStatus} label={false} /></div>
                 <Rating rate={car.company.rate} review={car.company.review} />
               </div>
               <Icon name="arrow_tail" size={18} color="#9e9e9e" />

@@ -597,7 +597,26 @@
     "reels": "ريلز",
     "details": "التفاصيل",
     "similarCars": "سيارات مشابهة",
-    "allCities": "كل المدن"
+    "allCities": "كل المدن",
+    "verifyIdentity": "تحقق من الهوية (اعرف عميلك)",
+    "kycVerified": "تم التحقق من الهوية",
+    "kycVerifiedDescription": "تم التحقق من هويتك. يمكنك نشر سياراتك وحجز السيارات.",
+    "kycPending": "يتم الآن مراجعة مستنداتك.",
+    "kycRejected": "تم رفض التحقق. يرجى إرسال مستندات أوضح.",
+    "kycInstructions": "ارفع الوجه الأمامي والخلفي لهويتك وصورة سيلفي واضحة. تتم مراجعة المستندات بأمان من قبل Carva.",
+    "kycFront": "الوجه الأمامي للهوية",
+    "kycBack": "الوجه الخلفي للهوية",
+    "kycSelfie": "صورة سيلفي",
+    "submitKyc": "إرسال للمراجعة",
+    "kycSubmitted": "تم إرسال طلب التحقق للمراجعة",
+    "kycDocumentsRequired": "يرجى اختيار الصور الثلاث",
+    "kycApplications": "طلبات التحقق من الهوية",
+    "noKycApplications": "لا توجد طلبات تحقق معلقة",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "kycApproved": "تمت الموافقة على التحقق",
+    "kycRejectionReason": "سبب الرفض"
+    ,"kycRequired": "تحقق من هويتك قبل حجز السيارة"
   },
   "analytics": {
     "title": "الزوار وحركة المرور",
