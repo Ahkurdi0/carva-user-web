@@ -628,6 +628,11 @@
     "kycApproved": "تمت الموافقة على التحقق",
     "kycRejectionReason": "سبب الرفض"
     ,"kycRequired": "تحقق من هويتك قبل حجز السيارة"
+    ,"recognizeCar": "التعرف على السيارة من الصورة"
+    ,"recognizingCar": "جارٍ التعرف على السيارة..."
+    ,"aiSuggestionApplied": "تمت تعبئة تفاصيل السيارة من الصورة. يرجى مراجعتها قبل النشر."
+    ,"aiImageRequired": "ارفع صورة السيارة أولاً"
+    ,"aiRecognitionFailed": "فشل التعرف على السيارة. يرجى تعبئة الحقول يدوياً"
   },
   "analytics": {
     "title": "الزوار وحركة المرور",
