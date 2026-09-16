@@ -128,7 +128,9 @@ export function CarFormModal({
 
   function addPlan() {
     const used = new Set(planRows.map((r) => r.periodType));
-    const next = PERIODS.map((pt) => planByPeriod.get(pt)).find((p) => p && !used.has(p.periodType!)) ?? plans[0];
+    const next = PERIODS
+      .map((pt) => planByPeriod.get(pt))
+      .find((p) => p && !used.has(p.periodType!));
     if (!next?.id) return;
     setPlanRows((r) => [
       ...r,
@@ -161,7 +163,21 @@ export function CarFormModal({
 
   async function submit() {
     const totalImages = editing ? existing.length + images.length : images.length;
-    if (!form.title || !form.brandId || planRows.length === 0 || totalImages === 0) {
+    const normalizedPlans = planRows.map((row) => ({
+      ...row,
+      // Always trust the catalog entry for the selected period. This prevents
+      // stale/mismatched plan IDs from being rejected by the API.
+      planId: planByPeriod.get(row.periodType)?.id ?? row.planId,
+    }));
+    const invalidPlan = normalizedPlans.some(
+      (row) =>
+        !row.planId ||
+        !planByPeriod.has(row.periodType) ||
+        !row.price.trim() ||
+        !Number.isFinite(Number(row.price)) ||
+        Number(row.price) <= 0,
+    );
+    if (!form.title || !form.brandId || normalizedPlans.length === 0 || invalidPlan || totalImages === 0) {
       toast(t("alertMessages.someThingWentWrong"), "error");
       return;
     }
@@ -186,7 +202,7 @@ export function CarFormModal({
           .filter((r) => r.id && !kept.has(r.id))
           .map((r) => ({ id: r.id! }));
         const create: PlanRow[] = [];
-        for (const r of planRows) {
+        for (const r of normalizedPlans) {
           if (!r.id) {
             create.push(r);
             continue;
@@ -228,7 +244,7 @@ export function CarFormModal({
         fd.append(
           "rentalPlan",
           JSON.stringify(
-            planRows.map((p) => ({
+            normalizedPlans.map((p) => ({
               planId: p.planId,
               periodType: p.periodType,
               price: Number(p.price) || 0,
@@ -291,7 +307,12 @@ export function CarFormModal({
         <div>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-medium">{t("labels.rentalPlans")}</span>
-            <button onClick={addPlan} className="text-sm font-medium text-primary">+ {t("buttons.add")}</button>
+            <button
+              type="button"
+              onClick={addPlan}
+              disabled={!PERIODS.some((pt) => planByPeriod.has(pt) && !planRows.some((row) => row.periodType === pt))}
+              className="text-sm font-medium text-primary disabled:cursor-not-allowed disabled:opacity-40"
+            >+ {t("buttons.add")}</button>
           </div>
           <div className="space-y-2">
             {planRows.map((p, i) => (
