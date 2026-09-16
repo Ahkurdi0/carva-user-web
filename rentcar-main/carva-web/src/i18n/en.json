@@ -628,6 +628,11 @@
     "kycApproved": "KYC approved",
     "kycRejectionReason": "Reason for rejection"
     ,"kycRequired": "Verify your identity before booking a car"
+    ,"recognizeCar": "Recognize car from photo"
+    ,"recognizingCar": "Recognizing car..."
+    ,"aiSuggestionApplied": "Car details filled from the photo. Please review before publishing."
+    ,"aiImageRequired": "Upload a car photo first"
+    ,"aiRecognitionFailed": "Car recognition failed. Please fill the fields manually"
   },
   "analytics": {
     "title": "Visitors & Traffic",

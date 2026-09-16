@@ -174,6 +174,17 @@ export const companyApi = {
   cities: () => api.json<(GeoCity & { towns: GeoCity[] })[]>("/company/cities", {}),
   deleteCar: (id: string) => api.json("/company/car/delete", { id }),
   newCar: (form: FormData) => api.form("/company/car/new", form),
+  recognizeCar: (form: FormData) => api.form<{
+    brandName: string | null;
+    model: string | null;
+    vehicleType: string | null;
+    year: number | null;
+    fuel: string | null;
+    transmission: string | null;
+    seats: number | null;
+    confidence: number | null;
+    notes: string | null;
+  }>("/company/car/recognize", form),
   updateCar: (form: FormData) => api.form("/company/car/update", form),
   updateCompany: (form: FormData) => api.form("/company/updateCompany", form),
 };

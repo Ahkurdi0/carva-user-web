@@ -84,6 +84,7 @@ export function CarFormModal({
   const [images, setImages] = useState<File[]>([]); // newly added files
   const [existing, setExisting] = useState<CarImage[]>([]); // kept existing images
   const [removed, setRemoved] = useState<CarImage[]>([]); // existing images to delete
+  const [recognizing, setRecognizing] = useState(false);
 
   // Reset / hydrate the form whenever the modal opens (or the target car changes).
   useEffect(() => {
@@ -120,6 +121,7 @@ export function CarFormModal({
     }
     setImages([]);
     setRemoved([]);
+    setRecognizing(false);
   }, [open, car, plans]);
 
   // Only periods that have a catalog plan can be added — otherwise the row has
@@ -151,6 +153,46 @@ export function CarFormModal({
     if (!files) return;
     const room = MAX_IMAGES - existing.length - images.length;
     setImages((r) => [...r, ...Array.from(files).slice(0, Math.max(0, room))]);
+  }
+
+  function normalized(value: string) {
+    return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  }
+
+  function matchCatalog(items: { id: string; en: string; ar?: string | null; ku?: string | null }[], value: string | null) {
+    if (!value) return "";
+    const needle = normalized(value);
+    return items.find((item) => [item.en, item.ar ?? "", item.ku ?? ""].some((label) => normalized(label) === needle || normalized(label).includes(needle) || needle.includes(normalized(label))))?.id ?? "";
+  }
+
+  async function recognizeCar() {
+    const image = images[0];
+    if (!image) {
+      toast(t("web.aiImageRequired"), "error");
+      return;
+    }
+    setRecognizing(true);
+    try {
+      const fd = new FormData();
+      fd.append("image", image);
+      const result = await companyApi.recognizeCar(fd);
+      const brandId = matchCatalog(brands, result.brandName);
+      const typeId = matchCatalog(types, result.vehicleType);
+      const recognizedTitle = [result.brandName, result.model].filter(Boolean).join(" ");
+      setForm((current) => ({
+        ...current,
+        title: recognizedTitle || current.title,
+        brandId: brandId || current.brandId,
+        typeId: typeId || current.typeId,
+        year: result.year ? String(result.year) : current.year,
+        seat: result.seats ? String(result.seats) : current.seat,
+        fuel: ["gasoline", "diesel", "electric", "hybird", "lpg", "cng"].includes(result.fuel ?? "") ? result.fuel! : current.fuel,
+        transmission: ["automatic", "manual", "cvt", "amt", "dct", "sp"].includes(result.transmission ?? "") ? result.transmission! : current.transmission,
+      }));
+      toast(t("web.aiSuggestionApplied"), "success");
+    } catch (err) {
+      toast(err instanceof Error ? err.message : t("web.aiRecognitionFailed"), "error");
+    } finally { setRecognizing(false); }
   }
 
   const featurePayload = () => ({
@@ -358,6 +400,11 @@ export function CarFormModal({
         )}
         {images.length > 0 && (
           <p className="text-xs text-muted">{images.length} {t("buttons.addImage").toLowerCase()}</p>
+        )}
+        {images.length > 0 && !editing && (
+          <Button variant="outline" full loading={recognizing} onClick={recognizeCar}>
+            <Icon name="checked" size={16} /> {t("web.recognizeCar")}
+          </Button>
         )}
 
         <Button full loading={busy} onClick={submit}>{editing ? t("buttons.update") : t("buttons.add")}</Button>
