@@ -24,6 +24,7 @@ export type CompanyStatuses = "suspended" | "loacked" | "live";
 export type PromotionPriceType = "percentage" | "fixed";
 export type PromotionType = "car" | "company" | "plan" | "rentalPlan";
 export type SlideType = "car" | "company" | "url";
+export type KycStatus = "unverified" | "pending" | "approved" | "rejected";
 
 /** Multi-language label used across brands, types, cities, towns, plans */
 export interface Localized {
@@ -140,7 +141,7 @@ export interface Company {
   tiktokLink?: string | null;
   // The admin endpoints attach the owning profile so the panel can edit on
   // their behalf (the owner id is needed when (re)creating a company plan).
-  profile?: { userId?: string; name?: string | null; email?: string | null } | null;
+  profile?: { userId?: string; name?: string | null; email?: string | null; kycStatus?: KycStatus } | null;
   cars?: number;
 }
 
@@ -217,6 +218,25 @@ export interface Profile {
   company?: Company | null;
   role?: Role | null;
   permissions?: { permission: Permission }[];
+  kycStatus?: KycStatus;
+  kycSubmittedAt?: string | null;
+  kycReviewedAt?: string | null;
+  kycRejectionReason?: string | null;
+}
+
+export interface KycApplication {
+  userId: string;
+  name: string;
+  email: string;
+  phoneNumber?: string | null;
+  image?: string | null;
+  kycStatus: KycStatus;
+  kycDocumentFront?: string | null;
+  kycDocumentBack?: string | null;
+  kycSelfie?: string | null;
+  kycSubmittedAt?: string | null;
+  kycReviewedAt?: string | null;
+  kycRejectionReason?: string | null;
 }
 
 export interface AuthResult extends Profile {

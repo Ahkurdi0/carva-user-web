@@ -88,7 +88,7 @@ export function Header() {
               {t(tab.key)}
             </Link>
           ))}
-          {user?.company && (
+          {(user?.company || user?.kycStatus === "approved") && (
             <Link
               href="/dashboard"
               className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
@@ -99,6 +99,17 @@ export function Header() {
             >
               <Icon name="status" size={18} />
               {t("web.dashboard")}
+            </Link>
+          )}
+          {user?.role?.roleName === "admin" && (
+            <Link
+              href="/admin/kyc"
+              className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+                isActive(pathname, "/admin") ? "bg-primary-container text-primary" : "text-on-surface hover:bg-surface-lowest"
+              }`}
+            >
+              <Icon name="checked" size={18} />
+              {t("web.adminPanel")}
             </Link>
           )}
         </nav>
@@ -169,7 +180,7 @@ export function BottomNav() {
             </Link>
           );
         })}
-        {user?.company && (
+        {(user?.company || user?.kycStatus === "approved") && (
           <Link
             href="/dashboard"
             className="flex flex-1 flex-col items-center gap-1 py-3"
@@ -188,6 +199,12 @@ export function BottomNav() {
             >
               {t("web.dashboard")}
             </span>
+          </Link>
+        )}
+        {user?.role?.roleName === "admin" && (
+          <Link href="/admin/kyc" className="flex flex-1 flex-col items-center gap-1 py-3">
+            <Icon name="checked" size={24} color={isActive(pathname, "/admin") ? "#B51219" : "#9e9e9e"} />
+            <span className="text-[11px]" style={{ color: isActive(pathname, "/admin") ? "#23262e" : "#9e9e9e" }}>{t("web.adminPanel")}</span>
           </Link>
         )}
       </div>

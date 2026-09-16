@@ -597,7 +597,26 @@
     "reels": "Reels",
     "details": "Details",
     "similarCars": "Similar cars",
-    "allCities": "All cities"
+    "allCities": "All cities",
+    "verifyIdentity": "Verify identity (KYC)",
+    "kycVerified": "Identity verified",
+    "kycVerifiedDescription": "Your identity is verified. You can post personal cars and book cars.",
+    "kycPending": "Your documents are being reviewed.",
+    "kycRejected": "Your verification was rejected. Please submit clearer documents.",
+    "kycInstructions": "Upload the front and back of your national ID and a clear selfie. Your documents are reviewed securely by Carva.",
+    "kycFront": "ID front",
+    "kycBack": "ID back",
+    "kycSelfie": "Selfie",
+    "submitKyc": "Submit for review",
+    "kycSubmitted": "KYC submitted for review",
+    "kycDocumentsRequired": "Please select all three images"
+    ,"kycApplications": "KYC applications",
+    "noKycApplications": "No pending KYC applications",
+    "approve": "Approve",
+    "reject": "Reject",
+    "kycApproved": "KYC approved",
+    "kycRejectionReason": "Reason for rejection"
+    ,"kycRequired": "Verify your identity before booking a car"
   },
   "analytics": {
     "title": "Visitors & Traffic",

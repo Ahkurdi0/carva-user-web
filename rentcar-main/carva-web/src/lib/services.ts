@@ -19,6 +19,7 @@ import type {
   Review,
   Slider,
   Support,
+  KycApplication,
 } from "./types";
 
 /* ----------------------------- Auth ----------------------------- */
@@ -106,6 +107,7 @@ export const userApi = {
     api.json<Book[]>("/user/booked", { cursor, status }),
   bookCar: (data: {
     carId: string;
+    companyId: string;
     rentalPlanId: string;
     planId?: string;
     startDate: string;
@@ -141,6 +143,8 @@ export const userApi = {
 
   explorerMap: (b: { west: number; east: number; north: number; south: number }) =>
     api.json<Car[]>("/user/explorerMap", b),
+  kycStatus: () => api.json<Pick<Profile, "kycStatus" | "kycSubmittedAt" | "kycReviewedAt" | "kycRejectionReason">>("/user/kyc/status"),
+  submitKyc: (form: FormData) => api.form<{ kycStatus: "pending" }>("/user/kyc/submit", form),
 };
 
 /* ----------------------------- Company dashboard ----------------------------- */
@@ -205,6 +209,9 @@ export const adminApi = {
     api.json("/admin/updateAccountStatus", { userId, title, description, bannedUntil }),
   bannedUsers: (cursor?: string) => api.json<Profile[]>("/admin/bannedUsers", { cursor }),
   recoverAccount: (userId: string) => api.json("/admin/recoverAccount", { userId }),
+  pendingKyc: () => api.json<KycApplication[]>("/admin/kyc/pending", {}),
+  reviewKyc: (userId: string, status: "approved" | "rejected", rejectionReason?: string) =>
+    api.json("/admin/kyc/review", { userId, status, rejectionReason }),
   updateUserPassword: (userId: string, password: string) =>
     api.json("/admin/updateUserPassword", { userId, password }),
   // content

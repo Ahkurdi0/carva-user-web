@@ -30,7 +30,7 @@ export function DashboardShell({
   const isAdmin = useAuth((s) => s.isAdmin)();
   const isCompany = useAuth((s) => s.isCompany)();
 
-  const allowed = req === "admin" ? isAdmin : isCompany || isAdmin;
+  const allowed = req === "admin" ? isAdmin : isCompany || isAdmin || user?.kycStatus === "approved";
 
   useEffect(() => {
     if (!loading && !user) router.replace("/login");
