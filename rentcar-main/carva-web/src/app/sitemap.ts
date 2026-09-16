@@ -17,7 +17,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }[] = [
     { path: "", priority: 1, freq: "daily" },
     { path: "/search", priority: 0.8, freq: "daily" },
-    { path: "/reels", priority: 0.7, freq: "daily" },
     { path: "/companies", priority: 0.7, freq: "weekly" },
   ];
 

@@ -76,7 +76,6 @@ export function Footer() {
           <p className="mb-3 text-sm font-bold text-on-surface">Carva</p>
           <ul className="space-y-2 text-sm text-muted">
             <li><Link className="hover:text-primary" href="/">{t("bottomNavigation.cars")}</Link></li>
-            <li><Link className="hover:text-primary" href="/reels">{t("web.reels")}</Link></li>
             <li><Link className="hover:text-primary" href="/companies">{t("bottomNavigation.companies")}</Link></li>
             <li><Link className="hover:text-primary" href="/search">{t("inputHintText.searchCar")}</Link></li>
           </ul>
