@@ -69,7 +69,7 @@ export default function SettingsPage() {
   const [newPwd, setNewPwd] = useState("");
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const [kycType, setKycType] = useState<KycDocumentType>("national_id");
+  const [kycType, setKycType] = useState<KycDocumentType>((user?.kycDocumentType as KycDocumentType) || "national_id");
   const [kycFiles, setKycFiles] = useState<{ front?: File; back?: File }>({});
 
   if (!user) return <AppShell><AuthPrompt /></AppShell>;
