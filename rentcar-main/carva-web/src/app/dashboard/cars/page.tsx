@@ -12,9 +12,11 @@ import { useI18n } from "@/i18n";
 import { formatNumber } from "@/lib/format";
 import { toast } from "@/components/toast";
 import type { Car } from "@/lib/types";
+import { useAuth } from "@/lib/auth-store";
 
 export default function DashboardCars() {
   const { t, tr } = useI18n();
+  const personal = useAuth((s) => !!s.user?.isPersonal);
   const e = useEnumLabel();
   const cars = useAsync(() => companyApi.getCars(), []);
   const brands = useAsync(() => companyApi.brands(), []);
@@ -49,8 +51,8 @@ export default function DashboardCars() {
   return (
     <div>
       <div className="mb-5 flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold">{t("labels.cars")}</h1>
-        <Button onClick={() => { setEditing(null); setOpen(true); }}><Icon name="car" size={16} color="#fff" /> {t("screens.newCar")}</Button>
+        <h1 className="text-2xl font-extrabold">{personal ? t("web.myCars") : t("labels.cars")}</h1>
+        <Button onClick={() => { setEditing(null); setOpen(true); }}><Icon name="car" size={16} color="#fff" /> {personal ? t("web.addPersonalCar") : t("screens.newCar")}</Button>
       </div>
 
       {cars.loading ? (

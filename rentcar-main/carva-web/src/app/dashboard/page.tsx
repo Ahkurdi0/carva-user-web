@@ -9,9 +9,11 @@ import { useI18n } from "@/i18n";
 import { imageUrl } from "@/lib/api";
 import { formatDate, formatNumber } from "@/lib/format";
 import Link from "next/link";
+import { useAuth } from "@/lib/auth-store";
 
 export default function DashboardOverview() {
   const { t } = useI18n();
+  const personal = useAuth((s) => !!s.user?.isPersonal);
   const e = useEnumLabel();
   const company = useAsync(() => companyApi.company(), []);
   const bookings = useAsync(() => companyApi.booked(), []);
@@ -32,8 +34,8 @@ export default function DashboardOverview() {
           ) : null}
         </span>
         <div>
-          <h1 className="text-2xl font-extrabold">{c?.name}</h1>
-          <p className="text-sm text-muted">{t("web.overview")}</p>
+          <h1 className="text-2xl font-extrabold">{personal ? t("web.personalCarsTitle") : c?.name}</h1>
+          <p className="text-sm text-muted">{personal ? t("web.personalOverview") : t("web.overview")}</p>
         </div>
       </div>
 
