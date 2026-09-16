@@ -8,10 +8,12 @@ import { imageUrl } from "@/lib/api";
 import { useAsync } from "@/lib/useAsync";
 import { companyApi } from "@/lib/services";
 import { useI18n } from "@/i18n";
+import { useAuth } from "@/lib/auth-store";
 import { toast } from "@/components/toast";
 
 export default function DashboardProfile() {
   const { t } = useI18n();
+  const personal = useAuth((s) => !!s.user?.isPersonal);
   const { data, loading } = useAsync(() => companyApi.company(), []);
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
@@ -52,7 +54,7 @@ export default function DashboardProfile() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="mb-5 text-2xl font-extrabold">{t("buttons.editCompany")}</h1>
+      <h1 className="mb-5 text-2xl font-extrabold">{personal ? t("web.personalProfile") : t("buttons.editCompany")}</h1>
       <Card className="space-y-4 p-5">
         <div className="flex items-center gap-4">
           <button onClick={() => imgRef.current?.click()} className="relative h-20 w-20 overflow-hidden rounded-2xl bg-primary-container">
