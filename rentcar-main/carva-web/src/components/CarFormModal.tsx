@@ -125,8 +125,12 @@ export function CarFormModal({
     } else {
       setStep("photos");
       setForm(emptyForm);
-      setPlanRows([]);
-      setOrigPlans([]);
+      const defaultPlan = plans.find((plan) => plan.periodType === "daily") ?? plans[0];
+      const initialPlans: PlanRow[] = defaultPlan?.id
+        ? [{ planId: defaultPlan.id, periodType: defaultPlan.periodType ?? "daily", price: "", currency: "iqd" }]
+        : [];
+      setPlanRows(initialPlans);
+      setOrigPlans(initialPlans);
       setExisting([]);
     }
     setImages([]);
@@ -277,8 +281,24 @@ export function CarFormModal({
         !Number.isFinite(Number(row.price)) ||
         Number(row.price) <= 0,
     );
-    if (!form.title || !form.brandId || normalizedPlans.length === 0 || invalidPlan || totalImages === 0) {
-      toast(t("alertMessages.someThingWentWrong"), "error");
+    if (!form.title) {
+      toast(t("web.carTitleRequired"), "error");
+      return;
+    }
+    if (!form.brandId) {
+      toast(t("web.carBrandRequired"), "error");
+      return;
+    }
+    if (totalImages === 0) {
+      toast(t("web.carPhotoRequired"), "error");
+      return;
+    }
+    if (normalizedPlans.length === 0) {
+      toast(t("web.rentalPlanRequired"), "error");
+      return;
+    }
+    if (invalidPlan) {
+      toast(t("web.rentalPlanPriceRequired"), "error");
       return;
     }
     setBusy(true);
