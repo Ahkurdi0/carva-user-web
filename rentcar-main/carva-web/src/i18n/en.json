@@ -69,6 +69,7 @@
     "reservation": "reservation",
     "reservations": "reservations",
     "Favorites": "Favorites",
+    "chat": "Chat",
     "trips": "Trips",
     "trip": "Trip",
     "settings": "Settings",
@@ -636,6 +637,12 @@
     ,"uploadCarPhotos": "Upload car photos first"
     ,"uploadCarPhotosHint": "Add at least one clear photo, then choose how to fill the car details."
     ,"fillManually": "Fill details manually"
+    ,"chat": "Chat"
+    ,"noChats": "No conversations yet"
+    ,"chatHint": "Open a car or company profile and tap Chat to start a conversation."
+    ,"newChat": "New conversation"
+    ,"selectChat": "Select a conversation"
+    ,"typeMessage": "Type a message..."
   },
   "analytics": {
     "title": "Visitors & Traffic",

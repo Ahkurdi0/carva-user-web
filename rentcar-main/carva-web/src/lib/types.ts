@@ -243,6 +243,28 @@ export interface KycApplication {
   kycRejectionReason?: string | null;
 }
 
+export interface ChatConversation {
+  id: string;
+  carId?: string | null;
+  companyId?: string | null;
+  lastMessagePreview?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  lastMessageAt?: string | null;
+  recipient: { userId: string; name: string; image?: string | null };
+  car?: { id: string; title?: string | null } | null;
+}
+
+export interface ChatMessage {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderName?: string | null;
+  body?: string | null;
+  image?: string | null;
+  createdAt: string;
+}
+
 export interface AuthResult extends Profile {
   accessToken: string;
   refreshToken: string;

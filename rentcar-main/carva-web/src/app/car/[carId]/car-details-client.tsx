@@ -14,6 +14,7 @@ import { GetAppBanner } from "@/components/GetAppBanner";
 import { ShareButton } from "@/components/ShareButton";
 import { KycBadge } from "@/components/KycBadge";
 import { DetailSponsorStrip } from "@/components/DetailSponsorStrip";
+import { ChatButton } from "@/components/ChatButton";
 import { SimilarCars } from "@/components/SimilarCars";
 import { MiniMap } from "@/components/MiniMap";
 import { ReviewList } from "@/components/ReviewList";
@@ -132,6 +133,7 @@ export function CarDetailsClient() {
               <Button onClick={() => setContactsOpen(true)} className="flex-1">
                 {t("buttons.contact")}
               </Button>
+              <ChatButton companyId={car.companyId} carId={car.id} />
               <Button variant="secondary" onClick={whatsapp} loading={contacting} className="bg-tint hover:bg-tint/90">
                 <Icon name="whatsapp" size={18} color="#fff" /> {t("buttons.whatsapp")}
               </Button>
