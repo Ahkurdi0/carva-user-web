@@ -37,7 +37,10 @@ export async function GET(req: NextRequest) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
   const data = await summarize();
-  return Response.json(data, {
+  // Individual visit rows contain personal data. Keep aggregate metrics for
+  // product improvement, but do not expose per-person IPs, paths, user IDs,
+  // user agents, or precise locations to general admins.
+  return Response.json({ ...data, recent: [] }, {
     headers: { "cache-control": "no-store" },
   });
 }
