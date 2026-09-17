@@ -85,6 +85,7 @@ export function CarFormModal({
   const [existing, setExisting] = useState<CarImage[]>([]); // kept existing images
   const [removed, setRemoved] = useState<CarImage[]>([]); // existing images to delete
   const [recognizing, setRecognizing] = useState(false);
+  const [vin, setVin] = useState("");
   const [step, setStep] = useState<"photos" | "details">("photos");
 
   // Reset / hydrate the form whenever the modal opens (or the target car changes).
@@ -125,6 +126,7 @@ export function CarFormModal({
     setImages([]);
     setRemoved([]);
     setRecognizing(false);
+    setVin("");
   }, [open, car, plans]);
 
   // Only periods that have a catalog plan can be added — otherwise the row has
@@ -183,6 +185,7 @@ export function CarFormModal({
       const fd = new FormData();
       fd.append("image", image);
       fd.append("brandCatalog", JSON.stringify(brands.map((brand) => brand.en).filter(Boolean)));
+      if (vin.trim()) fd.append("vin", vin.trim());
       const result = await companyApi.recognizeCar(fd);
       const brandId = matchCatalog(brands, result.brandName);
       const typeId = matchCatalog(types, result.vehicleType);
@@ -337,6 +340,9 @@ export function CarFormModal({
             </Field>
           )}
           {images.length > 0 && <p className="text-xs text-muted">{images.length} {t("buttons.addImage").toLowerCase()}</p>}
+          <Field label={t("labels.vin")}>
+            <Input value={vin} onChange={(ev) => setVin(ev.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 17))} placeholder={t("web.vinHint")} maxLength={17} autoCapitalize="characters" />
+          </Field>
           <div className="grid gap-2 sm:grid-cols-2">
             <Button variant="outline" disabled={images.length === 0} onClick={() => setStep("details")}>
               {t("web.fillManually")}
