@@ -671,7 +671,7 @@
     ,"feature_sunroof": "Sunroof"
     ,"feature_all_wheel_drive": "All-wheel drive"
     ,"uploadCarPhotos": "Upload car photos first"
-    ,"uploadCarPhotosHint": "Add at least one clear photo, then choose how to fill the car details."
+    ,"uploadCarPhotosHint": "Add clear car photos and a VIN/document photo if available, then choose how to fill the car details. Recognition checks the selected photos for the VIN."
     ,"fillManually": "Fill details manually"
     ,"chat": "Chat"
     ,"chatSubtitle": "Ask about availability, price, and pickup before you book."
