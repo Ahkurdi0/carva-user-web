@@ -63,6 +63,7 @@ export function Header() {
   const { t } = useI18n();
   const pathname = usePathname();
   const user = useAuth((s) => s.user);
+  const personalOwner = !!user?.isPersonal || user?.company?.name?.trim().toLowerCase().endsWith("· personal cars") === true;
 
   return (
     <header className="sticky top-0 z-30 border-b border-surface-lowest bg-white/90 backdrop-blur">
@@ -88,7 +89,7 @@ export function Header() {
               {t(tab.key)}
             </Link>
           ))}
-          {(user?.company || user?.kycStatus === "approved") && (
+          {(user?.company || user?.kycStatus === "approved") && !personalOwner && (
             <Link
               href="/dashboard"
               className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
@@ -151,6 +152,7 @@ export function BottomNav() {
   const { t } = useI18n();
   const pathname = usePathname();
   const user = useAuth((s) => s.user);
+  const personalOwner = !!user?.isPersonal || user?.company?.name?.trim().toLowerCase().endsWith("· personal cars") === true;
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-surface-lowest bg-white shadow-[0_-2px_12px_rgba(0,0,0,0.06)] md:hidden">
       <div className="mx-auto flex max-w-md items-stretch">
@@ -180,7 +182,7 @@ export function BottomNav() {
             </Link>
           );
         })}
-        {(user?.company || user?.kycStatus === "approved") && (
+        {(user?.company || user?.kycStatus === "approved") && !personalOwner && (
           <Link
             href="/dashboard"
             className="flex flex-1 flex-col items-center gap-1 py-3"
