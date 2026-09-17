@@ -67,6 +67,7 @@ export default function DashboardCars() {
                 <div className="p-3">
                   <p className="truncate font-semibold">{car.title}</p>
                   <p className="text-xs text-muted">{tr(car.brand)} {car.feature?.year ? `· ${car.feature.year}` : ""}</p>
+                  {personal && !car.available && <span className="mt-2 inline-flex rounded-full bg-amber-50 px-2 py-1 text-[11px] font-semibold text-amber-700">{t("web.pendingAdminApproval")}</span>}
                   {plan && <p className="mt-1 text-sm font-bold text-primary">{formatNumber(plan.price)} {e.currency(plan.currency)} · {e.period(plan.periodType)}</p>}
                   <div className="mt-3 flex gap-2">
                     <Button variant="outline" className="h-9 flex-1 px-3 text-xs" onClick={() => toggle(car)}>
