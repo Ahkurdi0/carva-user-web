@@ -249,7 +249,6 @@
     "type": "Type",
     "types": "Types",
     "year": "Year",
-    "vin": "VIN",
     "price": "Price",
     "rentalPlans": "Rental Plans",
     "city": "City",
@@ -648,7 +647,6 @@
     ,"recognizingCar": "Recognizing car..."
     ,"aiSuggestionApplied": "Car details filled from the photo. Please review before publishing."
     ,"aiImageRequired": "Upload a car photo first"
-    ,"vinHint": "Optional 17-character VIN for exact model year"
     ,"aiRecognitionFailed": "Car recognition failed. Please fill the fields manually"
     ,"uploadCarPhotos": "Upload car photos first"
     ,"uploadCarPhotosHint": "Add at least one clear photo, then choose how to fill the car details."
