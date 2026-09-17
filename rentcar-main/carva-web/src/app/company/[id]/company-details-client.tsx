@@ -9,6 +9,7 @@ import { CarCard, CarCardSkeleton } from "@/components/CarCard";
 import { MiniMap } from "@/components/MiniMap";
 import { ContactButton } from "@/components/ContactButtons";
 import { ShareButton } from "@/components/ShareButton";
+import { ChatButton } from "@/components/ChatButton";
 import { SocialLinks } from "@/components/SocialLinks";
 import { GetAppBanner } from "@/components/GetAppBanner";
 import { ReviewList } from "@/components/ReviewList";
@@ -121,8 +122,10 @@ export function CompanyDetailsClient() {
         {company.contacts && company.contacts.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
             {company.contacts.map((c) => <ContactButton key={c.id} c={c} companyId={company.id} />)}
+            <ChatButton companyId={company.id} />
           </div>
         )}
+        {(!company.contacts || company.contacts.length === 0) && <div className="mt-4"><ChatButton companyId={company.id} /></div>}
 
         <SocialLinks company={company} />
 

@@ -147,6 +147,16 @@ export const userApi = {
   submitKyc: (form: FormData) => api.form<{ kycStatus: "pending" }>("/user/kyc/submit", form),
 };
 
+/* ----------------------------- Chat ----------------------------- */
+export const chatApi = {
+  list: () => api.json<import("./types").ChatConversation[]>("/chat/list", {}),
+  start: (data: { carId?: string; companyId?: string; recipientUserId?: string }) =>
+    api.json<import("./types").ChatConversation>("/chat/start", data),
+  messages: (conversationId: string) =>
+    api.json<import("./types").ChatMessage[]>("/chat/messages", { conversationId }),
+  send: (form: FormData) => api.form<import("./types").ChatMessage>("/chat/send", form),
+};
+
 /* ----------------------------- Company dashboard ----------------------------- */
 export const companyApi = {
   company: () => api.json<Company>("/company/company", {}),

@@ -1,0 +1,85 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AppShell } from "@/components/AppShell";
+import { AuthPrompt } from "@/components/AuthPrompt";
+import { EmptyState, PageLoading, Button } from "@/components/ui";
+import { Icon } from "@/components/Icon";
+import { useAuth } from "@/lib/auth-store";
+import { chatApi } from "@/lib/services";
+import { imageUrl } from "@/lib/api";
+import { useI18n } from "@/i18n";
+import { toast } from "@/components/toast";
+import type { ChatConversation, ChatMessage } from "@/lib/types";
+
+function timeLabel(value?: string | null) {
+  if (!value) return "";
+  return new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit", month: "short", day: "numeric" }).format(new Date(value));
+}
+
+export default function ChatPage() {
+  const user = useAuth((s) => s.user);
+  const { t } = useI18n();
+  const [conversations, setConversations] = useState<ChatConversation[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [text, setText] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+  const [sending, setSending] = useState(false);
+  const endRef = useRef<HTMLDivElement>(null);
+
+  const selected = useMemo(() => conversations.find((c) => c.id === selectedId) ?? null, [conversations, selectedId]);
+  useEffect(() => { const id = new URLSearchParams(window.location.search).get("conversation"); if (id) setSelectedId(id); }, []);
+  const loadConversations = useCallback(async () => {
+    try {
+      const result = await chatApi.list();
+      setConversations(result);
+      setSelectedId((id) => id && result.some((c) => c.id === id) ? id : result[0]?.id ?? null);
+    } catch (err) { toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error"); }
+    finally { setLoading(false); }
+  }, [t]);
+
+  const loadMessages = useCallback(async (id: string, quiet = false) => {
+    if (!quiet) setLoadingMessages(true);
+    try { setMessages(await chatApi.messages(id)); }
+    catch (err) { if (!quiet) toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error"); }
+    finally { if (!quiet) setLoadingMessages(false); }
+  }, [t]);
+
+  useEffect(() => { if (user) { loadConversations(); const timer = window.setInterval(loadConversations, 10000); return () => window.clearInterval(timer); } }, [user, loadConversations]);
+  useEffect(() => { if (selectedId) { loadMessages(selectedId); const timer = window.setInterval(() => loadMessages(selectedId, true), 7000); return () => window.clearInterval(timer); } setMessages([]); }, [selectedId, loadMessages]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages.length]);
+
+  async function sendMessage() {
+    if (!selectedId || (!text.trim() && !image)) return;
+    setSending(true);
+    try {
+      const form = new FormData(); form.append("conversationId", selectedId); if (text.trim()) form.append("body", text.trim()); if (image) form.append("image", image);
+      const message = await chatApi.send(form);
+      setMessages((old) => [...old, message]); setText(""); setImage(null); await loadConversations();
+    } catch (err) { toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error"); }
+    finally { setSending(false); }
+  }
+
+  if (!user) return <AppShell><AuthPrompt /></AppShell>;
+  if (loading) return <AppShell><PageLoading /></AppShell>;
+
+  return <AppShell><div className="px-4 py-5"><h1 className="mb-4 text-xl font-extrabold">{t("web.chat")}</h1>
+    {conversations.length === 0 ? <EmptyState icon="mail" title={t("web.noChats")} subtitle={t("web.chatHint")} /> :
+      <div className="grid min-h-[60vh] overflow-hidden rounded-2xl border border-surface-low md:grid-cols-[280px_1fr]">
+        <aside className={`border-e border-surface-low bg-surface-lowest ${selected ? "hidden md:block" : "block"}`}>
+          {conversations.map((conversation) => <button key={conversation.id} onClick={() => setSelectedId(conversation.id)} className={`flex w-full gap-3 border-b border-surface-low px-3 py-3 text-start hover:bg-white ${conversation.id === selectedId ? "bg-white" : ""}`}>
+            <span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-primary-container">{conversation.recipient.image ? <img src={imageUrl(conversation.recipient.image)} alt="" className="h-full w-full object-cover" /> : <Icon name="profile" size={19} color="#B51219" />}</span>
+            <span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold">{conversation.recipient.name}</span><span className="block truncate text-xs text-muted">{conversation.car?.title || conversation.lastMessagePreview || t("web.newChat")}</span></span>
+          </button>)}
+        </aside>
+        {selected ? <section className={`flex min-h-[60vh] flex-col ${selected ? "block" : "hidden md:block"}`}>
+          <header className="flex items-center gap-3 border-b border-surface-low px-4 py-3"><button className="md:hidden" onClick={() => setSelectedId(null)}><Icon name="arrow" size={20} /></button><span className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-primary-container">{selected.recipient.image ? <img src={imageUrl(selected.recipient.image)} alt="" className="h-full w-full object-cover" /> : <Icon name="profile" size={17} color="#B51219" />}</span><div><p className="font-semibold">{selected.recipient.name}</p>{selected.car?.title && <p className="text-xs text-muted">{selected.car.title}</p>}</div></header>
+          <div className="flex-1 space-y-2 overflow-y-auto bg-surface-lowest p-4">{loadingMessages ? <PageLoading /> : messages.map((message) => <div key={message.id} className={`flex ${message.senderId === user.userId ? "justify-end" : "justify-start"}`}><div className={`max-w-[80%] rounded-2xl px-3 py-2 ${message.senderId === user.userId ? "rounded-ee-sm bg-primary text-white" : "rounded-es-sm bg-white text-on-surface"}`}>{message.image && <img src={imageUrl(message.image)} alt="" className="mb-2 max-h-56 rounded-xl object-cover" />}{message.body && <p className="whitespace-pre-wrap break-words text-sm">{message.body}</p>}<p className={`mt-1 text-[10px] ${message.senderId === user.userId ? "text-white/70" : "text-muted"}`}>{timeLabel(message.createdAt)}</p></div></div>)}<div ref={endRef} /></div>
+          <div className="border-t border-surface-low bg-white p-3"><div className="mb-2 flex items-center gap-2">{image && <span className="flex items-center gap-1 rounded-full bg-primary-container px-2 py-1 text-xs text-primary">{image.name}<button onClick={() => setImage(null)}><Icon name="cancel" size={12} /></button></span>}</div><div className="flex items-end gap-2"><label className="grid h-11 w-11 shrink-0 cursor-pointer place-items-center rounded-full bg-surface-lowest"><Icon name="image" size={20} color="#B51219" /><input type="file" accept="image/jpeg,image/png,image/gif" hidden onChange={(e) => setImage(e.target.files?.[0] ?? null)} /></label><textarea value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }} placeholder={t("web.typeMessage")} rows={1} className="min-h-11 flex-1 resize-none rounded-2xl border border-surface-low px-4 py-3 text-sm outline-none focus:border-primary" /><Button onClick={sendMessage} loading={sending} disabled={!text.trim() && !image} className="h-11 px-4"><Icon name="arrow" size={18} color="#fff" /></Button></div></div>
+        </section> : <div className="hidden items-center justify-center md:flex"><EmptyState icon="mail" title={t("web.selectChat")} /></div>}
+      </div>}
+  </div></AppShell>;
+}

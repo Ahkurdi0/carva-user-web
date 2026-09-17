@@ -175,6 +175,7 @@ export default function SettingsPage() {
           <Row icon="profile" label={t("web.editProfile")} onClick={() => { setName(user.name); setModal("profile"); }} />
           <Row icon="status" label={t("web.changePassword")} onClick={() => setModal("password")} />
           <Row icon="receipt" label={t("web.myTrips")} href="/trips" />
+          <Row icon="heart" label={t("bottomNavigation.Favorites")} href="/favorites" />
           <Row icon="checked" label={user.kycStatus === "approved" ? t("web.kycVerified") : t("web.verifyIdentity")} onClick={() => setModal("kyc")} />
           <Row icon="language" label={`${t("web.language")} · ${LANG_NAMES[lang]}`} onClick={() => setModal("lang")} />
           <Row icon="support" label={t("web.support")} onClick={() => setModal("support")} />
