@@ -85,11 +85,13 @@ export function CarFormModal({
   const [existing, setExisting] = useState<CarImage[]>([]); // kept existing images
   const [removed, setRemoved] = useState<CarImage[]>([]); // existing images to delete
   const [recognizing, setRecognizing] = useState(false);
+  const [step, setStep] = useState<"photos" | "details">("photos");
 
   // Reset / hydrate the form whenever the modal opens (or the target car changes).
   useEffect(() => {
     if (!open) return;
     if (car) {
+      setStep("details");
       setForm({
         title: car.title ?? "",
         brandId: car.brandId ?? car.brand?.id ?? "",
@@ -114,6 +116,7 @@ export function CarFormModal({
       setOrigPlans(rows);
       setExisting(car.images ?? []);
     } else {
+      setStep("photos");
       setForm(emptyForm);
       setPlanRows([]);
       setOrigPlans([]);
@@ -190,6 +193,7 @@ export function CarFormModal({
         transmission: ["automatic", "manual", "cvt", "amt", "dct", "sp"].includes(result.transmission ?? "") ? result.transmission! : current.transmission,
       }));
       toast(t("web.aiSuggestionApplied"), "success");
+      setStep("details");
     } catch (err) {
       toast(err instanceof Error ? err.message : t("web.aiRecognitionFailed"), "error");
     } finally { setRecognizing(false); }
@@ -316,7 +320,28 @@ export function CarFormModal({
 
   return (
     <Modal open={open} onClose={onClose} title={editing ? t("buttons.update") : t("screens.newCar")}>
-      <div className="space-y-3">
+      {step === "photos" && !editing ? (
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-lg font-bold">{t("web.uploadCarPhotos")}</h2>
+            <p className="mt-1 text-sm text-muted">{t("web.uploadCarPhotosHint")}</p>
+          </div>
+          {canAddImages && (
+            <Field label={t("buttons.addImage")}>
+              <input type="file" accept="image/*" multiple onChange={(ev) => addFiles(ev.target.files)} className="text-sm" />
+            </Field>
+          )}
+          {images.length > 0 && <p className="text-xs text-muted">{images.length} {t("buttons.addImage").toLowerCase()}</p>}
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Button variant="outline" disabled={images.length === 0} onClick={() => setStep("details")}>
+              {t("web.fillManually")}
+            </Button>
+            <Button disabled={images.length === 0} loading={recognizing} onClick={recognizeCar}>
+              <Icon name="checked" size={16} /> {t("web.recognizeCar")}
+            </Button>
+          </div>
+        </div>
+      ) : <div className="space-y-3">
         <Field label={t("inputLabels.title")}>
           <Input value={form.title} onChange={(ev) => setForm({ ...form, title: ev.target.value })} />
         </Field>
@@ -401,14 +426,8 @@ export function CarFormModal({
         {images.length > 0 && (
           <p className="text-xs text-muted">{images.length} {t("buttons.addImage").toLowerCase()}</p>
         )}
-        {images.length > 0 && !editing && (
-          <Button variant="outline" full loading={recognizing} onClick={recognizeCar}>
-            <Icon name="checked" size={16} /> {t("web.recognizeCar")}
-          </Button>
-        )}
-
         <Button full loading={busy} onClick={submit}>{editing ? t("buttons.update") : t("buttons.add")}</Button>
-      </div>
+      </div>}
     </Modal>
   );
 }

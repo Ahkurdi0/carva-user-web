@@ -633,6 +633,9 @@
     ,"aiSuggestionApplied": "Car details filled from the photo. Please review before publishing."
     ,"aiImageRequired": "Upload a car photo first"
     ,"aiRecognitionFailed": "Car recognition failed. Please fill the fields manually"
+    ,"uploadCarPhotos": "Upload car photos first"
+    ,"uploadCarPhotosHint": "Add at least one clear photo, then choose how to fill the car details."
+    ,"fillManually": "Fill details manually"
   },
   "analytics": {
     "title": "Visitors & Traffic",
