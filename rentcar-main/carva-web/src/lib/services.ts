@@ -186,6 +186,7 @@ export const companyApi = {
   deleteCar: (id: string) => api.json("/company/car/delete", { id }),
   newCar: (form: FormData) => api.form("/company/car/new", form),
   recognizeCar: (form: FormData) => api.form<{
+    vin: string | null;
     brandName: string | null;
     model: string | null;
     vehicleType: string | null;
@@ -195,6 +196,7 @@ export const companyApi = {
     seats: number | null;
     confidence: number | null;
     notes: string | null;
+    features?: string[];
   }>("/company/car/recognize", form),
   updateCar: (form: FormData) => api.form("/company/car/update", form),
   updateCompany: (form: FormData) => api.form("/company/updateCompany", form),

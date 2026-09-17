@@ -66,6 +66,7 @@ export interface Feature {
   cylinders?: LocalizedNum;
   engCC?: LocalizedNum;
   type?: (Localized & { id?: string }) | null;
+  extras?: { amenities?: string[]; vin?: string | null } | null;
 }
 
 export interface Brand extends Localized {
