@@ -253,6 +253,17 @@ export interface ChatConversation {
   lastMessageAt?: string | null;
   recipient: { userId: string; name: string; image?: string | null };
   car?: { id: string; title?: string | null } | null;
+  lastSeen?: string | null;
+}
+
+export interface ChatProfile {
+  userId: string;
+  name: string;
+  image?: string | null;
+  email?: string | null;
+  joinedAt?: string;
+  kycStatus?: KycStatus;
+  company?: Pick<Company, "id" | "name" | "image" | "coverImage" | "rate" | "review" | "desc"> | null;
 }
 
 export interface ChatMessage {

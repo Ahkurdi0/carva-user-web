@@ -155,6 +155,7 @@ export const chatApi = {
   messages: (conversationId: string) =>
     api.json<import("./types").ChatMessage[]>("/chat/messages", { conversationId }),
   send: (form: FormData) => api.form<import("./types").ChatMessage>("/chat/send", form),
+  profile: (userId: string) => api.json<import("./types").ChatProfile>("/chat/profile", { userId }),
 };
 
 /* ----------------------------- Company dashboard ----------------------------- */
