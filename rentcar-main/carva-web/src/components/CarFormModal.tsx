@@ -201,10 +201,30 @@ export function CarFormModal({
     }
     setRecognizing(true);
     try {
-      const fd = new FormData();
-      fd.append("image", image);
-      fd.append("brandCatalog", JSON.stringify(brands.map((brand) => brand.en).filter(Boolean)));
-      const result = await companyApi.recognizeCar(fd);
+      const recognizeImage = async (candidate: File) => {
+        const fd = new FormData();
+        fd.append("image", candidate);
+        fd.append("brandCatalog", JSON.stringify(brands.map((brand) => brand.en).filter(Boolean)));
+        return companyApi.recognizeCar(fd);
+      };
+      let result = await recognizeImage(image);
+      let recognizedImage = image;
+      // If the first photo is the car and another selected photo is a VIN label,
+      // check the remaining photos until a valid VIN is found and exclude that
+      // document from the published gallery.
+      if (!result.vin && images.length > 1) {
+        for (const candidate of images.slice(1, 5)) {
+          const candidateResult = await recognizeImage(candidate);
+          if (!candidateResult.vin) continue;
+          result = {
+            ...result,
+            ...candidateResult,
+            features: candidateResult.features?.length ? candidateResult.features : result.features,
+          };
+          recognizedImage = candidate;
+          break;
+        }
+      }
       const brandId = matchCatalog(brands, result.brandName);
       const typeId = matchCatalog(types, result.vehicleType);
       const recognizedTitle = [result.brandName, result.model].filter(Boolean).join(" ");
@@ -220,7 +240,7 @@ export function CarFormModal({
         amenities: result.features?.length ? result.features : current.amenities,
         vin: result.vin || current.vin,
       }));
-      setVinImage(result.vin ? image : null);
+      setVinImage(result.vin ? recognizedImage : null);
       toast(t("web.aiSuggestionApplied"), "success");
       setStep("details");
     } catch (err) {
@@ -361,9 +381,11 @@ export function CarFormModal({
             <p className="mt-1 text-sm text-muted">{t("web.uploadCarPhotosHint")}</p>
           </div>
           {canAddImages && (
-            <Field label={t("buttons.addImage")}>
-              <input type="file" accept="image/*" multiple onChange={(ev) => addFiles(ev.target.files)} className="text-sm" />
-            </Field>
+            <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-primary/40 bg-primary-container/30 px-4 py-3 text-sm font-medium text-primary hover:bg-primary-container">
+              <Icon name="image" size={22} color="#B51219" />
+              <span>{t("buttons.addImage")}</span>
+              <input type="file" accept="image/*" multiple onChange={(ev) => addFiles(ev.target.files)} className="sr-only" />
+            </label>
           )}
           {images.length > 0 && <p className="text-xs text-muted">{images.length} {t("buttons.addImage").toLowerCase()}</p>}
           <div className="grid gap-2 sm:grid-cols-2">
@@ -501,9 +523,11 @@ export function CarFormModal({
         )}
 
         {canAddImages && (
-          <Field label={t("buttons.addImage")}>
-            <input type="file" accept="image/*" multiple onChange={(ev) => addFiles(ev.target.files)} className="text-sm" />
-          </Field>
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-primary/40 bg-primary-container/30 px-4 py-3 text-sm font-medium text-primary hover:bg-primary-container">
+            <Icon name="image" size={22} color="#B51219" />
+            <span>{t("buttons.addImage")}</span>
+            <input type="file" accept="image/*" multiple onChange={(ev) => addFiles(ev.target.files)} className="sr-only" />
+          </label>
         )}
         {images.length > 0 && (
           <p className="text-xs text-muted">{images.length} {t("buttons.addImage").toLowerCase()}</p>
