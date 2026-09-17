@@ -18,6 +18,8 @@ export interface VisitEvent {
   ts: number; // epoch ms
   ip: string;
   path: string;
+  durationMs?: number;
+  event?: "view" | "heartbeat";
   platform: Platform;
   registered: boolean;
   userId?: string | null;
@@ -143,6 +145,15 @@ export interface AnalyticsSummary {
   byDay: { day: string; count: number }[]; // last 14 days, oldest→newest
   mapPoints: { lat: number; lon: number; city?: string; count: number }[];
   recent: VisitEvent[];
+}
+
+export interface MyActivitySummary {
+  totalMs: number;
+  sessions: number;
+  views: number;
+  lastActive: number | null;
+  byPage: { path: string; views: number; durationMs: number }[];
+  recent: { ts: number; path: string; durationMs: number; platform: Platform; device: string }[];
 }
 
 function dayKey(ts: number): string {
