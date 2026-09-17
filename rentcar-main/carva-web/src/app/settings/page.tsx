@@ -180,7 +180,7 @@ export default function SettingsPage() {
           <Row icon="checked" label={user.kycStatus === "approved" ? t("web.kycVerified") : t("web.verifyIdentity")} onClick={() => setModal("kyc")} />
           <Row icon="language" label={`${t("web.language")} · ${LANG_NAMES[lang]}`} onClick={() => setModal("lang")} />
           <Row icon="support" label={t("web.support")} onClick={() => setModal("support")} />
-          {user.role?.roleName === "admin" && <Row icon="checked" label={t("web.adminWorkspace")} href="https://admin.karvaran.com" />}
+          {user.role?.roleName === "admin" && <Row icon="checked" label={t("web.adminWorkspace")} href="https://admin.carvarent.com" />}
 
           <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase text-muted"> </p>
           <Row icon="logout" label={t("web.logout")} onClick={doLogout} danger />
