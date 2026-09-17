@@ -2,7 +2,7 @@
 
 import { StatCard, Card } from "@/components/DashboardShell";
 import { ImageHolder } from "@/components/ImageHolder";
-import { PageLoading, useEnumLabel } from "@/components/ui";
+import { Button, PageLoading, useEnumLabel } from "@/components/ui";
 import { useAsync } from "@/lib/useAsync";
 import { companyApi } from "@/lib/services";
 import { useI18n } from "@/i18n";
@@ -10,6 +10,7 @@ import { imageUrl } from "@/lib/api";
 import { formatDate, formatNumber } from "@/lib/format";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-store";
+import { Icon } from "@/components/Icon";
 
 export default function DashboardOverview() {
   const { t } = useI18n();
@@ -37,7 +38,10 @@ export default function DashboardOverview() {
           <h1 className="text-2xl font-extrabold">{personal ? t("web.personalCarsTitle") : c?.name}</h1>
           <p className="text-sm text-muted">{personal ? t("web.personalOverview") : t("web.overview")}</p>
         </div>
+        {personal && <Link href="/dashboard/cars"><Button><Icon name="car" size={16} color="#fff" /> {t("web.addPersonalCar")}</Button></Link>}
       </div>
+
+      {personal && <Card className="border-primary/15 bg-primary-container/40 p-4"><p className="font-semibold">{t("web.personalListingTitle")}</p><p className="mt-1 text-sm text-muted">{t("web.personalListingHint")}</p><Link href="/dashboard/cars" className="mt-3 inline-flex text-sm font-semibold text-primary">{t("web.managePersonalCars")}</Link></Card>}
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <StatCard label={t("labels.rate")} value={c?.rate ? c.rate.toFixed(1) : "—"} icon="star" />
