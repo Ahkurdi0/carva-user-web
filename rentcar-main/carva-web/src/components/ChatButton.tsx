@@ -9,7 +9,7 @@ import { chatApi } from "@/lib/services";
 import { toast } from "./toast";
 import { useState } from "react";
 
-export function ChatButton({ carId, companyId }: { carId?: string; companyId?: string }) {
+export function ChatButton({ carId, companyId, recipientUserId }: { carId?: string; companyId?: string; recipientUserId?: string }) {
   const { t } = useI18n();
   const user = useAuth((s) => s.user);
   const router = useRouter();
@@ -19,12 +19,12 @@ export function ChatButton({ carId, companyId }: { carId?: string; companyId?: s
     if (!user) { router.push("/login"); return; }
     setBusy(true);
     try {
-      const conversation = await chatApi.start({ carId, companyId });
+      const conversation = await chatApi.start({ carId, companyId, recipientUserId });
       router.push(`/chat?conversation=${encodeURIComponent(conversation.id)}`);
     } catch (err) {
       toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error");
     } finally { setBusy(false); }
   }
 
-  return <Button variant="outline" onClick={openChat} loading={busy}><Icon name="mail" size={18} color="#B51219" />{t("web.chat")}</Button>;
+  return <Button variant="outline" onClick={openChat} loading={busy}><Icon name="chat" size={18} color="#B51219" />{t("web.chat")}</Button>;
 }

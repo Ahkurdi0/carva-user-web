@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { AuthPrompt } from "@/components/AuthPrompt";
@@ -12,74 +13,27 @@ import { useI18n } from "@/i18n";
 import { toast } from "@/components/toast";
 import type { ChatConversation, ChatMessage } from "@/lib/types";
 
-function timeLabel(value?: string | null) {
-  if (!value) return "";
-  return new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit", month: "short", day: "numeric" }).format(new Date(value));
-}
+function formatTime(value?: string | null) { if (!value) return ""; return new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit", month: "short", day: "numeric" }).format(new Date(value)); }
+function profileHref(conversation: ChatConversation) { return conversation.companyId ? `/company/${conversation.companyId}` : `/profile/${conversation.recipient.userId}`; }
+function Avatar({ conversation, size = "h-12 w-12" }: { conversation: ChatConversation; size?: string }) { return <span className={`grid ${size} shrink-0 place-items-center overflow-hidden rounded-2xl bg-primary-container`}>{conversation.recipient.image ? <img src={imageUrl(conversation.recipient.image)} alt="" className="h-full w-full object-cover" /> : <Icon name="profile" size={20} color="#B51219" />}</span>; }
 
 export default function ChatPage() {
-  const user = useAuth((s) => s.user);
-  const { t } = useI18n();
-  const [conversations, setConversations] = useState<ChatConversation[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMessages, setLoadingMessages] = useState(false);
-  const [text, setText] = useState("");
-  const [image, setImage] = useState<File | null>(null);
-  const [sending, setSending] = useState(false);
-  const endRef = useRef<HTMLDivElement>(null);
-
+  const user = useAuth((s) => s.user); const { t } = useI18n();
+  const [conversations, setConversations] = useState<ChatConversation[]>([]); const [selectedId, setSelectedId] = useState<string | null>(null); const [messages, setMessages] = useState<ChatMessage[]>([]); const [search, setSearch] = useState(""); const [loading, setLoading] = useState(true); const [loadingMessages, setLoadingMessages] = useState(false); const [text, setText] = useState(""); const [image, setImage] = useState<File | null>(null); const [sending, setSending] = useState(false); const endRef = useRef<HTMLDivElement>(null);
   const selected = useMemo(() => conversations.find((c) => c.id === selectedId) ?? null, [conversations, selectedId]);
+  const visibleConversations = useMemo(() => conversations.filter((c) => c.recipient.name.toLowerCase().includes(search.toLowerCase()) || c.car?.title?.toLowerCase().includes(search.toLowerCase())), [conversations, search]);
   useEffect(() => { const id = new URLSearchParams(window.location.search).get("conversation"); if (id) setSelectedId(id); }, []);
-  const loadConversations = useCallback(async () => {
-    try {
-      const result = await chatApi.list();
-      setConversations(result);
-      setSelectedId((id) => id && result.some((c) => c.id === id) ? id : result[0]?.id ?? null);
-    } catch (err) { toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error"); }
-    finally { setLoading(false); }
-  }, [t]);
-
-  const loadMessages = useCallback(async (id: string, quiet = false) => {
-    if (!quiet) setLoadingMessages(true);
-    try { setMessages(await chatApi.messages(id)); }
-    catch (err) { if (!quiet) toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error"); }
-    finally { if (!quiet) setLoadingMessages(false); }
-  }, [t]);
-
+  const loadConversations = useCallback(async () => { try { const result = await chatApi.list(); setConversations(result); setSelectedId((id) => id && result.some((c) => c.id === id) ? id : result[0]?.id ?? null); } catch (err) { toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error"); } finally { setLoading(false); } }, [t]);
+  const loadMessages = useCallback(async (id: string, quiet = false) => { if (!quiet) setLoadingMessages(true); try { setMessages(await chatApi.messages(id)); } catch (err) { if (!quiet) toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error"); } finally { if (!quiet) setLoadingMessages(false); } }, [t]);
   useEffect(() => { if (user) { loadConversations(); const timer = window.setInterval(loadConversations, 10000); return () => window.clearInterval(timer); } }, [user, loadConversations]);
   useEffect(() => { if (selectedId) { loadMessages(selectedId); const timer = window.setInterval(() => loadMessages(selectedId, true), 7000); return () => window.clearInterval(timer); } setMessages([]); }, [selectedId, loadMessages]);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages.length]);
-
-  async function sendMessage() {
-    if (!selectedId || (!text.trim() && !image)) return;
-    setSending(true);
-    try {
-      const form = new FormData(); form.append("conversationId", selectedId); if (text.trim()) form.append("body", text.trim()); if (image) form.append("image", image);
-      const message = await chatApi.send(form);
-      setMessages((old) => [...old, message]); setText(""); setImage(null); await loadConversations();
-    } catch (err) { toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error"); }
-    finally { setSending(false); }
-  }
-
-  if (!user) return <AppShell><AuthPrompt /></AppShell>;
-  if (loading) return <AppShell><PageLoading /></AppShell>;
-
-  return <AppShell><div className="px-4 py-5"><h1 className="mb-4 text-xl font-extrabold">{t("web.chat")}</h1>
-    {conversations.length === 0 ? <EmptyState icon="mail" title={t("web.noChats")} subtitle={t("web.chatHint")} /> :
-      <div className="grid min-h-[60vh] overflow-hidden rounded-2xl border border-surface-low md:grid-cols-[280px_1fr]">
-        <aside className={`border-e border-surface-low bg-surface-lowest ${selected ? "hidden md:block" : "block"}`}>
-          {conversations.map((conversation) => <button key={conversation.id} onClick={() => setSelectedId(conversation.id)} className={`flex w-full gap-3 border-b border-surface-low px-3 py-3 text-start hover:bg-white ${conversation.id === selectedId ? "bg-white" : ""}`}>
-            <span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-primary-container">{conversation.recipient.image ? <img src={imageUrl(conversation.recipient.image)} alt="" className="h-full w-full object-cover" /> : <Icon name="profile" size={19} color="#B51219" />}</span>
-            <span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold">{conversation.recipient.name}</span><span className="block truncate text-xs text-muted">{conversation.car?.title || conversation.lastMessagePreview || t("web.newChat")}</span></span>
-          </button>)}
-        </aside>
-        {selected ? <section className={`flex min-h-[60vh] flex-col ${selected ? "block" : "hidden md:block"}`}>
-          <header className="flex items-center gap-3 border-b border-surface-low px-4 py-3"><button className="md:hidden" onClick={() => setSelectedId(null)}><Icon name="arrow" size={20} /></button><span className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-primary-container">{selected.recipient.image ? <img src={imageUrl(selected.recipient.image)} alt="" className="h-full w-full object-cover" /> : <Icon name="profile" size={17} color="#B51219" />}</span><div><p className="font-semibold">{selected.recipient.name}</p>{selected.car?.title && <p className="text-xs text-muted">{selected.car.title}</p>}</div></header>
-          <div className="flex-1 space-y-2 overflow-y-auto bg-surface-lowest p-4">{loadingMessages ? <PageLoading /> : messages.map((message) => <div key={message.id} className={`flex ${message.senderId === user.userId ? "justify-end" : "justify-start"}`}><div className={`max-w-[80%] rounded-2xl px-3 py-2 ${message.senderId === user.userId ? "rounded-ee-sm bg-primary text-white" : "rounded-es-sm bg-white text-on-surface"}`}>{message.image && <img src={imageUrl(message.image)} alt="" className="mb-2 max-h-56 rounded-xl object-cover" />}{message.body && <p className="whitespace-pre-wrap break-words text-sm">{message.body}</p>}<p className={`mt-1 text-[10px] ${message.senderId === user.userId ? "text-white/70" : "text-muted"}`}>{timeLabel(message.createdAt)}</p></div></div>)}<div ref={endRef} /></div>
-          <div className="border-t border-surface-low bg-white p-3"><div className="mb-2 flex items-center gap-2">{image && <span className="flex items-center gap-1 rounded-full bg-primary-container px-2 py-1 text-xs text-primary">{image.name}<button onClick={() => setImage(null)}><Icon name="cancel" size={12} /></button></span>}</div><div className="flex items-end gap-2"><label className="grid h-11 w-11 shrink-0 cursor-pointer place-items-center rounded-full bg-surface-lowest"><Icon name="image" size={20} color="#B51219" /><input type="file" accept="image/jpeg,image/png,image/gif" hidden onChange={(e) => setImage(e.target.files?.[0] ?? null)} /></label><textarea value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }} placeholder={t("web.typeMessage")} rows={1} className="min-h-11 flex-1 resize-none rounded-2xl border border-surface-low px-4 py-3 text-sm outline-none focus:border-primary" /><Button onClick={sendMessage} loading={sending} disabled={!text.trim() && !image} className="h-11 px-4"><Icon name="arrow" size={18} color="#fff" /></Button></div></div>
-        </section> : <div className="hidden items-center justify-center md:flex"><EmptyState icon="mail" title={t("web.selectChat")} /></div>}
-      </div>}
+  async function sendMessage() { if (!selectedId || (!text.trim() && !image)) return; setSending(true); try { const form = new FormData(); form.append("conversationId", selectedId); if (text.trim()) form.append("body", text.trim()); if (image) form.append("image", image); const message = await chatApi.send(form); setMessages((old) => [...old, message]); setText(""); setImage(null); await loadConversations(); } catch (err) { toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error"); } finally { setSending(false); } }
+  if (!user) return <AppShell><AuthPrompt /></AppShell>; if (loading) return <AppShell><PageLoading /></AppShell>;
+  return <AppShell><div className="px-4 py-5"><div className="mb-5 flex items-end justify-between gap-3"><div><div className="mb-1 flex items-center gap-2"><Icon name="chat" size={23} color="#B51219" /><h1 className="text-2xl font-extrabold">{t("web.chat")}</h1></div><p className="text-sm text-muted">{t("web.chatSubtitle")}</p></div><span className="rounded-full bg-primary-container px-3 py-1 text-xs font-semibold text-primary">{conversations.length}</span></div>
+    {conversations.length === 0 ? <EmptyState icon="chat" title={t("web.noChats")} subtitle={t("web.chatHint")} /> : <div className="grid min-h-[68vh] overflow-hidden rounded-3xl border border-surface-low bg-white shadow-sm md:grid-cols-[320px_1fr]">
+      <aside className={`border-e border-surface-low bg-surface-lowest ${selected ? "hidden md:block" : "block"}`}><div className="border-b border-surface-low p-4"><p className="mb-3 text-sm font-bold">{t("web.yourChats")}</p><label className="flex h-10 items-center gap-2 rounded-xl border border-surface-low bg-white px-3"><Icon name="search" size={16} color="#9e9e9e" /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("web.searchChats")} className="min-w-0 flex-1 bg-transparent text-sm outline-none" /></label></div><div className="p-2">{visibleConversations.map((conversation) => <div key={conversation.id} className={`mb-1 flex gap-2 rounded-2xl p-2 transition ${conversation.id === selectedId ? "bg-white shadow-sm" : "hover:bg-white/70"}`}><Link href={profileHref(conversation)} aria-label={t("web.openProfile")}><Avatar conversation={conversation} /></Link><button onClick={() => setSelectedId(conversation.id)} className="min-w-0 flex-1 text-start"><div className="flex items-center justify-between gap-2"><span className="truncate text-sm font-bold">{conversation.recipient.name}</span><span className="shrink-0 text-[10px] text-muted">{formatTime(conversation.lastMessageAt)}</span></div><span className="mt-1 block truncate text-xs text-muted">{conversation.car?.title || conversation.lastMessagePreview || t("web.newChat")}</span><span className="mt-1 block text-[10px] text-muted">{conversation.lastSeen ? `${t("web.lastSeen")} ${formatTime(conversation.lastSeen)}` : t("web.lastSeenUnknown")}</span></button></div>)}{visibleConversations.length === 0 && <p className="px-3 py-8 text-center text-sm text-muted">{t("web.noMatchingChats")}</p>}</div></aside>
+      {selected ? <section className="flex min-h-[68vh] flex-col"><header className="flex items-center gap-3 border-b border-surface-low bg-white px-4 py-3"><button className="rounded-full p-2 hover:bg-surface-lowest md:hidden" onClick={() => setSelectedId(null)}><Icon name="arrow" size={19} /></button><Link href={profileHref(selected)}><Avatar conversation={selected} size="h-11 w-11" /></Link><Link href={profileHref(selected)} className="min-w-0 flex-1"><p className="truncate font-bold hover:text-primary">{selected.recipient.name}</p><p className="truncate text-xs text-muted">{selected.lastSeen ? `${t("web.lastSeen")} ${formatTime(selected.lastSeen)}` : t("web.lastSeenUnknown")}</p></Link><Link href={profileHref(selected)} className="rounded-full border border-surface-low px-3 py-2 text-xs font-semibold text-primary hover:bg-primary-container">{t("web.viewProfile")}</Link></header><div className="flex-1 space-y-3 overflow-y-auto bg-gradient-to-b from-surface-lowest to-white p-4">{selected.car && <Link href={`/car/${selected.car.id}`} className="mx-auto flex max-w-sm items-center gap-2 rounded-xl border border-primary/15 bg-primary-container/50 px-3 py-2 text-xs text-primary"><Icon name="car" size={16} color="#B51219" /><span className="truncate">{selected.car.title}</span><Icon name="arrow_tail" size={14} color="#B51219" /></Link>}{loadingMessages ? <PageLoading /> : messages.map((message) => <div key={message.id} className={`flex ${message.senderId === user.userId ? "justify-end" : "justify-start"}`}><div className={`max-w-[82%] rounded-2xl px-3 py-2 shadow-sm ${message.senderId === user.userId ? "rounded-ee-sm bg-primary text-white" : "rounded-es-sm border border-surface-low bg-white text-on-surface"}`}>{message.image && <img src={imageUrl(message.image)} alt="" className="mb-2 max-h-64 rounded-xl object-cover" />}{message.body && <p className="whitespace-pre-wrap break-words text-sm leading-6">{message.body}</p>}<p className={`mt-1 text-[10px] ${message.senderId === user.userId ? "text-white/70" : "text-muted"}`}>{formatTime(message.createdAt)}</p></div></div>)}<div ref={endRef} /></div><div className="border-t border-surface-low bg-white p-3"><div className="mb-2 flex items-center gap-2">{image && <span className="flex max-w-full items-center gap-1 rounded-full bg-primary-container px-2 py-1 text-xs text-primary"><Icon name="image" size={13} color="#B51219" /><span className="truncate">{image.name}</span><button onClick={() => setImage(null)}><Icon name="cancel" size={12} /></button></span>}</div><div className="flex items-end gap-2"><label className="grid h-11 w-11 shrink-0 cursor-pointer place-items-center rounded-full bg-surface-lowest hover:bg-primary-container"><Icon name="image" size={20} color="#B51219" /><input type="file" accept="image/jpeg,image/png,image/gif" hidden onChange={(e) => setImage(e.target.files?.[0] ?? null)} /></label><textarea value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }} placeholder={t("web.typeMessage")} rows={1} className="min-h-11 flex-1 resize-none rounded-2xl border border-surface-low px-4 py-3 text-sm outline-none focus:border-primary" /><Button onClick={sendMessage} loading={sending} disabled={!text.trim() && !image} className="h-11 rounded-2xl px-4"><Icon name="arrow" size={18} color="#fff" /></Button></div></div></section> : <div className="hidden items-center justify-center md:flex"><EmptyState icon="chat" title={t("web.selectChat")} /></div>}
+    </div>}
   </div></AppShell>;
 }
