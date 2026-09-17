@@ -1,6 +1,6 @@
 // Typed wrappers around the backend endpoints, grouped by area.
 import { api, ApiError, tokens } from "./api";
-import type { AnalyticsSummary } from "./analytics-store";
+import type { AnalyticsSummary, MyActivitySummary } from "./analytics-store";
 import type {
   AuthResult,
   Book,
@@ -292,5 +292,16 @@ export const analyticsApi = {
     });
     if (!res.ok) throw new ApiError(res.status, `Failed to load analytics (${res.status})`);
     return (await res.json()) as AnalyticsSummary;
+  },
+};
+
+export const activityApi = {
+  summary: async (): Promise<MyActivitySummary> => {
+    const res = await fetch("/api/my-activity", {
+      headers: tokens.access ? { Authorization: `Bearer ${tokens.access}` } : {},
+      cache: "no-store",
+    });
+    if (!res.ok) throw new ApiError(res.status, `Failed to load activity (${res.status})`);
+    return (await res.json()) as MyActivitySummary;
   },
 };
