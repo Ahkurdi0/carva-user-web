@@ -159,13 +159,17 @@ export function CarFormModal({
   }
 
   function normalized(value: string) {
-    return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
   }
 
   function matchCatalog(items: { id: string; en: string; ar?: string | null; ku?: string | null }[], value: string | null) {
     if (!value) return "";
     const needle = normalized(value);
-    return items.find((item) => [item.en, item.ar ?? "", item.ku ?? ""].some((label) => normalized(label) === needle || normalized(label).includes(needle) || needle.includes(normalized(label))))?.id ?? "";
+    const candidates = items.filter((item) => [item.en, item.ar ?? "", item.ku ?? ""].some((label) => {
+      const candidate = normalized(label);
+      return candidate && (candidate === needle || candidate.includes(needle) || needle.includes(candidate));
+    }));
+    return candidates.sort((a, b) => normalized(b.en).length - normalized(a.en).length)[0]?.id ?? "";
   }
 
   async function recognizeCar() {
@@ -178,6 +182,7 @@ export function CarFormModal({
     try {
       const fd = new FormData();
       fd.append("image", image);
+      fd.append("brandCatalog", JSON.stringify(brands.map((brand) => brand.en).filter(Boolean)));
       const result = await companyApi.recognizeCar(fd);
       const brandId = matchCatalog(brands, result.brandName);
       const typeId = matchCatalog(types, result.vehicleType);
