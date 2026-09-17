@@ -173,6 +173,12 @@ export function CarFormModal({
     setImages((r) => [...r, ...Array.from(files).slice(0, Math.max(0, room))]);
   }
 
+  function removeNewImage(index: number) {
+    const file = images[index];
+    setImages((current) => current.filter((_, itemIndex) => itemIndex !== index));
+    if (file === vinImage) setVinImage(null);
+  }
+
   function normalized(value: string) {
     return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
   }
@@ -436,6 +442,9 @@ export function CarFormModal({
                 <div key={`${file.name}-${index}`} className="relative overflow-hidden rounded-xl border border-surface-low bg-surface-lowest">
                   {imagePreviews[index] && <img src={imagePreviews[index]} alt={file.name} className="h-28 w-full object-cover" />}
                   <p className="truncate px-2 py-1.5 text-[11px] text-muted">{file.name}</p>
+                  <button type="button" onClick={() => removeNewImage(index)} className="absolute right-1.5 top-1.5 grid h-6 w-6 place-items-center rounded-full bg-danger text-white" aria-label={t("buttons.delete")}>
+                    <Icon name="cancel" size={12} color="#fff" />
+                  </button>
                   {file === vinImage && (
                     <span className="absolute left-2 top-2 rounded-full bg-on-surface/80 px-2 py-1 text-[10px] font-semibold text-white">
                       {t("web.vinPhotoNotPublished")}
