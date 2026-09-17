@@ -23,6 +23,7 @@ import { userApi } from "@/lib/services";
 import { useI18n } from "@/i18n";
 import { imageUrl } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
+import { carAmenityLabel } from "@/lib/car-features";
 import { toast } from "@/components/toast";
 import type { Car } from "@/lib/types";
 
@@ -158,6 +159,18 @@ export function CarDetailsClient() {
             <Spec icon="engine" label={t("labels.engineCC")} value={num(f?.engCC) || null} />
             <Spec icon="car" label={t("labels.type")} value={f?.type ? tr(f.type) : null} />
           </div>
+          {!!f?.extras?.amenities?.length && (
+            <div className="mt-4">
+              <p className="mb-2 text-sm font-semibold text-on-surface">{t("web.carFeaturesSection")}</p>
+              <div className="flex flex-wrap gap-2">
+                {f.extras.amenities.map((key) => (
+                  <span key={key} className="rounded-full border border-surface-low bg-surface-lowest px-3 py-1.5 text-xs font-medium text-on-surface">
+                    {t(carAmenityLabel(key))}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Company */}

@@ -8,6 +8,7 @@ import { Icon } from "@/components/Icon";
 import { companyApi } from "@/lib/services";
 import { useI18n } from "@/i18n";
 import { toast } from "@/components/toast";
+import { CAR_AMENITIES, carAmenityLabel } from "@/lib/car-features";
 import type {
   Brand,
   Car,
@@ -54,6 +55,8 @@ const emptyForm = {
   fuel: "gasoline",
   transmission: "automatic",
   displayPlan: "daily" as RentalPeriodType,
+  amenities: [] as string[],
+  vin: "",
 };
 
 export function CarFormModal({
@@ -84,6 +87,8 @@ export function CarFormModal({
   const [images, setImages] = useState<File[]>([]); // newly added files
   const [existing, setExisting] = useState<CarImage[]>([]); // kept existing images
   const [removed, setRemoved] = useState<CarImage[]>([]); // existing images to delete
+  const [vinImage, setVinImage] = useState<File | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [recognizing, setRecognizing] = useState(false);
   const [step, setStep] = useState<"photos" | "details">("photos");
 
@@ -101,6 +106,8 @@ export function CarFormModal({
         fuel: car.feature?.fuel ?? "gasoline",
         transmission: car.feature?.transmission ?? "automatic",
         displayPlan: car.displayPlan ?? "daily",
+        amenities: car.feature?.extras?.amenities ?? [],
+        vin: car.feature?.extras?.vin ?? "",
       });
       const rows: PlanRow[] = (car.rentalPlan ?? []).map((p) => ({
         id: p.id,
@@ -123,9 +130,17 @@ export function CarFormModal({
       setExisting([]);
     }
     setImages([]);
+    setVinImage(null);
+    setImagePreviews([]);
     setRemoved([]);
     setRecognizing(false);
   }, [open, car, plans]);
+
+  useEffect(() => {
+    const urls = images.map((file) => URL.createObjectURL(file));
+    setImagePreviews(urls);
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, [images]);
 
   // Only periods that have a catalog plan can be added — otherwise the row has
   // no valid planId and the backend would store a mismatched plan.
@@ -196,7 +211,10 @@ export function CarFormModal({
         seat: result.seats ? String(result.seats) : current.seat,
         fuel: ["gasoline", "diesel", "electric", "hybird", "lpg", "cng"].includes(result.fuel ?? "") ? result.fuel! : current.fuel,
         transmission: ["automatic", "manual", "cvt", "amt", "dct", "sp"].includes(result.transmission ?? "") ? result.transmission! : current.transmission,
+        amenities: result.features?.length ? result.features : current.amenities,
+        vin: result.vin || current.vin,
       }));
+      setVinImage(result.vin ? image : null);
       toast(t("web.aiSuggestionApplied"), "success");
       setStep("details");
     } catch (err) {
@@ -210,10 +228,15 @@ export function CarFormModal({
     fuel: form.fuel,
     transmission: form.transmission,
     carTypeId: form.typeId || undefined,
+    extras: {
+      amenities: form.amenities.filter((key) => CAR_AMENITIES.includes(key as (typeof CAR_AMENITIES)[number])),
+      vin: form.vin || undefined,
+    },
   });
 
   async function submit() {
-    const totalImages = editing ? existing.length + images.length : images.length;
+    const publishableImages = images.filter((image) => image !== vinImage);
+    const totalImages = editing ? existing.length + publishableImages.length : publishableImages.length;
     const normalizedPlans = planRows.map((row) => ({
       ...row,
       // Always trust the catalog entry for the selected period. This prevents
@@ -291,7 +314,7 @@ export function CarFormModal({
             "deletedImages",
             JSON.stringify(removed.map((img) => ({ id: img.id, image: img.image }))),
           );
-        images.forEach((img) => fd.append("images", img));
+        publishableImages.forEach((img) => fd.append("images", img));
         await companyApi.updateCar(fd);
       } else {
         fd.append("available", "true");
@@ -378,6 +401,51 @@ export function CarFormModal({
             {["automatic", "manual", "cvt", "amt", "dct", "sp"].map((tm) => <option key={tm} value={tm}>{e.transmission(tm)}</option>)}
           </select>
         </Field>
+
+        <section className="rounded-2xl border border-surface-low p-4">
+          <div className="mb-3">
+            <h3 className="text-sm font-bold text-on-surface">{t("web.carFeaturesSection")}</h3>
+            <p className="mt-1 text-xs text-muted">{t("web.carFeaturesHint")}</p>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {CAR_AMENITIES.map((key) => (
+              <label key={key} className="flex cursor-pointer items-center gap-2 rounded-xl border border-surface-lowest px-3 py-2 text-sm hover:bg-surface-lowest">
+                <input
+                  type="checkbox"
+                  checked={form.amenities.includes(key)}
+                  onChange={(ev) => setForm((current) => ({
+                    ...current,
+                    amenities: ev.target.checked
+                      ? Array.from(new Set([...current.amenities, key]))
+                      : current.amenities.filter((item) => item !== key),
+                  }))}
+                  className="h-4 w-4 accent-primary"
+                />
+                <span>{t(carAmenityLabel(key))}</span>
+              </label>
+            ))}
+          </div>
+        </section>
+
+        {images.length > 0 && (
+          <section className="rounded-2xl border border-surface-low p-4">
+            <h3 className="mb-1 text-sm font-bold text-on-surface">{t("web.selectedCarPhotos")}</h3>
+            <p className="mb-3 text-xs text-muted">{t("web.selectedCarPhotosHint")}</p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {images.map((file, index) => (
+                <div key={`${file.name}-${index}`} className="relative overflow-hidden rounded-xl border border-surface-low bg-surface-lowest">
+                  {imagePreviews[index] && <img src={imagePreviews[index]} alt={file.name} className="h-28 w-full object-cover" />}
+                  <p className="truncate px-2 py-1.5 text-[11px] text-muted">{file.name}</p>
+                  {file === vinImage && (
+                    <span className="absolute left-2 top-2 rounded-full bg-on-surface/80 px-2 py-1 text-[10px] font-semibold text-white">
+                      {t("web.vinPhotoNotPublished")}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Rental plans */}
         <div>
