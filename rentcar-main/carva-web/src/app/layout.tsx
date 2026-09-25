@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   creator: SITE.name,
   publisher: SITE.name,
   alternates: { canonical: "/" },
+  icons: { icon: SITE.logo, apple: SITE.logo },
   manifest: "/manifest.webmanifest",
   openGraph: {
     type: "website",
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#B51219",
+  themeColor: "#3957d7",
   width: "device-width",
   initialScale: 1,
 };
