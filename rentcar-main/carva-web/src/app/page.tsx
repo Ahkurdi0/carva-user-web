@@ -7,14 +7,14 @@ import { CarRail } from "@/components/CarRail";
 import { CarCard, CarCardSkeleton } from "@/components/CarCard";
 import { SliderCarousel } from "@/components/SliderCarousel";
 import { SectionHeader, Spinner } from "@/components/ui";
-import { CityChips } from "@/components/CityChips";
 import { Icon } from "@/components/Icon";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useAsync } from "@/lib/useAsync";
 import { userApi } from "@/lib/services";
 import { uniqueById } from "@/lib/format";
+import { useAuth } from "@/lib/auth-store";
 import { useI18n } from "@/i18n";
-import type { BrandWithCars, Car, FiltersData } from "@/lib/types";
+import type { BrandWithCars, Car } from "@/lib/types";
 
 function BrandSection() {
   const { t, tr } = useI18n();
@@ -142,7 +142,7 @@ function NearbySection() {
 }
 
 function AllCars() {
-  const { t, tr } = useI18n();
+  const { t } = useI18n();
   const [cars, setCars] = useState<Car[]>([]);
   const [cursor, setCursor] = useState<string | undefined>();
   const [hasMore, setHasMore] = useState(true);
@@ -180,47 +180,11 @@ function AllCars() {
     return () => obs.disconnect();
   }, [load]);
 
-  const { data: filters } = useAsync<FiltersData>(() => userApi.filters(), []);
-  const [cityEn, setCityEn] = useState<string | null>(null);
-  const [cityId, setCityId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const wanted = new URLSearchParams(window.location.search).get("city");
-    if (!wanted || !filters?.cities) return;
-    const match = filters.cities.find(
-      (c) => (c.en ?? "").toLowerCase() === wanted.toLowerCase(),
-    );
-    if (match) {
-      setCityEn(match.en ?? null);
-      setCityId(match.id);
-    }
-  }, [filters]);
-  const cityKey = (v?: string | null) => (v ?? "").trim().toLowerCase();
-  const shown = cityEn
-    ? cars.filter(
-        (car) =>
-          cityKey(car.location?.city?.en ?? car.company?.location?.city?.en) ===
-          cityKey(cityEn),
-      )
-    : cars;
-
   return (
     <section className="py-3">
       <SectionHeader title={t("labels.cars")} />
-      {(filters?.cities?.length ?? 0) > 0 && (
-        <div className="mb-4">
-          <CityChips
-            cities={filters!.cities}
-            selectedId={cityId}
-            onSelect={(city) => {
-              setCityId(city?.id ?? null);
-              setCityEn(city?.en ?? null);
-            }}
-          />
-        </div>
-      )}
       <div className="grid grid-cols-2 gap-x-3 gap-y-5 px-4 sm:grid-cols-3 lg:grid-cols-4">
-        {shown.map((car) => (
+        {cars.map((car) => (
           <CarCard key={car.id} car={car} />
         ))}
         {loading &&
@@ -236,11 +200,10 @@ function AllCars() {
 
 export default function HomePage() {
   const { t } = useI18n();
-  // The hero rail mirrors the app: featured (paid) cars first, falling
-  // back to suggested when nothing is featured.
-  const featured = useAsync(() => userApi.featuredCars(), []);
+  const user = useAuth((s) => s.user);
   const suggested = useAsync(() => userApi.suggestedCars(), []);
   const sliders = useAsync(() => userApi.sliders(), []);
+  const recently = useAsync(() => userApi.recentlyViewed(), [!!user], !!user);
 
   return (
     <AppShell>
@@ -255,17 +218,16 @@ export default function HomePage() {
       </div>
 
       <CarRail
-        title={t("labels.featured")}
-        cars={
-          featured.data && featured.data.length > 0
-            ? featured.data
-            : suggested.data
-        }
-        loading={featured.loading}
+        title={t("labels.suggested")}
+        cars={suggested.data}
+        loading={suggested.loading}
       />
       <BrandSection />
       {sliders.data && sliders.data.length > 0 && (
         <SliderCarousel slides={sliders.data} />
+      )}
+      {user && recently.data && recently.data.length > 0 && (
+        <CarRail title={t("labels.recentlyViewed")} cars={recently.data} />
       )}
       <NearbySection />
       <AllCars />
