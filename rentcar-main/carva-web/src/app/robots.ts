@@ -9,10 +9,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Only the API is blocked. The auth/private pages carry a noindex
-        // meta tag instead — robots-blocking them would hide that tag from
-        // Google (which is how /login ended up indexed).
-        disallow: ["/api/"],
+        disallow: ["/admin", "/dashboard", "/api/", "/booking", "/settings", "/trips"],
       },
     ],
     sitemap: `${SITE.url}/sitemap.xml`,
