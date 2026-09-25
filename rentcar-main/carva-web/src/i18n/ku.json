@@ -547,6 +547,7 @@
     }
   },
   "web": {
+    "chat": "پەیامەکان",
     "signInSubtitle": "بچۆ ژوورەوە بۆ بەردەوامبوون",
     "signUpSubtitle": "لە چەند چرکەیەکدا هەژمارەکەت دروست بکە",
     "resetSubtitle": "وشەی نهێنی نوێ بکەرەوە",
@@ -589,15 +590,7 @@
     "overview": "گشتی",
     "getTheApp": "ئەپی Carva دابەزێنە بۆ ئەزموونی تەواو لەسەر iOS و Android.",
     "downloadOn": "دایبگرە لە",
-    "getItOn": "بیگرە لە",
-    "getAppTitle": "ئەپی کارڤا دابگرە",
-    "getAppSubtitle": "لە ئەپەکەدا خێراتر سەیارە ببینە و حجز بکە",
-    "share": "شەیرکردن",
-    "linkCopied": "لینکەکە کۆپی کرا",
-    "reels": "ریلەکان",
-    "details": "وردەکاری",
-    "similarCars": "سەیارەی هاوشێوە",
-    "allCities": "هەموو شارەکان"
+    "getItOn": "بیگرە لە"
   },
   "analytics": {
     "title": "سەردانکەران و هاتوچۆ",

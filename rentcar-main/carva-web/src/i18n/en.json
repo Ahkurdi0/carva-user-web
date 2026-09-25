@@ -547,6 +547,7 @@
     }
   },
   "web": {
+    "chat": "Messages",
     "signInSubtitle": "Sign in to continue",
     "signUpSubtitle": "Create your account in seconds",
     "resetSubtitle": "Reset your password",
@@ -589,15 +590,7 @@
     "overview": "Overview",
     "getTheApp": "Download the Carva app for the full experience on iOS and Android.",
     "downloadOn": "Download on the",
-    "getItOn": "Get it on",
-    "getAppTitle": "Get the Carva app",
-    "getAppSubtitle": "Browse and reserve cars faster in the app",
-    "share": "Share",
-    "linkCopied": "Link copied",
-    "reels": "Reels",
-    "details": "Details",
-    "similarCars": "Similar cars",
-    "allCities": "All cities"
+    "getItOn": "Get it on"
   },
   "analytics": {
     "title": "Visitors & Traffic",

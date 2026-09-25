@@ -18,6 +18,8 @@ export type IconName =
   | "clock"
   | "clock_active"
   | "clock_fill"
+  | "chat"
+  | "chat_active"
   | "company"
   | "company_fill"
   | "cylinder"

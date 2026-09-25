@@ -65,11 +65,8 @@ export const otpApi = {
 /* ----------------------------- Customer ----------------------------- */
 export const userApi = {
   suggestedCars: () => api.json<Car[]>("/user/suggestedCars"),
-  featuredCars: () => api.json<Car[]>("/user/featuredCars"),
-  reelsCars: () => api.json<Car[]>("/user/reelsCars"),
   brands: () => api.json<BrandWithCars[]>("/user/brands"),
   sliders: () => api.json<Slider[]>("/user/sliders"),
-  detailSponsors: () => api.json<Slider[]>("/user/sliders", { placement: "detailCar" }),
   slider: (id: string) => api.json("/user/slider", { id }),
   recentlyViewed: () => api.json<Car[]>("/user/recentlyViewed"),
   nearByCars: (lat: number, long: number) =>
@@ -141,6 +138,20 @@ export const userApi = {
 
   explorerMap: (b: { west: number; east: number; north: number; south: number }) =>
     api.json<Car[]>("/user/explorerMap", b),
+};
+
+/* ----------------------------- In-app chat ----------------------------- */
+// The web client intentionally uses the same contract as the mobile app. The
+// server can return either a bare array/object or a `{ data: ... }` envelope;
+// the chat screen normalizes both shapes before rendering them.
+export const chatApi = {
+  list: () => api.json<unknown>("/chat/list", {}),
+  start: (data: { userId?: string; companyId?: string; carId?: string }) =>
+    api.json<unknown>("/chat/start", data),
+  profile: (userId: string) => api.json<unknown>("/chat/profile", { userId }),
+  messages: (conversationId: string) =>
+    api.json<unknown>("/chat/messages", { conversationId }),
+  send: (form: FormData) => api.form<unknown>("/chat/send", form),
 };
 
 /* ----------------------------- Company dashboard ----------------------------- */
