@@ -112,8 +112,6 @@ export interface CarLocation {
   radiusKm?: number | null;
   city?: GeoCity | null;
   town?: GeoCity | null;
-  cityId?: string | null;
-  townId?: string | null;
 }
 
 export interface Company {
@@ -134,10 +132,7 @@ export interface Company {
   expiresAt?: string | null;
   contact?: string | null;
   contacts?: Contact[];
-  location?: CarLocation | null;
-  facebookLink?: string | null;
-  instagramLink?: string | null;
-  tiktokLink?: string | null;
+  location?: { lat: number; long: number } | CarLocation | null;
   // The admin endpoints attach the owning profile so the panel can edit on
   // their behalf (the owner id is needed when (re)creating a company plan).
   profile?: { userId?: string; name?: string | null; email?: string | null } | null;
