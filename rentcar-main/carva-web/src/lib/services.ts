@@ -1,6 +1,6 @@
 // Typed wrappers around the backend endpoints, grouped by area.
 import { api, ApiError, tokens } from "./api";
-import type { AnalyticsSummary, MyActivitySummary } from "./analytics-store";
+import type { AnalyticsSummary } from "./analytics-store";
 import type {
   AuthResult,
   Book,
@@ -19,7 +19,6 @@ import type {
   Review,
   Slider,
   Support,
-  KycApplication,
 } from "./types";
 
 /* ----------------------------- Auth ----------------------------- */
@@ -107,7 +106,6 @@ export const userApi = {
     api.json<Book[]>("/user/booked", { cursor, status }),
   bookCar: (data: {
     carId: string;
-    companyId: string;
     rentalPlanId: string;
     planId?: string;
     startDate: string;
@@ -143,19 +141,6 @@ export const userApi = {
 
   explorerMap: (b: { west: number; east: number; north: number; south: number }) =>
     api.json<Car[]>("/user/explorerMap", b),
-  kycStatus: () => api.json<Pick<Profile, "kycStatus" | "kycDocumentType" | "kycSubmittedAt" | "kycReviewedAt" | "kycRejectionReason">>("/user/kyc/status"),
-  submitKyc: (form: FormData) => api.form<{ kycStatus: "pending" }>("/user/kyc/submit", form),
-};
-
-/* ----------------------------- Chat ----------------------------- */
-export const chatApi = {
-  list: () => api.json<import("./types").ChatConversation[]>("/chat/list", {}),
-  start: (data: { carId?: string; companyId?: string; recipientUserId?: string }) =>
-    api.json<import("./types").ChatConversation>("/chat/start", data),
-  messages: (conversationId: string) =>
-    api.json<import("./types").ChatMessage[]>("/chat/messages", { conversationId }),
-  send: (form: FormData) => api.form<import("./types").ChatMessage>("/chat/send", form),
-  profile: (userId: string) => api.json<import("./types").ChatProfile>("/chat/profile", { userId }),
 };
 
 /* ----------------------------- Company dashboard ----------------------------- */
@@ -185,19 +170,6 @@ export const companyApi = {
   cities: () => api.json<(GeoCity & { towns: GeoCity[] })[]>("/company/cities", {}),
   deleteCar: (id: string) => api.json("/company/car/delete", { id }),
   newCar: (form: FormData) => api.form("/company/car/new", form),
-  recognizeCar: (form: FormData) => api.form<{
-    vin: string | null;
-    brandName: string | null;
-    model: string | null;
-    vehicleType: string | null;
-    year: number | null;
-    fuel: string | null;
-    transmission: string | null;
-    seats: number | null;
-    confidence: number | null;
-    notes: string | null;
-    features?: string[];
-  }>("/company/car/recognize", form),
   updateCar: (form: FormData) => api.form("/company/car/update", form),
   updateCompany: (form: FormData) => api.form("/company/updateCompany", form),
 };
@@ -233,9 +205,6 @@ export const adminApi = {
     api.json("/admin/updateAccountStatus", { userId, title, description, bannedUntil }),
   bannedUsers: (cursor?: string) => api.json<Profile[]>("/admin/bannedUsers", { cursor }),
   recoverAccount: (userId: string) => api.json("/admin/recoverAccount", { userId }),
-  pendingKyc: () => api.json<KycApplication[]>("/admin/kyc/pending", {}),
-  reviewKyc: (userId: string, status: "approved" | "rejected", rejectionReason?: string) =>
-    api.json("/admin/kyc/review", { userId, status, rejectionReason }),
   updateUserPassword: (userId: string, password: string) =>
     api.json("/admin/updateUserPassword", { userId, password }),
   // content
@@ -294,16 +263,5 @@ export const analyticsApi = {
     });
     if (!res.ok) throw new ApiError(res.status, `Failed to load analytics (${res.status})`);
     return (await res.json()) as AnalyticsSummary;
-  },
-};
-
-export const activityApi = {
-  summary: async (): Promise<MyActivitySummary> => {
-    const res = await fetch("/api/my-activity", {
-      headers: tokens.access ? { Authorization: `Bearer ${tokens.access}` } : {},
-      cache: "no-store",
-    });
-    if (!res.ok) throw new ApiError(res.status, `Failed to load activity (${res.status})`);
-    return (await res.json()) as MyActivitySummary;
   },
 };

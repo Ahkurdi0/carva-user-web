@@ -27,48 +27,31 @@ function sessionId(): string {
 export function VisitTracker() {
   const pathname = usePathname();
   const userId = useAuth((s) => s.user?.userId ?? null);
-  const userRef = useRef<string | null>(userId);
-  const active = useRef<{ path: string; startedAt: number; userId: string | null }>({ path: "", startedAt: 0, userId: null });
-  userRef.current = userId;
+  const lastSent = useRef<string>("");
 
-  function send(path: string, durationMs: number, event: "view" | "heartbeat" = "view", ownerId = userRef.current) {
-    const payload = JSON.stringify({
+  useEffect(() => {
+    // De-dupe rapid re-renders for the same path.
+    if (lastSent.current === pathname) return;
+    lastSent.current = pathname;
+
+    const payload = {
       platform: "web",
-      path,
-      durationMs,
-      event,
+      path: pathname,
       registered: !!tokens.access,
-      userId: ownerId,
+      userId,
       sessionId: sessionId(),
       ref: document.referrer || null,
-    });
+    };
+
     fetch("/api/track", {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...(tokens.access ? { Authorization: `Bearer ${tokens.access}` } : {}) },
-      body: payload,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
       keepalive: true,
     }).catch(() => {
       /* best effort */
     });
-  }
-
-  useEffect(() => {
-    const now = Date.now();
-    if (active.current.path && active.current.path !== pathname) {
-      send(active.current.path, now - active.current.startedAt, "heartbeat", active.current.userId);
-    }
-    active.current = { path: pathname, startedAt: now, userId: userRef.current };
-    send(pathname, 0, "view");
-  }, [pathname]);
-
-  useEffect(() => {
-    const flush = () => {
-      if (!active.current.path) return;
-      send(active.current.path, Date.now() - active.current.startedAt, "heartbeat", active.current.userId);
-    };
-    window.addEventListener("pagehide", flush);
-    return () => window.removeEventListener("pagehide", flush);
-  }, []);
+  }, [pathname, userId]);
 
   return null;
 }

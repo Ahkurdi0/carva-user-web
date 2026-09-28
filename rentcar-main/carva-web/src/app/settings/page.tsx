@@ -14,8 +14,7 @@ import { authApi, userApi } from "@/lib/services";
 import { imageUrl } from "@/lib/api";
 import { toast } from "@/components/toast";
 import { useAsync } from "@/lib/useAsync";
-import type { KycDocumentType, Lang, Support } from "@/lib/types";
-import { KycBadge } from "@/components/KycBadge";
+import type { Lang, Support } from "@/lib/types";
 
 function Row({ icon, label, onClick, href, danger }: { icon: IconName; label: string; onClick?: () => void; href?: string; danger?: boolean }) {
   const inner = (
@@ -63,14 +62,12 @@ export default function SettingsPage() {
   const setUser = useAuth((s) => s.setUser);
   const logout = useAuth((s) => s.logout);
 
-  const [modal, setModal] = useState<null | "profile" | "password" | "lang" | "support" | "kyc">(null);
+  const [modal, setModal] = useState<null | "profile" | "password" | "lang" | "support">(null);
   const [name, setName] = useState(user?.name ?? "");
   const [oldPwd, setOldPwd] = useState("");
   const [newPwd, setNewPwd] = useState("");
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const [kycType, setKycType] = useState<KycDocumentType>((user?.kycDocumentType as KycDocumentType) || "national_id");
-  const [kycFiles, setKycFiles] = useState<{ front?: File; back?: File }>({});
 
   if (!user) return <AppShell><AuthPrompt /></AppShell>;
 
@@ -124,27 +121,6 @@ export default function SettingsPage() {
     }
   }
 
-  async function submitKyc() {
-    if (!kycFiles.front || (kycType !== "passport" && !kycFiles.back)) {
-      toast(t("web.kycDocumentsRequired"), "error");
-      return;
-    }
-    setBusy(true);
-    try {
-      const form = new FormData();
-      form.append("documentType", kycType);
-      form.append("documentFront", kycFiles.front);
-      if (kycFiles.back) form.append("documentBack", kycFiles.back);
-      await userApi.submitKyc(form);
-      setUser({ ...user!, kycStatus: "pending", kycDocumentType: kycType, kycRejectionReason: null });
-      setKycFiles({});
-      setModal(null);
-      toast(t("web.kycSubmitted"), "success");
-    } catch (err) {
-      toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error");
-    } finally { setBusy(false); }
-  }
-
   return (
     <AppShell>
       <div className="px-4 py-5">
@@ -165,7 +141,7 @@ export default function SettingsPage() {
           </button>
           <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files?.[0] && uploadAvatar(e.target.files[0])} />
           <div className="min-w-0">
-            <div className="flex items-center gap-2"><p className="truncate text-lg font-bold">{user.name}</p><KycBadge status={user.kycStatus} /></div>
+            <p className="truncate text-lg font-bold">{user.name}</p>
             <p className="truncate text-sm text-muted">{user.email}</p>
           </div>
         </div>
@@ -175,13 +151,8 @@ export default function SettingsPage() {
           <Row icon="profile" label={t("web.editProfile")} onClick={() => { setName(user.name); setModal("profile"); }} />
           <Row icon="status" label={t("web.changePassword")} onClick={() => setModal("password")} />
           <Row icon="receipt" label={t("web.myTrips")} href="/trips" />
-          {user.isPersonal && <Row icon="status" label={t("web.personalDashboard")} href="/dashboard" />}
-          <Row icon="clock" label={t("web.myActivity")} href="/settings/activity" />
-          <Row icon="heart" label={t("bottomNavigation.Favorites")} href="/favorites" />
-          <Row icon="checked" label={user.kycStatus === "approved" ? t("web.kycVerified") : t("web.verifyIdentity")} onClick={() => setModal("kyc")} />
           <Row icon="language" label={`${t("web.language")} · ${LANG_NAMES[lang]}`} onClick={() => setModal("lang")} />
           <Row icon="support" label={t("web.support")} onClick={() => setModal("support")} />
-          {user.role?.roleName === "admin" && <Row icon="checked" label={t("web.adminWorkspace")} href="https://admin.carvarent.com" />}
 
           <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase text-muted"> </p>
           <Row icon="logout" label={t("web.logout")} onClick={doLogout} danger />
@@ -229,31 +200,6 @@ export default function SettingsPage() {
       </Modal>
 
       <SupportModal open={modal === "support"} onClose={() => setModal(null)} />
-
-      <Modal open={modal === "kyc"} onClose={() => setModal(null)} title={t("web.verifyIdentity")}>
-        <div className="space-y-4">
-          {user.kycStatus === "approved" ? (
-            <div className="flex items-center gap-2 rounded-xl bg-blue-50 p-3 text-sm text-blue-700"><KycBadge status="approved" /> {t("web.kycVerifiedDescription")}</div>
-          ) : user.kycStatus === "pending" ? (
-            <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-700">{t("web.kycPending")}</p>
-          ) : (
-            <>
-              <p className="text-sm text-muted">{t("web.kycInstructions")}</p>
-              <Field label={t("web.kycDocumentType")}>
-                <select value={kycType} onChange={(e) => { setKycType(e.target.value as KycDocumentType); setKycFiles({}); }} className="h-12 w-full rounded-xl border border-surface-low bg-white px-3 text-sm">
-                  <option value="national_id">{t("web.kycNationalId")}</option>
-                  <option value="passport">{t("web.kycPassport")}</option>
-                  <option value="driving_license">{t("web.kycDrivingLicense")}</option>
-                </select>
-              </Field>
-              <Field label={t("web.kycFront")}><Input type="file" accept="image/*" onChange={(e) => setKycFiles((v) => ({ ...v, front: e.target.files?.[0] }))} /></Field>
-              {kycType !== "passport" && <Field label={t("web.kycBack")}><Input type="file" accept="image/*" onChange={(e) => setKycFiles((v) => ({ ...v, back: e.target.files?.[0] }))} /></Field>}
-              {user.kycStatus === "rejected" && <p className="text-sm text-danger">{user.kycRejectionReason || t("web.kycRejected")}</p>}
-              <Button full loading={busy} onClick={submitKyc}>{t("web.submitKyc")}</Button>
-            </>
-          )}
-        </div>
-      </Modal>
     </AppShell>
   );
 }

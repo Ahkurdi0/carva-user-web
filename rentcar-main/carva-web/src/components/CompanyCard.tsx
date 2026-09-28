@@ -6,7 +6,6 @@ import { imageUrl } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Rating } from "./ui";
 import { useI18n } from "@/i18n";
-import { KycBadge } from "./KycBadge";
 
 export function CompanyCard({ company }: { company: Company }) {
   const { t } = useI18n();
@@ -31,7 +30,7 @@ export function CompanyCard({ company }: { company: Company }) {
           )}
         </span>
         <div className="pt-9">
-          <div className="flex items-center gap-2"><p className="truncate font-semibold text-on-surface">{company.name}</p><KycBadge status={company.profile?.kycStatus} label={false} /></div>
+          <p className="truncate font-semibold text-on-surface">{company.name}</p>
           <div className="mt-1 flex items-center gap-2">
             <Rating rate={company.rate} review={company.review} />
           </div>

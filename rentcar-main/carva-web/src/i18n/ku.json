@@ -69,7 +69,6 @@
     "reservation": "حجزکراو",
     "reservations": "حجزکراوەکان",
     "Favorites": "دڵخوازەکان",
-    "chat": "گفتوگۆکان",
     "trips": "گەشتەکان",
     "trip": "گەشت",
     "settings": "رێیکخستنەکان",
@@ -577,28 +576,7 @@
     "deleteAccount": "سڕینەوەی هەژمار",
     "logout": "چوونەدەرەوە",
     "dashboard": "داشبۆردی کۆمپانیا",
-    "personalDashboard": "داشبۆردی بەکرێدانی تایبەتی من",
-    "personalOverview": "ئۆتۆمبێلەکان و چالاکی بەکرێدان",
-    "myCars": "ئۆتۆمبێلەکانم",
-    "rentalBookings": "حجزەکانی بەکرێدان",
-    "personalProfile": "پرۆفایلی کەسی",
-    "personalCarsTitle": "ئۆتۆمبێلەکانم بۆ بەکرێدان",
-    "addPersonalCar": "زیادکردنی ئۆتۆمبێلی کەسی",
-    "personalListingTitle": "ئۆتۆمبێلەکەت بۆ بەکرێدان بڵاو بکەرەوە",
-    "personalListingHint": "ئۆتۆمبێلەکەت شاراوە دەمێنێتەوە تا بەڕێوەبەری گشتی پشکنینی بکات و پەسەندی بکات.",
-    "managePersonalCars": "بەڕێوەبردنی ئۆتۆمبێلە کەسییەکانم",
-    "pendingAdminApproval": "چاوەڕوانی پەسەندکردنی بەڕێوەبەر",
     "adminPanel": "پانێڵی بەڕێوەبەر",
-    "adminWorkspace": "کردنەوەی شوێنی بەڕێوەبەر",
-    "myActivity": "چالاکییەکانم",
-    "myActivityPrivacy": "تەنها تۆ دەتوانیت ئەم چالاکییە ببینیت. ناونیشانی IP لێرە نیشان نادرێت.",
-    "timeSpent": "کاتی بەسەربردن",
-    "sessions": "دانیشتنەکان",
-    "pagesViewed": "پەڕە بینراوەکان",
-    "lastActive": "دواین چالاکی",
-    "timeByPage": "کات بەپێی پەڕە",
-    "recentActivity": "چالاکییە نوێکان",
-    "noActivity": "هێشتا هیچ چالاکییەک تۆمار نەکراوە",
     "filters": "فلتەرەکان",
     "applyFilters": "جێبەجێکردن",
     "clearFilters": "پاککردنەوە",
@@ -619,81 +597,7 @@
     "reels": "ریلەکان",
     "details": "وردەکاری",
     "similarCars": "سەیارەی هاوشێوە",
-    "allCities": "هەموو شارەکان",
-    "verifyIdentity": "پشتڕاستکردنەوەی ناسنامە (KYC)",
-    "kycVerified": "ناسنامە پشتڕاستکراوەتەوە",
-    "kycVerifiedDescription": "ناسنامەکەت پشتڕاستکراوەتەوە. دەتوانیت ئۆتۆمبێلی خۆت دابنێیت و ئۆتۆمبێل حجز بکەیت.",
-    "kycPending": "بەڵگەکانت لەلایەن تیمەکەمانەوە پشکنین دەکرێن.",
-    "kycRejected": "پشتڕاستکردنەوەکەت ڕەتکرایەوە. تکایە بەڵگەی ڕوونتر بنێرە.",
-    "kycInstructions": "جۆری بەڵگەیەک هەڵبژێرە. پاسپۆرت تەنها یەک وێنەی دەوێت؛ ناسنامەی نیشتیمانی و مۆڵەتی شۆفێری وێنەی پێش و دواوی دەوێت. بەڕێوەبەری گشتی هەموو داواکارییەکان پشکنین دەکات.",
-    "kycDocumentType": "جۆری بەڵگە",
-    "kycNationalId": "ناسنامەی نیشتیمانی",
-    "kycPassport": "پاسپۆرت",
-    "kycDrivingLicense": "مۆڵەتی شۆفێری",
-    "kycFront": "پێشی بەڵگە",
-    "kycBack": "دواوی بەڵگە",
-    "kycSelfie": "سێلفی (ئاختیاری)",
-    "submitKyc": "ناردن بۆ پشکنین",
-    "kycSubmitted": "داواکاری KYC نێردرا بۆ پشکنین",
-    "kycDocumentsRequired": "تکایە وێنەی پێویستی بەڵگەکە باربکە",
-    "kycApplications": "داواکارییەکانی KYC",
-    "noKycApplications": "هیچ داواکارییەکی KYC چاوەڕوان نییە",
-    "approve": "پەسەندکردن",
-    "reject": "ڕەتکردنەوە",
-    "kycApproved": "KYC پەسەندکرا",
-    "kycRejectionReason": "هۆکاری ڕەتکردنەوە"
-    ,"kycRequired": "پێش حجزکردنی ئۆتۆمبێل ناسنامەکەت پشتڕاست بکەرەوە"
-    ,"recognizeCar": "ناسینەوەی ئۆتۆمبێل لە وێنە"
-    ,"recognizingCar": "ئۆتۆمبێل دەناسرێتەوە..."
-    ,"aiSuggestionApplied": "وردەکاری ئۆتۆمبێل لە وێنەکەوە پڕکرایەوە. تکایە پێش بڵاوکردنەوە پشکنینی بکە."
-    ,"aiImageRequired": "سەرەتا وێنەیەکی ئۆتۆمبێل باربکە"
-    ,"aiRecognitionFailed": "ناسینەوەی ئۆتۆمبێل سەرکەوتوو نەبوو. تکایە خانەکان بە دەستی پڕبکەرەوە"
-    ,"carTitleRequired": "ناونیشانی ئۆتۆمبێلەکە زیاد بکە"
-    ,"carBrandRequired": "مارکەی ئۆتۆمبێلەکە هەڵبژێرە"
-    ,"carPhotoRequired": "لانیکەم وێنەیەکی ئۆتۆمبێل زیاد بکە. تەنها وێنەی VIN ناتوانرێت بڵاو بکرێتەوە."
-    ,"rentalPlanRequired": "لانیکەم پلانی کرێدانێک زیاد بکە"
-    ,"rentalPlanPriceRequired": "نرخی کرێدانێک زیاتر لە سفر بنووسە"
-    ,"carFeaturesSection": "تایبەتمەندییە گرنگەکان بۆ کرێچی"
-    ,"carFeaturesHint": "ئەو ئامێرانە هەڵبژێرە کە یارمەتیدەدەن کرێچی ئۆتۆمبێلی گونجاو هەڵبژێرێت."
-    ,"selectedCarPhotos": "وێنە هەڵبژێردراوەکانی ئۆتۆمبێل"
-    ,"selectedCarPhotosHint": "وێنەکان لە خوارەوە پشکنە. وێنەی VIN تەنها بۆ ناسینەوە هەڵدەگیرێت و هەرگیز بڵاوناکرێتەوە."
-    ,"vinPhotoNotPublished": "وێنەی VIN · بڵاونەکراوەتەوە"
-    ,"feature_parking_sensors": "سێنسەری پارککردن"
-    ,"feature_apple_carplay": "Apple CarPlay"
-    ,"feature_android_auto": "Android Auto"
-    ,"feature_rear_camera": "کامێرای دواوە"
-    ,"feature_cruise_control": "کۆنترۆڵی خێرایی"
-    ,"feature_adaptive_cruise": "کۆنترۆڵی خێرایی خۆگونجێن"
-    ,"feature_infotainment_screen": "شاشەی زانیاری و کاتێنمنت"
-    ,"feature_smart_key": "کلیلی زیرەک / دەستپێکردنی بێ کلیـل"
-    ,"feature_blind_spot_monitor": "چاودێری خاڵی کوێر"
-    ,"feature_lane_assist": "یارمەتیدەری ڕاگرتنی هێڵ"
-    ,"feature_automatic_emergency_braking": "بریککردنی خۆکار لە کاتی فریاکەوتن"
-    ,"feature_bluetooth": "Bluetooth"
-    ,"feature_usb": "USB"
-    ,"feature_heated_seats": "کورسیی گەرمکراو"
-    ,"feature_climate_control": "کۆنترۆڵی کەشوهەوا"
-    ,"feature_sunroof": "پەنجەرەی سەقف"
-    ,"feature_all_wheel_drive": "پاڵپشتی هەموو چەرخەکان"
-    ,"uploadCarPhotos": "سەرەتا وێنەی ئۆتۆمبێل باربکە"
-    ,"uploadCarPhotosHint": "وێنەی ڕوونی ئۆتۆمبێل و ئەگەر هەیە وێنەی VIN یان بەڵگە زیاد بکە، پاشان شێوازی پڕکردنەوەی وردەکارییەکان هەڵبژێرە. ناسینەوە وێنە هەڵبژێردراوەکان بۆ VIN دەپشکنێت."
-    ,"fillManually": "پڕکردنەوەی وردەکاری بە دەستی"
-    ,"chat": "گفتوگۆکان"
-    ,"chatSubtitle": "پێش حجزکردن لە بەردەستبوون و نرخ و وەرگرتن بپرسە."
-    ,"yourChats": "گفتوگۆکانت"
-    ,"searchChats": "گەڕان لە گفتوگۆکان"
-    ,"openProfile": "کردنەوەی هەژمار"
-    ,"viewProfile": "بینینی هەژمار"
-    ,"lastSeen": "دواین بینین"
-    ,"lastSeenUnknown": "دواین بینین بەردەست نییە"
-    ,"noMatchingChats": "هیچ گفتوگۆیەکی هاوتا نییە"
-    ,"memberSince": "ئەندامە لە"
-    ,"ownerProfile": "هەژماری خاوەن"
-    ,"noChats": "هێشتا هیچ گفتوگۆیەک نییە"
-    ,"chatHint": "پەڕەی ئۆتۆمبێل یان کۆمپانیا بکەرەوە و گفتوگۆ هەڵبژێرە بۆ دەستپێکردن."
-    ,"newChat": "گفتوگۆی نوێ"
-    ,"selectChat": "گفتوگۆیەک هەڵبژێرە"
-    ,"typeMessage": "نامەیەک بنووسە..."
+    "allCities": "هەموو شارەکان"
   },
   "analytics": {
     "title": "سەردانکەران و هاتوچۆ",

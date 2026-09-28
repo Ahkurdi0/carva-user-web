@@ -91,11 +91,6 @@ function BookingInner() {
       router.push("/login");
       return;
     }
-    if (user.kycStatus !== "approved") {
-      toast(t("web.kycRequired"), "info");
-      router.push("/settings");
-      return;
-    }
     if (!selected || !start || !end) {
       toast(t("web.pickDates"), "error");
       return;
@@ -104,12 +99,11 @@ function BookingInner() {
     try {
       await userApi.bookCar({
         carId: car!.id,
-        companyId: car!.companyId,
         rentalPlanId: selected.id,
         planId: planRef?.id,
         startDate: new Date(start).toISOString(),
         endDate: new Date(end).toISOString(),
-        contact: contact || user.phoneNumber || "",
+        contact: contact || undefined,
         code: code || undefined,
       });
       toast(t("alertMessages.reservationSuccess"), "success");

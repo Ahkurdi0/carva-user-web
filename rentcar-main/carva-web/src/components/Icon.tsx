@@ -7,7 +7,6 @@ export type IconName =
   | "arrow"
   | "arrow_tail"
   | "calender"
-  | "chat"
   | "call"
   | "cancel"
   | "cancel2"

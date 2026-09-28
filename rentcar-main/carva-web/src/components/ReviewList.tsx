@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { Icon } from "./Icon";
 import { Spinner } from "./ui";
 import { imageUrl } from "@/lib/api";
-import { KycBadge } from "./KycBadge";
 import { userApi } from "@/lib/services";
 import { useI18n } from "@/i18n";
 import { formatDate } from "@/lib/format";
@@ -69,7 +68,7 @@ export function ReviewList({ kind, id }: { kind: "car" | "company"; id: string }
               )}
             </span>
             <div className="flex-1">
-              <div className="flex items-center gap-2"><p className="text-sm font-semibold text-on-surface">{r.profile?.name ?? "User"}</p><KycBadge status={r.profile?.kycStatus} label={false} /></div>
+              <p className="text-sm font-semibold text-on-surface">{r.profile?.name ?? "User"}</p>
               <p className="text-[11px] text-muted">{formatDate(r.reviewedAt)}</p>
             </div>
             <Stars rate={r.rate} />
