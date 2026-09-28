@@ -8,6 +8,7 @@ import { Icon } from "@/components/Icon";
 import { companyApi } from "@/lib/services";
 import { useI18n } from "@/i18n";
 import { toast } from "@/components/toast";
+import { CAR_AMENITIES, carAmenityLabel } from "@/lib/car-features";
 import type {
   Brand,
   Car,
@@ -54,6 +55,8 @@ const emptyForm = {
   fuel: "gasoline",
   transmission: "automatic",
   displayPlan: "daily" as RentalPeriodType,
+  amenities: [] as string[],
+  vin: "",
 };
 
 export function CarFormModal({
@@ -84,11 +87,16 @@ export function CarFormModal({
   const [images, setImages] = useState<File[]>([]); // newly added files
   const [existing, setExisting] = useState<CarImage[]>([]); // kept existing images
   const [removed, setRemoved] = useState<CarImage[]>([]); // existing images to delete
+  const [vinImage, setVinImage] = useState<File | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [recognizing, setRecognizing] = useState(false);
+  const [step, setStep] = useState<"photos" | "details">("photos");
 
   // Reset / hydrate the form whenever the modal opens (or the target car changes).
   useEffect(() => {
     if (!open) return;
     if (car) {
+      setStep("details");
       setForm({
         title: car.title ?? "",
         brandId: car.brandId ?? car.brand?.id ?? "",
@@ -98,6 +106,8 @@ export function CarFormModal({
         fuel: car.feature?.fuel ?? "gasoline",
         transmission: car.feature?.transmission ?? "automatic",
         displayPlan: car.displayPlan ?? "daily",
+        amenities: car.feature?.extras?.amenities ?? [],
+        vin: car.feature?.extras?.vin ?? "",
       });
       const rows: PlanRow[] = (car.rentalPlan ?? []).map((p) => ({
         id: p.id,
@@ -113,14 +123,28 @@ export function CarFormModal({
       setOrigPlans(rows);
       setExisting(car.images ?? []);
     } else {
+      setStep("photos");
       setForm(emptyForm);
-      setPlanRows([]);
-      setOrigPlans([]);
+      const defaultPlan = plans.find((plan) => plan.periodType === "daily") ?? plans[0];
+      const initialPlans: PlanRow[] = defaultPlan?.id
+        ? [{ planId: defaultPlan.id, periodType: defaultPlan.periodType ?? "daily", price: "", currency: "iqd" }]
+        : [];
+      setPlanRows(initialPlans);
+      setOrigPlans(initialPlans);
       setExisting([]);
     }
     setImages([]);
+    setVinImage(null);
+    setImagePreviews([]);
     setRemoved([]);
+    setRecognizing(false);
   }, [open, car, plans]);
+
+  useEffect(() => {
+    const urls = images.map((file) => URL.createObjectURL(file));
+    setImagePreviews(urls);
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, [images]);
 
   // Only periods that have a catalog plan can be added — otherwise the row has
   // no valid planId and the backend would store a mismatched plan.
@@ -128,7 +152,9 @@ export function CarFormModal({
 
   function addPlan() {
     const used = new Set(planRows.map((r) => r.periodType));
-    const next = PERIODS.map((pt) => planByPeriod.get(pt)).find((p) => p && !used.has(p.periodType!)) ?? plans[0];
+    const next = PERIODS
+      .map((pt) => planByPeriod.get(pt))
+      .find((p) => p && !used.has(p.periodType!));
     if (!next?.id) return;
     setPlanRows((r) => [
       ...r,
@@ -151,18 +177,128 @@ export function CarFormModal({
     setImages((r) => [...r, ...Array.from(files).slice(0, Math.max(0, room))]);
   }
 
+  function removeNewImage(index: number) {
+    const file = images[index];
+    setImages((current) => current.filter((_, itemIndex) => itemIndex !== index));
+    if (file === vinImage) setVinImage(null);
+  }
+
+  function normalized(value: string) {
+    return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
+  }
+
+  function matchCatalog(items: { id: string; en: string; ar?: string | null; ku?: string | null }[], value: string | null) {
+    if (!value) return "";
+    const needle = normalized(value);
+    const candidates = items.filter((item) => [item.en, item.ar ?? "", item.ku ?? ""].some((label) => {
+      const candidate = normalized(label);
+      return candidate && (candidate === needle || candidate.includes(needle) || needle.includes(candidate));
+    }));
+    return candidates.sort((a, b) => normalized(b.en).length - normalized(a.en).length)[0]?.id ?? "";
+  }
+
+  async function recognizeCar() {
+    const image = images[0];
+    if (!image) {
+      toast(t("web.aiImageRequired"), "error");
+      return;
+    }
+    setRecognizing(true);
+    try {
+      const recognizeImage = async (candidate: File) => {
+        const fd = new FormData();
+        fd.append("image", candidate);
+        fd.append("brandCatalog", JSON.stringify(brands.map((brand) => brand.en).filter(Boolean)));
+        return companyApi.recognizeCar(fd);
+      };
+      let result = await recognizeImage(image);
+      let recognizedImage = image;
+      // If the first photo is the car and another selected photo is a VIN label,
+      // check the remaining photos until a valid VIN is found and exclude that
+      // document from the published gallery.
+      if (!result.vin && images.length > 1) {
+        for (const candidate of images.slice(1, 5)) {
+          const candidateResult = await recognizeImage(candidate);
+          if (!candidateResult.vin) continue;
+          result = {
+            ...result,
+            ...candidateResult,
+            features: candidateResult.features?.length ? candidateResult.features : result.features,
+          };
+          recognizedImage = candidate;
+          break;
+        }
+      }
+      const brandId = matchCatalog(brands, result.brandName);
+      const typeId = matchCatalog(types, result.vehicleType);
+      const recognizedTitle = [result.brandName, result.model].filter(Boolean).join(" ");
+      setForm((current) => ({
+        ...current,
+        title: recognizedTitle || current.title,
+        brandId: brandId || current.brandId,
+        typeId: typeId || current.typeId,
+        year: result.year ? String(result.year) : current.year,
+        seat: result.seats ? String(result.seats) : current.seat,
+        fuel: ["gasoline", "diesel", "electric", "hybird", "lpg", "cng"].includes(result.fuel ?? "") ? result.fuel! : current.fuel,
+        transmission: ["automatic", "manual", "cvt", "amt", "dct", "sp"].includes(result.transmission ?? "") ? result.transmission! : current.transmission,
+        amenities: result.features?.length ? result.features : current.amenities,
+        vin: result.vin || current.vin,
+      }));
+      setVinImage(result.vin ? recognizedImage : null);
+      toast(t("web.aiSuggestionApplied"), "success");
+      setStep("details");
+    } catch (err) {
+      toast(err instanceof Error ? err.message : t("web.aiRecognitionFailed"), "error");
+    } finally { setRecognizing(false); }
+  }
+
   const featurePayload = () => ({
     seat: Number(form.seat) || 1,
     year: form.year ? Number(form.year) : undefined,
     fuel: form.fuel,
     transmission: form.transmission,
     carTypeId: form.typeId || undefined,
+    extras: {
+      amenities: form.amenities.filter((key) => CAR_AMENITIES.includes(key as (typeof CAR_AMENITIES)[number])),
+      vin: form.vin || undefined,
+    },
   });
 
   async function submit() {
-    const totalImages = editing ? existing.length + images.length : images.length;
-    if (!form.title || !form.brandId || planRows.length === 0 || totalImages === 0) {
-      toast(t("alertMessages.someThingWentWrong"), "error");
+    const publishableImages = images.filter((image) => image !== vinImage);
+    const totalImages = editing ? existing.length + publishableImages.length : publishableImages.length;
+    const normalizedPlans = planRows.map((row) => ({
+      ...row,
+      // Always trust the catalog entry for the selected period. This prevents
+      // stale/mismatched plan IDs from being rejected by the API.
+      planId: planByPeriod.get(row.periodType)?.id ?? row.planId,
+    }));
+    const invalidPlan = normalizedPlans.some(
+      (row) =>
+        !row.planId ||
+        !planByPeriod.has(row.periodType) ||
+        !row.price.trim() ||
+        !Number.isFinite(Number(row.price)) ||
+        Number(row.price) <= 0,
+    );
+    if (!form.title) {
+      toast(t("web.carTitleRequired"), "error");
+      return;
+    }
+    if (!form.brandId) {
+      toast(t("web.carBrandRequired"), "error");
+      return;
+    }
+    if (totalImages === 0) {
+      toast(t("web.carPhotoRequired"), "error");
+      return;
+    }
+    if (normalizedPlans.length === 0) {
+      toast(t("web.rentalPlanRequired"), "error");
+      return;
+    }
+    if (invalidPlan) {
+      toast(t("web.rentalPlanPriceRequired"), "error");
       return;
     }
     setBusy(true);
@@ -186,7 +322,7 @@ export function CarFormModal({
           .filter((r) => r.id && !kept.has(r.id))
           .map((r) => ({ id: r.id! }));
         const create: PlanRow[] = [];
-        for (const r of planRows) {
+        for (const r of normalizedPlans) {
           if (!r.id) {
             create.push(r);
             continue;
@@ -211,6 +347,9 @@ export function CarFormModal({
                 periodType: p.periodType,
                 price: Number(p.price) || 0,
                 currency: p.currency,
+                // The company update schema requires this flag for every
+                // rental plan that is created or replaced.
+                available: true,
               })),
             ),
           );
@@ -221,18 +360,19 @@ export function CarFormModal({
             "deletedImages",
             JSON.stringify(removed.map((img) => ({ id: img.id, image: img.image }))),
           );
-        images.forEach((img) => fd.append("images", img));
+        publishableImages.forEach((img) => fd.append("images", img));
         await companyApi.updateCar(fd);
       } else {
         fd.append("available", "true");
         fd.append(
           "rentalPlan",
           JSON.stringify(
-            planRows.map((p) => ({
+            normalizedPlans.map((p) => ({
               planId: p.planId,
               periodType: p.periodType,
               price: Number(p.price) || 0,
               currency: p.currency,
+              available: true,
             })),
           ),
         );
@@ -254,7 +394,30 @@ export function CarFormModal({
 
   return (
     <Modal open={open} onClose={onClose} title={editing ? t("buttons.update") : t("screens.newCar")}>
-      <div className="space-y-3">
+      {step === "photos" && !editing ? (
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-lg font-bold">{t("web.uploadCarPhotos")}</h2>
+            <p className="mt-1 text-sm text-muted">{t("web.uploadCarPhotosHint")}</p>
+          </div>
+          {canAddImages && (
+            <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-primary/40 bg-primary-container/30 px-4 py-3 text-sm font-medium text-primary hover:bg-primary-container">
+              <Icon name="image" size={22} color="#B51219" />
+              <span>{t("buttons.addImage")}</span>
+              <input type="file" accept="image/*" multiple onChange={(ev) => addFiles(ev.target.files)} className="sr-only" />
+            </label>
+          )}
+          {images.length > 0 && <p className="text-xs text-muted">{images.length} {t("buttons.addImage").toLowerCase()}</p>}
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Button variant="outline" disabled={images.length === 0} onClick={() => setStep("details")}>
+              {t("web.fillManually")}
+            </Button>
+            <Button disabled={images.length === 0} loading={recognizing} onClick={recognizeCar}>
+              <Icon name="checked" size={16} /> {t("web.recognizeCar")}
+            </Button>
+          </div>
+        </div>
+      ) : <div className="space-y-3">
         <Field label={t("inputLabels.title")}>
           <Input value={form.title} onChange={(ev) => setForm({ ...form, title: ev.target.value })} />
         </Field>
@@ -287,11 +450,64 @@ export function CarFormModal({
           </select>
         </Field>
 
+        <section className="rounded-2xl border border-surface-low p-4">
+          <div className="mb-3">
+            <h3 className="text-sm font-bold text-on-surface">{t("web.carFeaturesSection")}</h3>
+            <p className="mt-1 text-xs text-muted">{t("web.carFeaturesHint")}</p>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {CAR_AMENITIES.map((key) => (
+              <label key={key} className="flex cursor-pointer items-center gap-2 rounded-xl border border-surface-lowest px-3 py-2 text-sm hover:bg-surface-lowest">
+                <input
+                  type="checkbox"
+                  checked={form.amenities.includes(key)}
+                  onChange={(ev) => setForm((current) => ({
+                    ...current,
+                    amenities: ev.target.checked
+                      ? Array.from(new Set([...current.amenities, key]))
+                      : current.amenities.filter((item) => item !== key),
+                  }))}
+                  className="h-4 w-4 accent-primary"
+                />
+                <span>{t(carAmenityLabel(key))}</span>
+              </label>
+            ))}
+          </div>
+        </section>
+
+        {images.length > 0 && (
+          <section className="rounded-2xl border border-surface-low p-4">
+            <h3 className="mb-1 text-sm font-bold text-on-surface">{t("web.selectedCarPhotos")}</h3>
+            <p className="mb-3 text-xs text-muted">{t("web.selectedCarPhotosHint")}</p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {images.map((file, index) => (
+                <div key={`${file.name}-${index}`} className="relative overflow-hidden rounded-xl border border-surface-low bg-surface-lowest">
+                  {imagePreviews[index] && <img src={imagePreviews[index]} alt={file.name} className="h-28 w-full object-cover" />}
+                  <p className="truncate px-2 py-1.5 text-[11px] text-muted">{file.name}</p>
+                  <button type="button" onClick={() => removeNewImage(index)} className="absolute right-1.5 top-1.5 grid h-6 w-6 place-items-center rounded-full bg-danger text-white" aria-label={t("buttons.delete")}>
+                    <Icon name="cancel" size={12} color="#fff" />
+                  </button>
+                  {file === vinImage && (
+                    <span className="absolute left-2 top-2 rounded-full bg-on-surface/80 px-2 py-1 text-[10px] font-semibold text-white">
+                      {t("web.vinPhotoNotPublished")}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Rental plans */}
         <div>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-medium">{t("labels.rentalPlans")}</span>
-            <button onClick={addPlan} className="text-sm font-medium text-primary">+ {t("buttons.add")}</button>
+            <button
+              type="button"
+              onClick={addPlan}
+              disabled={!PERIODS.some((pt) => planByPeriod.has(pt) && !planRows.some((row) => row.periodType === pt))}
+              className="text-sm font-medium text-primary disabled:cursor-not-allowed disabled:opacity-40"
+            >+ {t("buttons.add")}</button>
           </div>
           <div className="space-y-2">
             {planRows.map((p, i) => (
@@ -327,16 +543,17 @@ export function CarFormModal({
         )}
 
         {canAddImages && (
-          <Field label={t("buttons.addImage")}>
-            <input type="file" accept="image/*" multiple onChange={(ev) => addFiles(ev.target.files)} className="text-sm" />
-          </Field>
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-primary/40 bg-primary-container/30 px-4 py-3 text-sm font-medium text-primary hover:bg-primary-container">
+            <Icon name="image" size={22} color="#B51219" />
+            <span>{t("buttons.addImage")}</span>
+            <input type="file" accept="image/*" multiple onChange={(ev) => addFiles(ev.target.files)} className="sr-only" />
+          </label>
         )}
         {images.length > 0 && (
           <p className="text-xs text-muted">{images.length} {t("buttons.addImage").toLowerCase()}</p>
         )}
-
         <Button full loading={busy} onClick={submit}>{editing ? t("buttons.update") : t("buttons.add")}</Button>
-      </div>
+      </div>}
     </Modal>
   );
 }

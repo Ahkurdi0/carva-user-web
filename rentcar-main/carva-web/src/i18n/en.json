@@ -69,6 +69,7 @@
     "reservation": "reservation",
     "reservations": "reservations",
     "Favorites": "Favorites",
+    "chat": "Chat",
     "trips": "Trips",
     "trip": "Trip",
     "settings": "Settings",
@@ -576,7 +577,28 @@
     "deleteAccount": "Delete account",
     "logout": "Log out",
     "dashboard": "Company dashboard",
+    "personalDashboard": "Personal rental dashboard",
+    "personalOverview": "My rental listings and activity",
+    "myCars": "My cars",
+    "rentalBookings": "Rental bookings",
+    "personalProfile": "Personal profile",
+    "personalCarsTitle": "My cars for rent",
+    "addPersonalCar": "Add a personal car",
+    "personalListingTitle": "Publish your car for rent",
+    "personalListingHint": "Your car will stay hidden until a general admin reviews and approves it.",
+    "managePersonalCars": "Manage my personal cars",
+    "pendingAdminApproval": "Pending admin approval",
     "adminPanel": "Admin panel",
+    "adminWorkspace": "Open admin workspace",
+    "myActivity": "My activity",
+    "myActivityPrivacy": "Only you can see this activity. Individual IP addresses are never shown here.",
+    "timeSpent": "Time spent",
+    "sessions": "Sessions",
+    "pagesViewed": "Pages viewed",
+    "lastActive": "Last active",
+    "timeByPage": "Time by page",
+    "recentActivity": "Recent activity",
+    "noActivity": "No activity recorded yet",
     "filters": "Filters",
     "applyFilters": "Apply filters",
     "clearFilters": "Clear",
@@ -597,7 +619,81 @@
     "reels": "Reels",
     "details": "Details",
     "similarCars": "Similar cars",
-    "allCities": "All cities"
+    "allCities": "All cities",
+    "verifyIdentity": "Verify identity (KYC)",
+    "kycVerified": "Identity verified",
+    "kycVerifiedDescription": "Your identity is verified. You can post personal cars and book cars.",
+    "kycPending": "Your documents are being reviewed.",
+    "kycRejected": "Your verification was rejected. Please submit clearer documents.",
+    "kycInstructions": "Choose one document type. Passport requires one photo; national ID and driving license require front and back photos. The general admin reviews every submission.",
+    "kycDocumentType": "Document type",
+    "kycNationalId": "National ID",
+    "kycPassport": "Passport",
+    "kycDrivingLicense": "Driving license",
+    "kycFront": "Document front",
+    "kycBack": "Document back",
+    "kycSelfie": "Selfie (optional)",
+    "submitKyc": "Submit for review",
+    "kycSubmitted": "KYC submitted for review",
+    "kycDocumentsRequired": "Please upload the required document photo(s)"
+    ,"kycApplications": "KYC applications",
+    "noKycApplications": "No pending KYC applications",
+    "approve": "Approve",
+    "reject": "Reject",
+    "kycApproved": "KYC approved",
+    "kycRejectionReason": "Reason for rejection"
+    ,"kycRequired": "Verify your identity before booking a car"
+    ,"recognizeCar": "Recognize car from photo"
+    ,"recognizingCar": "Recognizing car..."
+    ,"aiSuggestionApplied": "Car details filled from the photo. Please review before publishing."
+    ,"aiImageRequired": "Upload a car photo first"
+    ,"aiRecognitionFailed": "Car recognition failed. Please fill the fields manually"
+    ,"carTitleRequired": "Add a title for the car"
+    ,"carBrandRequired": "Choose a car brand"
+    ,"carPhotoRequired": "Add at least one car photo. A VIN photo cannot be published by itself."
+    ,"rentalPlanRequired": "Add at least one rental plan"
+    ,"rentalPlanPriceRequired": "Enter a rental price greater than zero"
+    ,"carFeaturesSection": "Renter-friendly features"
+    ,"carFeaturesHint": "Select equipment that helps renters choose the right car."
+    ,"selectedCarPhotos": "Selected car photos"
+    ,"selectedCarPhotosHint": "Review the photos below. A VIN/document photo is stored for recognition but is never published."
+    ,"vinPhotoNotPublished": "VIN photo · not published"
+    ,"feature_parking_sensors": "Parking sensors"
+    ,"feature_apple_carplay": "Apple CarPlay"
+    ,"feature_android_auto": "Android Auto"
+    ,"feature_rear_camera": "Rear camera"
+    ,"feature_cruise_control": "Cruise control"
+    ,"feature_adaptive_cruise": "Adaptive cruise control"
+    ,"feature_infotainment_screen": "Infotainment screen"
+    ,"feature_smart_key": "Smart key / keyless start"
+    ,"feature_blind_spot_monitor": "Blind-spot monitor"
+    ,"feature_lane_assist": "Lane keeping assist"
+    ,"feature_automatic_emergency_braking": "Automatic emergency braking"
+    ,"feature_bluetooth": "Bluetooth"
+    ,"feature_usb": "USB"
+    ,"feature_heated_seats": "Heated seats"
+    ,"feature_climate_control": "Climate control"
+    ,"feature_sunroof": "Sunroof"
+    ,"feature_all_wheel_drive": "All-wheel drive"
+    ,"uploadCarPhotos": "Upload car photos first"
+    ,"uploadCarPhotosHint": "Add clear car photos and a VIN/document photo if available, then choose how to fill the car details. Recognition checks the selected photos for the VIN."
+    ,"fillManually": "Fill details manually"
+    ,"chat": "Chat"
+    ,"chatSubtitle": "Ask about availability, price, and pickup before you book."
+    ,"yourChats": "Your conversations"
+    ,"searchChats": "Search conversations"
+    ,"openProfile": "Open profile"
+    ,"viewProfile": "View profile"
+    ,"lastSeen": "Last seen"
+    ,"lastSeenUnknown": "Last seen unavailable"
+    ,"noMatchingChats": "No matching conversations"
+    ,"memberSince": "Member since"
+    ,"ownerProfile": "Owner profile"
+    ,"noChats": "No conversations yet"
+    ,"chatHint": "Open a car or company profile and tap Chat to start a conversation."
+    ,"newChat": "New conversation"
+    ,"selectChat": "Select a conversation"
+    ,"typeMessage": "Type a message..."
   },
   "analytics": {
     "title": "Visitors & Traffic",

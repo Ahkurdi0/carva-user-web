@@ -17,9 +17,12 @@ export default function CompaniesPage() {
   // Same city list the car filters use — the app's companies filter fix.
   const { data: filters } = useAsync<FiltersData>(() => userApi.filters(), []);
 
-  const companies = (data ?? []).filter(
-    (c) => !cityId || c.location?.cityId === cityId,
-  );
+  // Personal owners use a synthetic company record internally so their cars
+  // can reuse the rental model. They belong in car results, not this directory.
+  const companies = (data ?? []).filter((c) => {
+    if (c.name.trim().toLowerCase().endsWith("· personal cars")) return false;
+    return !cityId || c.location?.cityId === cityId;
+  });
 
   return (
     <AppShell>

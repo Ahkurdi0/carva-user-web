@@ -69,6 +69,7 @@
     "reservation": "الحجز",
     "reservations": "الحجوزات",
     "Favorites": "المفضلة",
+    "chat": "المحادثات",
     "trips": "الرحلات",
     "trip": "الرحلة",
     "settings": "الاعدادات",
@@ -576,7 +577,28 @@
     "deleteAccount": "حذف الحساب",
     "logout": "تسجيل الخروج",
     "dashboard": "لوحة الشركة",
+    "personalDashboard": "لوحة تأجيرك الشخصية",
+    "personalOverview": "سياراتك ونشاط التأجير",
+    "myCars": "سياراتي",
+    "rentalBookings": "حجوزات التأجير",
+    "personalProfile": "الملف الشخصي",
+    "personalCarsTitle": "سياراتي المعروضة للتأجير",
+    "addPersonalCar": "إضافة سيارة شخصية",
+    "personalListingTitle": "انشر سيارتك للإيجار",
+    "personalListingHint": "ستبقى السيارة مخفية حتى يراجعها المدير العام ويوافق عليها.",
+    "managePersonalCars": "إدارة سياراتي الشخصية",
+    "pendingAdminApproval": "بانتظار موافقة المدير",
     "adminPanel": "لوحة الإدارة",
+    "adminWorkspace": "فتح مساحة الإدارة",
+    "myActivity": "نشاطي",
+    "myActivityPrivacy": "أنت فقط تستطيع رؤية هذا النشاط. لا تظهر عناوين IP الفردية هنا.",
+    "timeSpent": "الوقت المستغرق",
+    "sessions": "الجلسات",
+    "pagesViewed": "الصفحات المشاهدة",
+    "lastActive": "آخر نشاط",
+    "timeByPage": "الوقت حسب الصفحة",
+    "recentActivity": "النشاط الأخير",
+    "noActivity": "لا يوجد نشاط مسجل بعد",
     "filters": "الفلاتر",
     "applyFilters": "تطبيق",
     "clearFilters": "مسح",
@@ -597,7 +619,81 @@
     "reels": "ريلز",
     "details": "التفاصيل",
     "similarCars": "سيارات مشابهة",
-    "allCities": "كل المدن"
+    "allCities": "كل المدن",
+    "verifyIdentity": "تحقق من الهوية (اعرف عميلك)",
+    "kycVerified": "تم التحقق من الهوية",
+    "kycVerifiedDescription": "تم التحقق من هويتك. يمكنك نشر سياراتك وحجز السيارات.",
+    "kycPending": "يتم الآن مراجعة مستنداتك.",
+    "kycRejected": "تم رفض التحقق. يرجى إرسال مستندات أوضح.",
+    "kycInstructions": "اختر نوع مستند واحد. جواز السفر يحتاج صورة واحدة، بينما الهوية الوطنية ورخصة القيادة تحتاجان صورة أمامية وخلفية. يراجع المشرف العام كل الطلبات.",
+    "kycDocumentType": "نوع المستند",
+    "kycNationalId": "الهوية الوطنية",
+    "kycPassport": "جواز السفر",
+    "kycDrivingLicense": "رخصة القيادة",
+    "kycFront": "الوجه الأمامي للمستند",
+    "kycBack": "الوجه الخلفي للمستند",
+    "kycSelfie": "صورة سيلفي (اختيارية)",
+    "submitKyc": "إرسال للمراجعة",
+    "kycSubmitted": "تم إرسال طلب التحقق للمراجعة",
+    "kycDocumentsRequired": "يرجى رفع صور المستند المطلوبة",
+    "kycApplications": "طلبات التحقق من الهوية",
+    "noKycApplications": "لا توجد طلبات تحقق معلقة",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "kycApproved": "تمت الموافقة على التحقق",
+    "kycRejectionReason": "سبب الرفض"
+    ,"kycRequired": "تحقق من هويتك قبل حجز السيارة"
+    ,"recognizeCar": "التعرف على السيارة من الصورة"
+    ,"recognizingCar": "جارٍ التعرف على السيارة..."
+    ,"aiSuggestionApplied": "تمت تعبئة تفاصيل السيارة من الصورة. يرجى مراجعتها قبل النشر."
+    ,"aiImageRequired": "ارفع صورة السيارة أولاً"
+    ,"aiRecognitionFailed": "فشل التعرف على السيارة. يرجى تعبئة الحقول يدوياً"
+    ,"carTitleRequired": "أضف عنواناً للسيارة"
+    ,"carBrandRequired": "اختر ماركة السيارة"
+    ,"carPhotoRequired": "أضف صورة واحدة على الأقل للسيارة. لا يمكن نشر صورة VIN وحدها."
+    ,"rentalPlanRequired": "أضف خطة إيجار واحدة على الأقل"
+    ,"rentalPlanPriceRequired": "أدخل سعراً للإيجار أكبر من صفر"
+    ,"carFeaturesSection": "ميزات مهمة للمستأجر"
+    ,"carFeaturesHint": "اختر التجهيزات التي تساعد المستأجر على اختيار السيارة المناسبة."
+    ,"selectedCarPhotos": "صور السيارة المختارة"
+    ,"selectedCarPhotosHint": "راجع الصور أدناه. يتم حفظ صورة VIN للتعرف فقط ولا يتم نشرها أبداً."
+    ,"vinPhotoNotPublished": "صورة VIN · غير منشورة"
+    ,"feature_parking_sensors": "حساسات ركن"
+    ,"feature_apple_carplay": "Apple CarPlay"
+    ,"feature_android_auto": "Android Auto"
+    ,"feature_rear_camera": "كاميرا خلفية"
+    ,"feature_cruise_control": "مثبت سرعة"
+    ,"feature_adaptive_cruise": "مثبت سرعة متكيف"
+    ,"feature_infotainment_screen": "شاشة ترفيه ومعلومات"
+    ,"feature_smart_key": "مفتاح ذكي / تشغيل بدون مفتاح"
+    ,"feature_blind_spot_monitor": "مراقبة النقطة العمياء"
+    ,"feature_lane_assist": "مساعد الحفاظ على المسار"
+    ,"feature_automatic_emergency_braking": "فرملة طوارئ تلقائية"
+    ,"feature_bluetooth": "بلوتوث"
+    ,"feature_usb": "USB"
+    ,"feature_heated_seats": "مقاعد مدفأة"
+    ,"feature_climate_control": "تحكم بالمناخ"
+    ,"feature_sunroof": "فتحة سقف"
+    ,"feature_all_wheel_drive": "دفع رباعي"
+    ,"uploadCarPhotos": "ارفع صور السيارة أولاً"
+    ,"uploadCarPhotosHint": "أضف صوراً واضحة للسيارة وصورة VIN أو المستند إن توفرت، ثم اختر طريقة تعبئة التفاصيل. سيفحص التعرف الصور المحددة بحثاً عن VIN."
+    ,"fillManually": "تعبئة التفاصيل يدوياً"
+    ,"chat": "المحادثات"
+    ,"chatSubtitle": "اسأل عن التوفر والسعر والاستلام قبل الحجز."
+    ,"yourChats": "محادثاتك"
+    ,"searchChats": "البحث في المحادثات"
+    ,"openProfile": "فتح الملف الشخصي"
+    ,"viewProfile": "عرض الملف الشخصي"
+    ,"lastSeen": "آخر ظهور"
+    ,"lastSeenUnknown": "آخر ظهور غير متاح"
+    ,"noMatchingChats": "لا توجد محادثات مطابقة"
+    ,"memberSince": "عضو منذ"
+    ,"ownerProfile": "ملف المالك"
+    ,"noChats": "لا توجد محادثات بعد"
+    ,"chatHint": "افتح سيارة أو شركة واضغط على المحادثة لبدء التواصل."
+    ,"newChat": "محادثة جديدة"
+    ,"selectChat": "اختر محادثة"
+    ,"typeMessage": "اكتب رسالة..."
   },
   "analytics": {
     "title": "الزوار وحركة المرور",

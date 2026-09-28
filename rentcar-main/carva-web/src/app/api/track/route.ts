@@ -19,6 +19,25 @@ function clientIp(req: NextRequest): string {
 const BOT_RE =
   /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|embedly|quora|pinterest|vkshare|whatsapp|telegram|discord|headless|lighthouse|gptbot|claudebot|ccbot|anthropic|perplexity|python-requests|axios|curl|wget|monitor|uptime/i;
 
+const UPSTREAM = (process.env.API_UPSTREAM || process.env.NEXT_PUBLIC_API_BASE || "").replace(/\/$/, "");
+
+async function authenticatedUserId(req: NextRequest): Promise<string | null> {
+  const auth = req.headers.get("authorization");
+  if (!auth || !UPSTREAM) return null;
+  try {
+    const response = await fetch(`${UPSTREAM}/auth/refresh`, {
+      method: "POST",
+      headers: { authorization: auth, accept: "application/json" },
+      cache: "no-store",
+    });
+    if (!response.ok) return null;
+    const profile = (await response.json()) as { userId?: string };
+    return typeof profile.userId === "string" ? profile.userId : null;
+  } catch {
+    return null;
+  }
+}
+
 function classifyDevice(ua: string, bot: boolean): string {
   if (bot) return "bot";
   if (/tablet|ipad/i.test(ua)) return "tablet";
@@ -39,6 +58,7 @@ export async function POST(req: NextRequest) {
   // Apps report themselves explicitly; only sniff the UA for web visitors.
   const bot = platform === "web" && BOT_RE.test(ua);
   const ip = clientIp(req);
+  const verifiedUserId = await authenticatedUserId(req);
 
   const geo = await geolocate(ip);
 
@@ -46,9 +66,11 @@ export async function POST(req: NextRequest) {
     ts: Date.now(),
     ip,
     path: typeof body.path === "string" ? body.path.slice(0, 300) : "/",
+    durationMs: typeof body.durationMs === "number" ? Math.max(0, Math.min(Math.round(body.durationMs), 30 * 60 * 1000)) : 0,
+    event: body.event === "heartbeat" ? "heartbeat" : "view",
     platform,
-    registered: body.registered === true,
-    userId: typeof body.userId === "string" ? body.userId : null,
+    registered: Boolean(verifiedUserId),
+    userId: verifiedUserId,
     sessionId: typeof body.sessionId === "string" ? body.sessionId.slice(0, 64) : null,
     ua: ua.slice(0, 400),
     bot,

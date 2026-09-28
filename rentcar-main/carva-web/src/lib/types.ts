@@ -24,6 +24,8 @@ export type CompanyStatuses = "suspended" | "loacked" | "live";
 export type PromotionPriceType = "percentage" | "fixed";
 export type PromotionType = "car" | "company" | "plan" | "rentalPlan";
 export type SlideType = "car" | "company" | "url";
+export type KycStatus = "unverified" | "pending" | "approved" | "rejected";
+export type KycDocumentType = "national_id" | "passport" | "driving_license";
 
 /** Multi-language label used across brands, types, cities, towns, plans */
 export interface Localized {
@@ -64,6 +66,7 @@ export interface Feature {
   cylinders?: LocalizedNum;
   engCC?: LocalizedNum;
   type?: (Localized & { id?: string }) | null;
+  extras?: { amenities?: string[]; vin?: string | null } | null;
 }
 
 export interface Brand extends Localized {
@@ -140,7 +143,7 @@ export interface Company {
   tiktokLink?: string | null;
   // The admin endpoints attach the owning profile so the panel can edit on
   // their behalf (the owner id is needed when (re)creating a company plan).
-  profile?: { userId?: string; name?: string | null; email?: string | null } | null;
+  profile?: { userId?: string; name?: string | null; email?: string | null; kycStatus?: KycStatus } | null;
   cars?: number;
 }
 
@@ -217,6 +220,61 @@ export interface Profile {
   company?: Company | null;
   role?: Role | null;
   permissions?: { permission: Permission }[];
+  kycStatus?: KycStatus;
+  kycDocumentType?: KycDocumentType | null;
+  isPersonal?: boolean;
+  kycSubmittedAt?: string | null;
+  kycReviewedAt?: string | null;
+  kycRejectionReason?: string | null;
+}
+
+export interface KycApplication {
+  userId: string;
+  name: string;
+  email: string;
+  phoneNumber?: string | null;
+  image?: string | null;
+  kycStatus: KycStatus;
+  kycDocumentType?: KycDocumentType | null;
+  kycDocumentFront?: string | null;
+  kycDocumentBack?: string | null;
+  kycSelfie?: string | null;
+  kycSubmittedAt?: string | null;
+  kycReviewedAt?: string | null;
+  kycRejectionReason?: string | null;
+}
+
+export interface ChatConversation {
+  id: string;
+  carId?: string | null;
+  companyId?: string | null;
+  lastMessagePreview?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  lastMessageAt?: string | null;
+  recipient: { userId: string; name: string; image?: string | null };
+  car?: { id: string; title?: string | null } | null;
+  lastSeen?: string | null;
+}
+
+export interface ChatProfile {
+  userId: string;
+  name: string;
+  image?: string | null;
+  email?: string | null;
+  joinedAt?: string;
+  kycStatus?: KycStatus;
+  company?: Pick<Company, "id" | "name" | "image" | "coverImage" | "rate" | "review" | "desc"> | null;
+}
+
+export interface ChatMessage {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderName?: string | null;
+  body?: string | null;
+  image?: string | null;
+  createdAt: string;
 }
 
 export interface AuthResult extends Profile {
