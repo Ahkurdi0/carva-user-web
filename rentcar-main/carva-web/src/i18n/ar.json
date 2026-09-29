@@ -597,7 +597,17 @@
     "reels": "ريلز",
     "details": "التفاصيل",
     "similarCars": "سيارات مشابهة",
-    "allCities": "كل المدن"
+    "allCities": "كل المدن",
+    "notifications": "الإشعارات",
+    "notificationsOn": "مفعّلة",
+    "notificationsOff": "متوقفة",
+    "notificationsBlocked": "محظورة في المتصفح",
+    "notificationsBlockedHelp": "الإشعارات محظورة لهذا الموقع. اسمح بها من أيقونة القفل بجانب شريط العنوان ثم حاول مرة أخرى.",
+    "notificationsUnsupported": "هذا المتصفح لا يدعم الإشعارات",
+    "notifyTitle": "فعّل الإشعارات",
+    "notifySubtitle": "اعرف فوراً عندما ترد عليك شركة، مع أخبار وعروض كارڤا.",
+    "notifyEnable": "تفعيل",
+    "notifyLater": "ليس الآن"
   },
   "analytics": {
     "title": "الزوار وحركة المرور",

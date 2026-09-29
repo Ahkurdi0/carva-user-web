@@ -597,7 +597,17 @@
     "reels": "ریلەکان",
     "details": "وردەکاری",
     "similarCars": "سەیارەی هاوشێوە",
-    "allCities": "هەموو شارەکان"
+    "allCities": "هەموو شارەکان",
+    "notifications": "ئاگادارکردنەوەکان",
+    "notificationsOn": "چالاکە",
+    "notificationsOff": "ناچالاکە",
+    "notificationsBlocked": "لە وێبگەڕەکەدا ڕێگری لێکراوە",
+    "notificationsBlockedHelp": "ئاگادارکردنەوە بۆ ئەم ماڵپەڕە ڕێگری لێکراوە. لە ئایکۆنی قوفڵەکەی تەنیشت شوێنی ناونیشان ڕێگەی پێ بدە، پاشان دووبارە هەوڵ بدەرەوە.",
+    "notificationsUnsupported": "ئەم وێبگەڕە پشتگیری ئاگادارکردنەوە ناکات",
+    "notifyTitle": "ئاگادار بە",
+    "notifySubtitle": "یەکسەر بزانە کاتێک کۆمپانیایەک وەڵامت دەداتەوە، لەگەڵ هەواڵ و ئۆفەرەکانی کارڤا.",
+    "notifyEnable": "چالاکی بکە",
+    "notifyLater": "ئێستا نا"
   },
   "analytics": {
     "title": "سەردانکەران و هاتوچۆ",

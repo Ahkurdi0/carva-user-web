@@ -597,7 +597,17 @@
     "reels": "Reels",
     "details": "Details",
     "similarCars": "Similar cars",
-    "allCities": "All cities"
+    "allCities": "All cities",
+    "notifications": "Notifications",
+    "notificationsOn": "On",
+    "notificationsOff": "Off",
+    "notificationsBlocked": "Blocked in browser",
+    "notificationsBlockedHelp": "Notifications are blocked for this site. Allow them from the lock icon next to the address bar, then try again.",
+    "notificationsUnsupported": "This browser does not support notifications",
+    "notifyTitle": "Get notified",
+    "notifySubtitle": "Know right away when a company replies to you, plus Carva news and offers.",
+    "notifyEnable": "Turn on",
+    "notifyLater": "Not now"
   },
   "analytics": {
     "title": "Visitors & Traffic",

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { I18nProvider } from "@/i18n";
 import { useAuth } from "@/lib/auth-store";
 import { VisitTracker } from "./VisitTracker";
+import { NotificationPrompt } from "./NotificationPrompt";
 
 function SessionGate({ children }: { children: React.ReactNode }) {
   const hydrate = useAuth((s) => s.hydrate);
@@ -24,6 +25,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <I18nProvider>
       <SessionGate>{children}</SessionGate>
       <VisitTracker />
+      <NotificationPrompt />
     </I18nProvider>
   );
 }

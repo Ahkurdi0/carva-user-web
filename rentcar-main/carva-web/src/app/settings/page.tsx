@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
@@ -15,6 +15,7 @@ import { imageUrl } from "@/lib/api";
 import { toast } from "@/components/toast";
 import { useAsync } from "@/lib/useAsync";
 import type { Lang, Support } from "@/lib/types";
+import { disablePush, enablePush, pushConfigured, pushState, type PushState } from "@/lib/push";
 
 function Row({ icon, label, onClick, href, danger }: { icon: IconName; label: string; onClick?: () => void; href?: string; danger?: boolean }) {
   const inner = (
@@ -68,6 +69,11 @@ export default function SettingsPage() {
   const [newPwd, setNewPwd] = useState("");
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [push, setPush] = useState<PushState | null>(null);
+
+  useEffect(() => {
+    if (user && pushConfigured()) pushState().then(setPush);
+  }, [user]);
 
   if (!user) return <AppShell><AuthPrompt /></AppShell>;
 
@@ -104,6 +110,27 @@ export default function SettingsPage() {
       toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error");
     } finally { setBusy(false); }
   }
+
+  async function togglePush() {
+    if (push === "blocked") {
+      toast(t("web.notificationsBlockedHelp"), "error");
+      return;
+    }
+    if (push === "unsupported") {
+      toast(t("web.notificationsUnsupported"), "error");
+      return;
+    }
+    setPush(push === "on" ? await disablePush() : await enablePush());
+  }
+
+  const pushLabel =
+    push === "on"
+      ? t("web.notificationsOn")
+      : push === "blocked"
+        ? t("web.notificationsBlocked")
+        : push === "unsupported"
+          ? t("web.notificationsUnsupported")
+          : t("web.notificationsOff");
 
   async function doLogout() {
     await logout();
@@ -152,6 +179,7 @@ export default function SettingsPage() {
           <Row icon="status" label={t("web.changePassword")} onClick={() => setModal("password")} />
           <Row icon="receipt" label={t("web.myTrips")} href="/trips" />
           <Row icon="language" label={`${t("web.language")} · ${LANG_NAMES[lang]}`} onClick={() => setModal("lang")} />
+          {push && <Row icon="notification" label={`${t("web.notifications")} · ${pushLabel}`} onClick={togglePush} />}
           <Row icon="support" label={t("web.support")} onClick={() => setModal("support")} />
 
           <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase text-muted"> </p>
