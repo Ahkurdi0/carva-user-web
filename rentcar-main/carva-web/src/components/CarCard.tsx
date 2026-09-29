@@ -51,12 +51,12 @@ export function FavoriteButton({ car }: { car: Car }) {
       onClick={toggle}
       disabled={busy}
       aria-label="favorite"
-      className="grid h-9 w-9 place-items-center rounded-full bg-white/90 shadow-sm backdrop-blur transition hover:bg-white"
+      className="grid h-8 w-8 place-items-center rounded-full bg-white/90 shadow-sm backdrop-blur transition hover:scale-105 hover:bg-white"
     >
       <Icon
         name={fav ? "favorited" : "heart"}
-        size={18}
-        color={fav ? "#ef4444" : "#23262e"}
+        size={16}
+        color={fav ? "#B51219" : "#171214"}
       />
     </button>
   );
@@ -66,45 +66,52 @@ export function CarCard({ car, className = "" }: { car: Car; className?: string 
   const { t, tr, num } = useI18n();
   const e = useEnumLabel();
   const plan = displayPlan(car);
+  const city = car.location?.city ?? car.company?.location?.city;
 
   return (
     <Link
       href={`/car/${car.carId}`}
-      className={`group block ${className}`}
+      className={`group block overflow-hidden rounded-[18px] bg-white shadow-[var(--shadow-card)] ring-1 ring-surface-low/70 transition duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)] ${className}`}
     >
       <div className="relative">
         <ImageHolder
           src={car.images?.[0]?.image}
           alt={car.title}
-          className="aspect-[4/3] w-full shadow-[0_8px_18px_-6px_rgba(24,37,94,0.25)] transition group-hover:shadow-[0_12px_24px_-6px_rgba(24,37,94,0.35)]"
+          rounded="rounded-none"
+          className="aspect-[4/3] w-full [&_img]:transition [&_img]:duration-500 group-hover:[&_img]:scale-[1.04]"
         />
-        <div className="absolute left-3 top-3">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/35 to-transparent" />
+        <div className="absolute end-2.5 top-2.5">
           <FavoriteButton car={car} />
         </div>
         {car.featuredCars && (
-          <span className="absolute right-2 top-2 rounded-full bg-tint px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
-            {t("labels.featured")}
+          <span className="micro absolute start-2.5 top-2.5 rounded-md bg-ink/85 px-2 py-1 !text-[9px] text-white backdrop-blur">
+            VIP · {t("labels.featured")}
+          </span>
+        )}
+        {city && (
+          <span className="absolute bottom-2 start-2.5 flex items-center gap-1 text-[11px] font-medium text-white drop-shadow">
+            <Icon name="location_p" size={11} color="#fff" />
+            {tr(city)}
           </span>
         )}
       </div>
-      <div className="mt-2 px-0.5">
-        <p className="line-clamp-1 text-sm font-semibold text-on-surface">
+      <div className="px-3 pb-3 pt-2.5">
+        <p className="line-clamp-1 text-[14px] font-bold tracking-[-0.01em] text-on-surface">
           {car.title}
         </p>
-        <p className="mt-0.5 text-xs text-muted">
-          {num(car.feature?.year)}
-          {car.feature?.transmission ? ` - ${e.transmission(car.feature.transmission)}` : ""}
+        <p className="mt-0.5 line-clamp-1 text-[11.5px] text-muted">
+          {[car.brand ? tr(car.brand) : null, car.feature?.year ? num(car.feature.year) : null, car.feature?.transmission ? e.transmission(car.feature.transmission) : null]
+            .filter(Boolean)
+            .join(" · ")}
         </p>
         {plan && (
-          <p className="mt-0.5 text-xs font-medium text-on-surface">
-            <span className="text-sm font-bold text-primary">
+          <p className="mt-2 flex items-baseline gap-1">
+            <span className="num text-[15px] font-bold text-primary">
               {formatNumber(plan.price)} {e.currency(plan.currency)}
             </span>
-            <span className="text-muted"> · {e.period(plan.periodType)}</span>
+            <span className="text-[11px] text-faint">/ {e.period(plan.periodType)}</span>
           </p>
-        )}
-        {car.brand && (
-          <p className="mt-0.5 text-[11px] text-muted">{tr(car.brand)}</p>
         )}
       </div>
     </Link>
@@ -114,8 +121,8 @@ export function CarCard({ car, className = "" }: { car: Car; className?: string 
 export function CarCardSkeleton() {
   return (
     <div>
-      <SkeletonBox className="aspect-[4/3] w-full" />
-      <SkeletonBox className="mt-2 h-4 w-3/4" />
+      <SkeletonBox className="aspect-[4/3] w-full !rounded-[18px]" />
+      <SkeletonBox className="mt-2.5 h-4 w-3/4" />
       <SkeletonBox className="mt-1.5 h-3 w-1/2" />
     </div>
   );

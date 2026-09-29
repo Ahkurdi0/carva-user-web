@@ -118,8 +118,11 @@ export function SectionHeader({
   onAction?: () => void;
 }) {
   return (
-    <div className="mb-3 flex items-center justify-between px-4">
-      <h2 className="text-base font-bold text-on-surface">{title}</h2>
+    <div className="mb-3.5 flex items-end justify-between px-4">
+      <h2 className="flex items-center gap-2 text-[17px] font-extrabold tracking-[-0.02em] text-on-surface">
+        <span className="h-4 w-1 rounded-full bg-primary" aria-hidden />
+        {title}
+      </h2>
       {actionLabel &&
         (href ? (
           <Link href={href} className="text-sm font-medium text-primary">

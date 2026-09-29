@@ -90,14 +90,14 @@ function BrandSection() {
               className="flex shrink-0 flex-col items-center gap-1"
             >
               <span
-                className={`grid h-16 w-16 place-items-center overflow-hidden rounded-2xl border bg-white p-2.5 transition ${
-                  isActive ? "border-primary" : "border-surface-low"
+                className={`grid h-16 w-16 place-items-center overflow-hidden rounded-[18px] border bg-white p-2.5 shadow-[var(--shadow-card)] transition ${
+                  isActive ? "border-primary ring-2 ring-primary/15" : "border-surface-low hover:border-faint"
                 }`}
               >
                 <BrandLogo name={b.en} image={b.image} size={44} />
               </span>
               <span
-                className={`text-[11px] ${isActive ? "font-semibold text-primary" : "text-muted"}`}
+                className={`text-[11px] ${isActive ? "font-bold text-primary" : "font-medium text-muted"}`}
               >
                 {tr(b)}
               </span>
@@ -245,13 +245,31 @@ export default function HomePage() {
   return (
     <AppShell>
       <div className="px-4 pt-4">
-        <Link
-          href="/search"
-          className="flex h-12 items-center gap-3 rounded-full border border-surface-low bg-surface-lowest px-5 text-sm text-muted"
-        >
-          <Icon name="search" size={18} color="#9e9e9e" />
-          {t("inputHintText.searchCar")}
-        </Link>
+        <section className="relative overflow-hidden rounded-[22px] bg-[radial-gradient(120%_160%_at_85%_-30%,#5A090D_0%,#161112_55%)] px-5 pb-5 pt-6 text-white shadow-[var(--shadow-lift)] sm:px-8 sm:pb-7 sm:pt-9">
+          <div className="hero-texture pointer-events-none absolute inset-0" aria-hidden />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/images/carva.png"
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute -end-6 top-4 w-56 opacity-[0.07] brightness-0 invert sm:w-80"
+          />
+          <p className="micro relative text-white/55">{t("web.heroKicker")}</p>
+          <h1 className="relative mt-2 max-w-md text-[26px] font-extrabold leading-tight tracking-[-0.03em] sm:text-[34px]">
+            {t("web.heroTitle")}
+          </h1>
+          <p className="relative mt-1.5 max-w-md text-[13.5px] text-white/65">{t("web.heroSubtitle")}</p>
+          <Link
+            href="/search"
+            className="relative mt-5 flex h-[52px] max-w-xl items-center gap-3 rounded-2xl bg-white px-4 text-sm text-muted shadow-[0_14px_30px_-18px_rgba(0,0,0,0.6)] transition hover:ring-2 hover:ring-primary/30"
+          >
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary">
+              <Icon name="search" size={17} color="#fff" />
+            </span>
+            <span className="flex-1">{t("inputHintText.searchCar")}</span>
+            <Icon name="filter" size={18} color="#A29A96" />
+          </Link>
+        </section>
       </div>
 
       <CarRail

@@ -607,7 +607,10 @@
     "notifyTitle": "Get notified",
     "notifySubtitle": "Know right away when a company replies to you, plus Carva news and offers.",
     "notifyEnable": "Turn on",
-    "notifyLater": "Not now"
+    "notifyLater": "Not now",
+    "heroTitle": "What car do you need?",
+    "heroSubtitle": "Cars from trusted rental offices in Erbil, Sulaymaniyah and Duhok.",
+    "heroKicker": "Car rental · Kurdistan"
   },
   "analytics": {
     "title": "Visitors & Traffic",

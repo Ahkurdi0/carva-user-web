@@ -92,7 +92,7 @@ export function Header() {
   const user = useAuth((s) => s.user);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-surface-lowest bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-surface-low/70 bg-canvas/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
         <Link href="/" className="flex items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -107,8 +107,8 @@ export function Header() {
               href={tab.href}
               className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
                 isActive(pathname, tab.href)
-                  ? "bg-primary-container text-primary"
-                  : "text-on-surface hover:bg-surface-lowest"
+                  ? "bg-on-surface text-white"
+                  : "text-muted hover:bg-surface-lowest hover:text-on-surface"
               }`}
             >
               <span className="relative inline-flex">
@@ -193,13 +193,14 @@ export function BottomNav() {
   );
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+/** `bare` drops the footer and max-width for full-screen pages (Reels). */
+export function AppShell({ children, bare = false }: { children: React.ReactNode; bare?: boolean }) {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-canvas">
       <Header />
-      <main className="mx-auto max-w-6xl">{children}</main>
-      <Footer />
-      <div className="pb-20 md:pb-0" />
+      <main className={bare ? "" : "mx-auto max-w-6xl"}>{children}</main>
+      {!bare && <Footer />}
+      {!bare && <div className="pb-20 md:pb-0" />}
       <BottomNav />
     </div>
   );
