@@ -153,6 +153,8 @@ function ChatThread() {
   const company = header?.company ?? null;
   const whatsapp = whatsappUrl(company);
   const phone = phoneOf(company);
+  // Quick questions stay until the customer has written something (a shared car card alone doesn't count).
+  const asked = messages.some((m) => m.sender === "user" && m.type === "text");
   const carInChat = !!askedCar && messages.some((m) => m.car?.id === askedCar.id);
 
   return (
@@ -241,7 +243,7 @@ function ChatThread() {
             <ChatCarCard car={askedCar} mine />
           </div>
         )}
-        {loaded && messages.length === 0 && (
+        {loaded && !asked && (
           <div className="-mx-1 mb-2 flex gap-2 overflow-x-auto px-1 pb-1">
             {QUICK.map((k) => (
               <button

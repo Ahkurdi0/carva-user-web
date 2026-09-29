@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Icon } from "./Icon";
-import { Button } from "./ui";
+import { ActionButton } from "./ActionButton";
 import { toast } from "./toast";
 import { useI18n } from "@/i18n";
 import { useAuth } from "@/lib/auth-store";
@@ -11,7 +10,7 @@ import { chatApi } from "@/lib/chat";
 
 /**
  * Opens the chat with a company — from a car page (carId = the car's public
- * id, so the first message carries that car's card) or a company page.
+ * id: its card is sent to the company right away) or a company page.
  * Signed-out visitors are sent to log in first.
  */
 export function ChatButton({
@@ -37,7 +36,10 @@ export function ChatButton({
     setBusy(true);
     try {
       const { id } = await chatApi.start(carId ? { carId } : { companyId });
-      router.push(carId ? `/chats/${id}?car=${encodeURIComponent(carId)}` : `/chats/${id}`);
+      // From a car page, the company gets that car's card straight away;
+      // the chat still opens if sharing it fails.
+      if (carId) await chatApi.shareCar(id, carId).catch(() => {});
+      router.push(`/chats/${id}`);
     } catch (err) {
       toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error");
       setBusy(false);
@@ -45,8 +47,6 @@ export function ChatButton({
   }
 
   return (
-    <Button onClick={open} loading={busy} className={className}>
-      <Icon name="chat" size={18} color="#fff" /> {t("chat.button")}
-    </Button>
+    <ActionButton tone="chat" icon="chat" label={t("chat.button")} onClick={open} loading={busy} className={className} />
   );
 }

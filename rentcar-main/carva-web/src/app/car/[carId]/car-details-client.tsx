@@ -5,11 +5,12 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { Icon, type IconName } from "@/components/Icon";
-import { Button, Rating, PageLoading, EmptyState, useEnumLabel, SectionHeader } from "@/components/ui";
+import { Rating, PageLoading, EmptyState, useEnumLabel, SectionHeader } from "@/components/ui";
 import { FavoriteButton } from "@/components/CarCard";
 import { CarGallery } from "@/components/CarGallery";
 import { ContactButton } from "@/components/ContactButtons";
 import { ChatButton } from "@/components/ChatButton";
+import { ActionButton } from "@/components/ActionButton";
 import { Modal } from "@/components/Modal";
 import { GetAppBanner } from "@/components/GetAppBanner";
 import { ShareButton } from "@/components/ShareButton";
@@ -128,14 +129,10 @@ export function CarDetailsClient() {
               </div>
             </div>
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Button variant="secondary" onClick={whatsapp} loading={contacting} className="flex-1 bg-tint hover:bg-tint/90">
-                <Icon name="whatsapp" size={18} color="#fff" /> {t("buttons.whatsapp")}
-              </Button>
-              <ChatButton companyId={car.companyId} carId={car.carId} className="flex-1" />
-              <Button variant="secondary" onClick={() => setContactsOpen(true)}>
-                <Icon name="call" size={18} /> {t("buttons.contact")}
-              </Button>
+            <div className="mt-5 grid grid-cols-[1fr_1fr_auto] gap-2.5">
+              <ChatButton companyId={car.companyId} carId={car.carId} />
+              <ActionButton tone="whatsapp" icon="whatsapp" label={t("buttons.whatsapp")} onClick={whatsapp} loading={contacting} />
+              <ActionButton tone="neutral" icon="call" label={t("buttons.contact")} onClick={() => setContactsOpen(true)} compact />
             </div>
           </div>
         </div>

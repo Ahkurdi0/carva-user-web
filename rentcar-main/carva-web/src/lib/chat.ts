@@ -72,6 +72,8 @@ export const chatApi = {
   start: (p: { companyId?: string; carId?: string }) => api.json<{ id: string }>("/user/chat/start", p),
   messages: (id: string, opts: { before?: string; after?: string } = {}) =>
     api.json<ChatPage>("/user/chat/messages", { id, ...opts }),
+  /** Drops a card for that car (public carId) into the chat right away; [] when it's already the latest car. */
+  shareCar: (id: string, carId: string) => api.json<ChatMessage[]>("/user/chat/shareCar", { id, carId }),
   /** carId (public) adds a card for that car before the text when it is new to the chat. */
   send: (id: string, body: string, carId?: string | null) =>
     api.json<ChatMessage[]>("/user/chat/send", { id, body, carId: carId ?? null }),
