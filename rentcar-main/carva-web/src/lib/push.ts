@@ -23,6 +23,10 @@ interface OneSignalSdk {
     isPushSupported(): boolean;
     requestPermission(): Promise<void>;
     addEventListener(event: "permissionChange", cb: (granted: boolean) => void): void;
+    addEventListener(
+      event: "click",
+      cb: (e: { notification: { additionalData?: Record<string, unknown> } }) => void,
+    ): void;
   };
   User: {
     PushSubscription: {
@@ -62,6 +66,13 @@ function sdk(): Promise<OneSignalSdk | null> {
           // We show our own prompt (NotificationPrompt) instead of OneSignal's.
           notifyButton: { enable: false },
           welcomeNotification: { disable: true },
+        });
+        // Chat pushes carry { type: "chat", conversationId }: open that chat.
+        os.Notifications.addEventListener("click", (e) => {
+          const data = e.notification.additionalData;
+          if (data?.type === "chat" && typeof data.conversationId === "string") {
+            window.location.href = `/chats/${data.conversationId}`;
+          }
         });
         resolve(os);
       } catch {

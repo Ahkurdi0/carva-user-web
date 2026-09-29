@@ -13,6 +13,8 @@ export type IconName =
   | "car"
   | "car_active"
   | "car_fill"
+  | "chat"
+  | "chat_active"
   | "check"
   | "checked"
   | "clock"

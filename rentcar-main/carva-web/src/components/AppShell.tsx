@@ -2,21 +2,47 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon, type IconName } from "./Icon";
 import { Footer } from "./Footer";
 import { useI18n, LANG_NAMES } from "@/i18n";
 import { useAuth } from "@/lib/auth-store";
 import { imageUrl } from "@/lib/api";
 import type { Lang } from "@/lib/types";
+import { useChatUnread } from "@/lib/chat-store";
 
 const TABS: { href: string; key: string; icon: IconName; active: IconName }[] = [
   { href: "/", key: "bottomNavigation.cars", icon: "car", active: "car_active" },
   { href: "/reels", key: "web.reels", icon: "star", active: "star_active" },
   { href: "/favorites", key: "bottomNavigation.Favorites", icon: "heart", active: "heart_active" },
+  { href: "/chats", key: "chat.title", icon: "chat", active: "chat_active" },
   { href: "/companies", key: "bottomNavigation.companies", icon: "company", active: "company_fill" },
   { href: "/settings", key: "bottomNavigation.settings", icon: "settings", active: "settings_active" },
 ];
+
+/** Red unread count on the Chats tab; polls while signed in. */
+function ChatBadge({ href }: { href: string }) {
+  const user = useAuth((s) => s.user);
+  const count = useChatUnread((s) => s.count);
+  const refresh = useChatUnread((s) => s.refresh);
+  const reset = useChatUnread((s) => s.reset);
+  useEffect(() => {
+    if (href !== "/chats") return;
+    if (!user) {
+      reset();
+      return;
+    }
+    void refresh();
+    const timer = window.setInterval(refresh, 30000);
+    return () => window.clearInterval(timer);
+  }, [href, user, refresh, reset]);
+  if (href !== "/chats" || !user || count <= 0) return null;
+  return (
+    <span className="absolute -end-1.5 -top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-primary px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white">
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -85,7 +111,10 @@ export function Header() {
                   : "text-on-surface hover:bg-surface-lowest"
               }`}
             >
-              <Icon name={isActive(pathname, tab.href) ? tab.active : tab.icon} size={18} />
+              <span className="relative inline-flex">
+                <Icon name={isActive(pathname, tab.href) ? tab.active : tab.icon} size={18} />
+                <ChatBadge href={tab.href} />
+              </span>
               {t(tab.key)}
             </Link>
           ))}
@@ -139,11 +168,14 @@ export function BottomNav() {
               href={tab.href}
               className="flex flex-1 flex-col items-center gap-1 py-3"
             >
-              <Icon
-                name={active ? tab.active : tab.icon}
-                size={24}
-                color={active ? color : "#9e9e9e"}
-              />
+              <span className="relative inline-flex">
+                <Icon
+                  name={active ? tab.active : tab.icon}
+                  size={24}
+                  color={active ? color : "#9e9e9e"}
+                />
+                <ChatBadge href={tab.href} />
+              </span>
               <span
                 className="text-[11px]"
                 style={{
