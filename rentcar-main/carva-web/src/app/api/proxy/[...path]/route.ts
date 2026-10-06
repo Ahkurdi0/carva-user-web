@@ -33,6 +33,11 @@ async function forward(req: NextRequest, path: string[]) {
   if (lang) headers.set("devicelang", lang);
   if (ctype) headers.set("content-type", ctype);
   headers.set("accept", "application/json");
+  // Lets the backend count website visitors (dashboard: Active users) and
+  // tell them apart from the app and from this server's own fetches.
+  headers.set("x-client", "web");
+  const ua = req.headers.get("user-agent");
+  if (ua) headers.set("user-agent", ua);
 
   // Forward the real visitor IP so the backend's per-IP rate limiters and
   // logging see each user, not just the web server. (The backend must
