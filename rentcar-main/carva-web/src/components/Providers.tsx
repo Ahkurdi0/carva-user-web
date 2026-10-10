@@ -5,6 +5,7 @@ import { I18nProvider } from "@/i18n";
 import { useAuth } from "@/lib/auth-store";
 import { VisitTracker } from "./VisitTracker";
 import { NotificationPrompt } from "./NotificationPrompt";
+import { ResidencyPrompt } from "./ResidencyPrompt";
 
 function SessionGate({ children }: { children: React.ReactNode }) {
   const hydrate = useAuth((s) => s.hydrate);
@@ -26,6 +27,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <SessionGate>{children}</SessionGate>
       <VisitTracker />
       <NotificationPrompt />
+      <ResidencyPrompt />
     </I18nProvider>
   );
 }

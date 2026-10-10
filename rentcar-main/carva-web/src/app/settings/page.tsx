@@ -16,6 +16,9 @@ import { toast } from "@/components/toast";
 import { useAsync } from "@/lib/useAsync";
 import type { Lang, Support } from "@/lib/types";
 import { disablePush, enablePush, pushConfigured, pushState, type PushState } from "@/lib/push";
+import { KycBadge } from "@/components/KycBadge";
+import { ResidencyChoice, residencyComplete, type Residency } from "@/components/ResidencyChoice";
+import { countryName, flag } from "@/lib/countries";
 
 function Row({ icon, label, onClick, href, danger }: { icon: IconName; label: string; onClick?: () => void; href?: string; danger?: boolean }) {
   const inner = (
@@ -63,7 +66,8 @@ export default function SettingsPage() {
   const setUser = useAuth((s) => s.setUser);
   const logout = useAuth((s) => s.logout);
 
-  const [modal, setModal] = useState<null | "profile" | "password" | "lang" | "support">(null);
+  const [modal, setModal] = useState<null | "profile" | "password" | "lang" | "support" | "residency">(null);
+  const [residency, setResidency] = useState<Residency>({ residency: null, homeCountry: null });
   const [name, setName] = useState(user?.name ?? "");
   const [oldPwd, setOldPwd] = useState("");
   const [newPwd, setNewPwd] = useState("");
@@ -82,6 +86,19 @@ export default function SettingsPage() {
     try {
       await authApi.updateName(name.trim());
       setUser({ ...user!, name: name.trim() });
+      toast(t("alertMessages.updated"), "success");
+      setModal(null);
+    } catch (err) {
+      toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error");
+    } finally { setBusy(false); }
+  }
+
+  async function saveResidency() {
+    if (!residencyComplete(residency)) return;
+    setBusy(true);
+    try {
+      await authApi.updateResidency(residency.residency!, residency.homeCountry ?? undefined);
+      setUser({ ...user!, residency: residency.residency, homeCountry: residency.residency === "visitor" ? residency.homeCountry : null });
       toast(t("alertMessages.updated"), "success");
       setModal(null);
     } catch (err) {
@@ -170,6 +187,7 @@ export default function SettingsPage() {
           <div className="min-w-0">
             <p className="truncate text-lg font-bold">{user.name}</p>
             <p className="truncate text-sm text-muted">{user.email}</p>
+            <div className="mt-1"><KycBadge status={user.kycStatus} level={user.kycLevel} showPending small /></div>
           </div>
         </div>
 
@@ -178,6 +196,18 @@ export default function SettingsPage() {
           <Row icon="profile" label={t("web.editProfile")} onClick={() => { setName(user.name); setModal("profile"); }} />
           <Row icon="status" label={t("web.changePassword")} onClick={() => setModal("password")} />
           <Row icon="receipt" label={t("web.myTrips")} href="/trips" />
+          <Row
+            icon="checked"
+            label={`${t("v2.kycRow")}${user.kycStatus === "verified" ? " · ✓" : user.kycStatus === "pending" ? ` · ${t("v2.badgePending")}` : ""}`}
+            href="/verify"
+          />
+          <Row
+            icon="location_p"
+            label={`${t("v2.residencyRow")} · ${
+              user.residency === "iraq" ? "🇮🇶" : user.residency === "visitor" && user.homeCountry ? `${flag(user.homeCountry)} ${countryName(user.homeCountry, lang)}` : "—"
+            }`}
+            onClick={() => { setResidency({ residency: user.residency ?? null, homeCountry: user.homeCountry ?? null }); setModal("residency"); }}
+          />
           <Row icon="language" label={`${t("web.language")} · ${LANG_NAMES[lang]}`} onClick={() => setModal("lang")} />
           {push && <Row icon="notification" label={`${t("web.notifications")} · ${pushLabel}`} onClick={togglePush} />}
           <Row icon="support" label={t("web.support")} onClick={() => setModal("support")} />
@@ -225,6 +255,12 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
+      </Modal>
+
+      {/* Where you live */}
+      <Modal open={modal === "residency"} onClose={() => setModal(null)} title={t("v2.whereLive")}>
+        <ResidencyChoice value={residency} onChange={setResidency} />
+        <Button full className="mt-5" loading={busy} disabled={!residencyComplete(residency)} onClick={saveResidency}>{t("v2.save")}</Button>
       </Modal>
 
       <SupportModal open={modal === "support"} onClose={() => setModal(null)} />

@@ -43,7 +43,7 @@ export const tokens = {
 
 export function getLang(): Lang {
   if (typeof window === "undefined") return "en";
-  return (localStorage.getItem(LANG_KEY) as Lang) || "en";
+  return (localStorage.getItem(LANG_KEY) as Lang) || "ku";
 }
 
 export function setLang(lang: Lang) {

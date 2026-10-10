@@ -32,7 +32,15 @@ export const authApi = {
     phoneNumber?: string;
     countryCode?: string;
     userName?: string;
+    residency?: "iraq" | "visitor";
+    homeCountry?: string;
   }) => api.json<AuthResult>("/auth/signup", { ...data, session: {} }),
+  /** "Where do you live?" for accounts made before it was asked. */
+  updateResidency: (residency: "iraq" | "visitor", homeCountry?: string) =>
+    api.json<{ residency: string; homeCountry?: string | null }>("/auth/updateResidency", {
+      residency,
+      ...(residency === "visitor" ? { homeCountry } : {}),
+    }),
   updateName: (name: string) => api.json("/auth/updateName", { name }),
   updatePhoneNumber: (countryCode: string, phoneNumber: string) =>
     api.json("/auth/updatePhoneNumber", { countryCode, phoneNumber }),
@@ -264,4 +272,52 @@ export const analyticsApi = {
     if (!res.ok) throw new ApiError(res.status, `Failed to load analytics (${res.status})`);
     return (await res.json()) as AnalyticsSummary;
   },
+};
+
+/* ----------------------------- Advertise on CARVA ----------------------------- */
+export interface AdvertiseText {
+  ku: string;
+  ar: string;
+  en: string;
+}
+export interface AdvertisePage {
+  enabled: boolean;
+  headline?: AdvertiseText;
+  subheadline?: AdvertiseText;
+  benefits?: AdvertiseText[];
+  packages?: { name: AdvertiseText; price: string; period: AdvertiseText; features: AdvertiseText[]; highlighted: boolean }[];
+  note?: AdvertiseText;
+  contacts?: { channel: string; value: string; url: string }[];
+}
+export const advertiseApi = {
+  page: () => api.json<AdvertisePage>("/user/advertise", {}),
+  /** channel: page | whatsapp | … | join | join_whatsapp | … (dashboard counters). */
+  event: (channel: string) => api.json("/user/advertise/event", { channel }).catch(() => undefined),
+};
+
+/* ----------------------------- Identity check (KYC) ----------------------------- */
+export type KycSlot = "idFront" | "idBack" | "licenseFront" | "licenseBack" | "selfie";
+export interface KycState {
+  status: "none" | "pending" | "verified" | "rejected";
+  level: "license" | "id" | null;
+  verifiedAt: string | null;
+  rules: { docTypes: ("national_id" | "passport")[]; docCountry: string | null };
+  latest: {
+    attempt: number;
+    status: string;
+    submittedAt: string;
+    reviewedAt: string | null;
+    docType: string;
+    hasLicense: boolean;
+    rejectReasons: string[];
+    badSlots: KycSlot[];
+    rejectNote: string | null;
+  } | null;
+  reusable: KycSlot[];
+}
+export const kycApi = {
+  status: () => api.json<KycState>("/user/kyc/status", {}),
+  submit: (form: FormData) => api.form<KycState>("/user/kyc/submit", form),
+  cancel: () => api.json<KycState>("/user/kyc/cancel", {}),
+  deletePhotos: () => api.json<KycState>("/user/kyc/deletePhotos", {}),
 };

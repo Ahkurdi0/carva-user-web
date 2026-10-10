@@ -9,6 +9,7 @@ import { useI18n } from "@/i18n";
 import { authApi } from "@/lib/services";
 import { useAuth } from "@/lib/auth-store";
 import { toast } from "@/components/toast";
+import { ResidencyChoice, residencyComplete, type Residency } from "@/components/ResidencyChoice";
 
 export default function SignupPage() {
   const { t } = useI18n();
@@ -22,12 +23,17 @@ export default function SignupPage() {
     phoneNumber: "",
   });
   const [loading, setLoading] = useState(false);
+  const [residency, setResidency] = useState<Residency>({ residency: null, homeCountry: null });
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!residencyComplete(residency)) {
+      toast(t(residency.residency === "visitor" ? "v2.pickCountry" : "v2.pickResidency"), "error");
+      return;
+    }
     setLoading(true);
     try {
       const res = await authApi.signup({
@@ -36,6 +42,8 @@ export default function SignupPage() {
         password: form.password,
         countryCode: form.countryCode,
         phoneNumber: form.phoneNumber ? form.phoneNumber.replace(/^0+/, "") : undefined,
+        residency: residency.residency!,
+        homeCountry: residency.residency === "visitor" ? residency.homeCountry! : undefined,
       });
       signIn(res);
       toast(t("web.welcomeBack"), "success");
@@ -67,6 +75,11 @@ export default function SignupPage() {
         <Field label={t("inputLabels.password")}>
           <Input type="password" required minLength={8} value={form.password} onChange={set("password")} autoComplete="new-password" />
         </Field>
+        <div className="pt-1">
+          <p className="text-sm font-bold">{t("v2.whereLive")}</p>
+          <p className="mb-3 text-xs text-muted">{t("v2.whereLiveSub")}</p>
+          <ResidencyChoice value={residency} onChange={setResidency} />
+        </div>
         <Button type="submit" full loading={loading}>
           {t("buttons.createAccount")}
         </Button>

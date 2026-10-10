@@ -51,10 +51,11 @@ interface I18nValue {
 const I18nContext = createContext<I18nValue | null>(null);
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("en");
+  const [lang, setLangState] = useState<Lang>("ku");
 
   useEffect(() => {
-    const stored = (localStorage.getItem("carva.lang") as Lang) || "en";
+    // Kurdish by default, like the app.
+    const stored = (localStorage.getItem("carva.lang") as Lang) || "ku";
     setLangState(stored);
   }, []);
 

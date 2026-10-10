@@ -214,6 +214,15 @@ export interface Profile {
   phoneVerifiedAt?: string | null;
   tourist?: boolean | null;
   iraqi?: boolean | null;
+  /** 'iraq' | 'visitor'; null until answered (older accounts). */
+  residency?: "iraq" | "visitor" | null;
+  /** Visitor's country (ISO, e.g. "DE"). */
+  homeCountry?: string | null;
+  /** Identity check: null | pending | verified | rejected. */
+  kycStatus?: "pending" | "verified" | "rejected" | null;
+  /** When verified: 'license' (with driving licence) | 'id' (without). */
+  kycLevel?: "license" | "id" | null;
+  kycVerifiedAt?: string | null;
   company?: Company | null;
   role?: Role | null;
   permissions?: { permission: Permission }[];

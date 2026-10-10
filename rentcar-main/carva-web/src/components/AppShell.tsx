@@ -121,6 +121,13 @@ export function Header() {
         </nav>
 
         <div className="ms-auto flex items-center gap-2">
+          <Link
+            href="/advertise"
+            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-on-surface px-3 text-xs font-semibold text-white hover:bg-on-surface/90 sm:px-4 sm:text-sm"
+          >
+            <span aria-hidden>📣</span>
+            <span className="hidden sm:inline">{t("v2.wantAdvertise")}</span>
+          </Link>
           <LangSwitch />
           {user ? (
             <Link
