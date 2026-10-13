@@ -31,7 +31,7 @@ export default function ResetPage() {
   }
 
   return (
-    <AuthCard title={t("buttons.reset")} subtitle={t("web.resetSubtitle")}>
+    <AuthCard eyebrow="CARVA" title={t("buttons.reset")} subtitle={t("web.resetSubtitle")}>
       {step === 0 && (
         <form
           onSubmit={(e) => {

@@ -112,7 +112,7 @@ export function ReachOutCard({
   const auto = message.type === "autoReply";
   const name = company?.name ?? "";
   return (
-    <div className="mx-auto w-full max-w-sm rounded-2xl border border-surface-low bg-white p-4 shadow-sm">
+    <div className="mx-auto w-full max-w-sm rounded-2xl border border-hairline bg-white p-4 shadow-sm">
       <div className="flex items-center gap-2">
         <span className="grid h-8 w-8 place-items-center rounded-full bg-[#25D366]/15">
           <Icon name="whatsapp" size={16} color="#1DA851" />
@@ -141,7 +141,7 @@ export function ReachOutCard({
       {phone && (
         <a
           href={`tel:${phone}`}
-          className="mt-2 flex items-center justify-center gap-2 rounded-full border border-surface-low px-4 py-2 text-sm font-semibold text-on-surface transition hover:bg-surface-lowest"
+          className="mt-2 flex items-center justify-center gap-2 rounded-full border border-hairline px-4 py-2 text-sm font-semibold text-on-surface transition hover:bg-surface-lowest"
         >
           <Icon name="call" size={16} color="#B51219" /> {t("chat.call")} · <span dir="ltr">{phone}</span>
         </a>
@@ -166,7 +166,7 @@ export function MessageBubble({
       <div className="max-w-[78%]">
         <div
           className={`rounded-2xl px-3.5 py-2 text-sm shadow-sm ${
-            mine ? "rounded-ee-md bg-primary text-white" : "rounded-es-md border border-surface-low bg-white text-on-surface"
+            mine ? "rounded-ee-md bg-primary text-white" : "rounded-es-md border border-hairline bg-white text-on-surface"
           } ${message.pending ? "opacity-70" : ""}`}
         >
           <p dir="auto" className="whitespace-pre-wrap break-words">

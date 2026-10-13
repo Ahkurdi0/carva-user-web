@@ -55,7 +55,7 @@ export function MiniMap({
     <div
       ref={ref}
       style={{ height }}
-      className="w-full overflow-hidden rounded-2xl border border-surface-low"
+      className="w-full overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card)] ring-1 ring-hairline"
     />
   );
 }

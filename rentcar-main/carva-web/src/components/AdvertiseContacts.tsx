@@ -21,7 +21,7 @@ export function AdvertiseContacts({ contacts, join = false }: { contacts: NonNul
           rel="noopener noreferrer"
           onClick={() => advertiseApi.event(join ? `join_${c.channel}` : c.channel)}
           className={`flex h-14 items-center gap-3 rounded-2xl px-4 text-start font-semibold transition ${
-            c.channel === "whatsapp" ? "bg-[#1fa855] text-white hover:bg-[#1a9549]" : "border border-surface-low bg-white hover:bg-surface-lowest"
+            c.channel === "whatsapp" ? "bg-[#1fa855] text-white hover:bg-[#1a9549]" : "border border-hairline bg-white hover:bg-surface-lowest"
           }`}
         >
           <span className="text-xl">{ICON[c.channel] ?? "•"}</span>

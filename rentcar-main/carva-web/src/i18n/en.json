@@ -783,6 +783,17 @@
     "cameraDenied": "Camera access was blocked. Allow it in the browser bar, or choose a file.",
     "cameraHintSelfie": "Put your face inside the circle, in good light.",
     "cameraHintDoc": "Fit the document inside the frame with all edges showing.",
-    "chooseFile": "Choose a file"
+    "chooseFile": "Choose a file",
+    "unit_hourly": "hr",
+    "unit_daily": "day",
+    "unit_weekly": "wk",
+    "unit_monthly": "mo",
+    "contactForPrice": "Contact for price",
+    "featured": "Featured",
+    "seeAll": "See all",
+    "allCities": "All cities",
+    "selectCity": "Select city",
+    "confirm": "Confirm",
+    "cities": "cities"
   }
 }

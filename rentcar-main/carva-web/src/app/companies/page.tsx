@@ -32,12 +32,12 @@ export default function CompaniesPage() {
     <AppShell>
       <div className="px-4 py-5">
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <h1 className="text-xl font-extrabold">{t("web.companiesTitle")}</h1>
+          <h1 className="text-[28px] font-bold leading-tight">{t("web.companiesTitle")}</h1>
           {joinContacts.length > 0 && (
             <button
               type="button"
               onClick={() => { setJoinOpen(true); advertiseApi.event("join"); }}
-              className="ms-auto inline-flex h-9 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-4 text-sm font-semibold text-primary hover:bg-primary/10"
+              className="press ms-auto inline-flex h-10 items-center gap-1.5 rounded-full bg-primary-container px-4 text-[13px] font-semibold text-primary hover:bg-primary-container/70"
             >
               ＋ {t("v2.addOffice")}
             </button>

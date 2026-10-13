@@ -25,7 +25,7 @@ export function ShareButton({ title }: { title: string }) {
       onClick={share}
       aria-label={t("web.share")}
       title={t("web.share")}
-      className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-surface-low bg-surface-lowest text-on-surface transition hover:bg-surface-low"
+      className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-hairline bg-white text-on-surface transition hover:bg-surface-low"
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         <circle cx="18" cy="5" r="3" />

@@ -60,11 +60,11 @@ export function CarGallery({
   const current = images[active]?.image;
 
   const arrowBtn =
-    "absolute top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-white backdrop-blur transition hover:bg-black/65";
+    "glass-dark press absolute top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full transition hover:bg-black/50";
 
   return (
     <div>
-      <div className="relative select-none">
+      <div className="relative select-none overflow-hidden rounded-[18px] bg-[#1A1517] shadow-[var(--shadow-card)]">
         <button
           type="button"
           onClick={() => count > 0 && setLightbox(true)}
@@ -73,7 +73,7 @@ export function CarGallery({
           className="block w-full cursor-zoom-in"
           aria-label={title}
         >
-          <ImageHolder src={current} alt={title} className="aspect-[16/10] max-h-[420px] w-full" />
+          <ImageHolder src={current} alt={title} rounded="rounded-none" className="aspect-[4/3] max-h-[460px] w-full sm:aspect-[16/10]" />
         </button>
 
         {count > 1 && (
@@ -84,15 +84,15 @@ export function CarGallery({
             <button type="button" onClick={() => go(1)} aria-label="Next photo" className={`${arrowBtn} right-2`}>
               <Icon name="arrow" size={18} color="#fff" className="rotate-180" />
             </button>
-            <span className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/55 px-2 py-0.5 text-[11px] font-medium text-white">
+            <span className="num pointer-events-none absolute bottom-3 end-3 rounded-full bg-[#111]/60 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
               {active + 1} / {count}
             </span>
           </>
         )}
 
-        {favorite && <div className="absolute right-3 top-3">{favorite}</div>}
+        {favorite && <div className="absolute end-3 top-3">{favorite}</div>}
         {featuredLabel && (
-          <span className="absolute left-3 top-3 rounded-full bg-tint px-2.5 py-1 text-[10px] font-bold uppercase text-white">
+          <span className="absolute start-3 top-3 rounded-full bg-primary px-3 py-1.5 text-[12px] font-bold leading-none text-white">
             {featuredLabel}
           </span>
         )}
@@ -104,9 +104,9 @@ export function CarGallery({
             <button
               key={img.id ?? i}
               onClick={() => setActive(i)}
-              className={`shrink-0 overflow-hidden rounded-lg border-2 ${i === active ? "border-primary" : "border-transparent"}`}
+              className={`press shrink-0 overflow-hidden rounded-xl ring-2 ring-offset-2 ring-offset-canvas transition ${i === active ? "ring-primary" : "ring-transparent opacity-70 hover:opacity-100"}`}
             >
-              <ImageHolder src={img.image} className="h-16 w-20" rounded="rounded-md" />
+              <ImageHolder src={img.image} className="h-14 w-20" rounded="rounded-xl" />
             </button>
           ))}
         </div>

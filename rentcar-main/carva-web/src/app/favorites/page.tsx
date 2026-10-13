@@ -24,7 +24,7 @@ export default function FavoritesPage() {
   return (
     <AppShell>
       <div className="px-4 py-5">
-        <h1 className="mb-4 text-xl font-extrabold">{t("bottomNavigation.Favorites")}</h1>
+        <h1 className="mb-4 text-[28px] font-bold leading-tight">{t("bottomNavigation.Favorites")}</h1>
         {loading ? (
           <div className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 6 }).map((_, i) => <CarCardSkeleton key={i} />)}

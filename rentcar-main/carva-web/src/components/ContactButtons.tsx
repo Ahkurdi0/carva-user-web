@@ -38,7 +38,7 @@ export function ContactButton({ c, companyId }: { c: Contact; companyId: string 
   return (
     <button
       onClick={open}
-      className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${isWa ? "bg-tint text-white" : "border border-surface-low text-on-surface"}`}
+      className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${isWa ? "bg-tint text-white" : "border border-hairline text-on-surface"}`}
     >
       <Icon name={CONTACT_ICON[c.type] ?? "call"} size={16} color={isWa ? "#fff" : "#B51219"} />
       {c.countrCode ?? ""}{c.value}

@@ -20,7 +20,7 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
             href={s.content}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between gap-3 rounded-xl border border-surface-low p-3 transition hover:border-primary hover:bg-surface-lowest"
+            className="flex items-center justify-between gap-3 rounded-xl border border-hairline p-3 transition hover:border-primary hover:bg-surface-lowest"
           >
             <div className="min-w-0">
               <p className="font-semibold">{tr(s)}</p>

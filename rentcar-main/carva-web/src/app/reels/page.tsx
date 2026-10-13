@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { Icon } from "@/components/Icon";
@@ -175,7 +175,7 @@ function Reel({ car, active, near }: { car: Car; active: boolean; near: boolean 
           </Link>
         )}
 
-        <p className="text-[22px] font-extrabold leading-tight tracking-[-0.02em] text-white">{car.title}</p>
+        <p className="text-[22px] font-bold leading-tight tracking-[-0.02em] text-white">{car.title}</p>
 
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
           {plan && (
@@ -217,7 +217,7 @@ function Reel({ car, active, near }: { car: Car; active: boolean; near: boolean 
 export default function ReelsPage() {
   const { t } = useI18n();
   const { data, loading } = useAsync<Car[]>(() => userApi.reelsCars(), []);
-  const cars = data ?? [];
+  const cars = useMemo(() => data ?? [], [data]);
   const feed = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const lockUntil = useRef(0);
@@ -231,6 +231,17 @@ export default function ReelsPage() {
     },
     [cars.length],
   );
+
+  // Opened from Home's reels strip (?car=…): start at that car.
+  const started = useRef(false);
+  useEffect(() => {
+    const el = feed.current;
+    if (started.current || !el || cars.length === 0) return;
+    started.current = true;
+    const want = new URLSearchParams(window.location.search).get("car");
+    const i = want ? cars.findIndex((c) => c.carId === want || c.id === want) : -1;
+    if (i > 0) el.scrollTo({ top: i * el.clientHeight });
+  }, [cars]);
 
   // Track which reel is on screen.
   useEffect(() => {

@@ -68,7 +68,7 @@ export default function ChatsPage() {
   return (
     <AppShell>
       <div className="mx-auto max-w-2xl px-4 py-5">
-        <h1 className="mb-4 text-xl font-extrabold">{t("chat.title")}</h1>
+        <h1 className="mb-4 text-[28px] font-bold leading-tight">{t("chat.title")}</h1>
 
         {error && !items && (
           <div className="py-16 text-center">
@@ -97,7 +97,7 @@ export default function ChatsPage() {
         )}
 
         {items && items.length > 0 && (
-          <div className="divide-y divide-surface-lowest overflow-hidden rounded-2xl border border-surface-low">
+          <div className="divide-y divide-hairline overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card)] ring-1 ring-hairline">
             {items.map((c) => {
               const unread = c.userUnread > 0;
               return (
@@ -105,7 +105,7 @@ export default function ChatsPage() {
                   <CompanyAvatar company={c.company} size={48} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline justify-between gap-2">
-                      <p className={`truncate ${unread ? "font-extrabold" : "font-bold"}`}>{c.company.name}</p>
+                      <p className={`truncate ${unread ? "font-bold" : "font-bold"}`}>{c.company.name}</p>
                       <span className={`shrink-0 text-[11px] ${unread ? "font-bold text-primary" : "text-muted"}`}>
                         {listTime(c.lastMessageAt)}
                       </span>

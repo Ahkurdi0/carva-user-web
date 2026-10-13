@@ -47,7 +47,7 @@ export function SimilarCars({ car }: { car: Car }) {
       <SectionHeader title={t("web.similarCars")} />
       <div className="no-scrollbar flex gap-3 overflow-x-auto">
         {similar.map((c) => (
-          <div key={c.id} className="w-44 shrink-0 sm:w-52">
+          <div key={c.id} className="w-[46vw] max-w-60 shrink-0 sm:w-56">
             <CarCard car={c} />
           </div>
         ))}

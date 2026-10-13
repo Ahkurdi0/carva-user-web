@@ -783,6 +783,17 @@
     "cameraDenied": "لم يُسمح بالكاميرا. اسمح بها من شريط المتصفح أو اختر ملفاً.",
     "cameraHintSelfie": "ضع وجهك داخل الدائرة في مكان مضيء.",
     "cameraHintDoc": "ضع الوثيقة داخل الإطار وتأكد من ظهور حوافها.",
-    "chooseFile": "اختر ملفاً"
+    "chooseFile": "اختر ملفاً",
+    "unit_hourly": "ساعة",
+    "unit_daily": "يوم",
+    "unit_weekly": "أسبوع",
+    "unit_monthly": "شهر",
+    "contactForPrice": "تواصل لمعرفة السعر",
+    "featured": "مميز",
+    "seeAll": "عرض الكل",
+    "allCities": "كل المدن",
+    "selectCity": "اختر المدينة",
+    "confirm": "تأكيد",
+    "cities": "مدن"
   }
 }

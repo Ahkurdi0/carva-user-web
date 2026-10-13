@@ -6,7 +6,7 @@ import { Icon, type IconName } from "./Icon";
 import { useI18n } from "@/i18n";
 
 /* ------------------------------ Button ------------------------------ */
-type Variant = "primary" | "secondary" | "outline" | "ghost" | "danger";
+type Variant = "primary" | "secondary" | "outline" | "ghost" | "danger" | "tint" | "whatsapp";
 
 export function Button({
   children,
@@ -21,21 +21,23 @@ export function Button({
   full?: boolean;
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
   const styles: Record<Variant, string> = {
-    primary: "bg-primary text-white hover:bg-primary/90",
-    secondary: "bg-secondary text-white hover:bg-secondary/90",
-    outline: "border border-surface-low text-on-surface hover:bg-surface-lowest",
+    primary: "bg-primary text-white shadow-[var(--shadow-card)] hover:bg-primary-hover",
+    secondary: "bg-hero text-white shadow-[var(--shadow-card)] hover:bg-hero/90",
+    outline: "border border-border-strong bg-white text-on-surface hover:bg-surface-lowest",
     ghost: "text-on-surface hover:bg-surface-lowest",
-    danger: "bg-danger text-white hover:bg-danger/90",
+    danger: "bg-danger text-white shadow-[var(--shadow-card)] hover:bg-danger/90",
+    tint: "bg-primary-container text-primary hover:bg-primary-container/70",
+    whatsapp: "bg-whatsapp text-white shadow-[var(--shadow-card)] hover:brightness-95",
   };
   return (
     <button
       {...props}
       disabled={loading || props.disabled}
-      className={`inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition disabled:opacity-60 ${
+      className={`press inline-flex h-12 items-center justify-center gap-2 rounded-2xl px-6 text-[15px] font-semibold transition disabled:opacity-60 ${
         full ? "w-full" : ""
       } ${styles[variant]} ${className}`}
     >
-      {loading ? <Spinner size={18} light={variant === "primary" || variant === "secondary" || variant === "danger"} /> : children}
+      {loading ? <Spinner size={18} light={variant === "primary" || variant === "secondary" || variant === "danger" || variant === "whatsapp"} /> : children}
     </button>
   );
 }
@@ -71,8 +73,8 @@ export function Rating({
   const r = rate ?? 0;
   return (
     <span className="inline-flex items-center gap-1 text-xs font-medium text-on-surface">
-      <Icon name="star_fill" size={size} color="#f5b50a" />
-      {r > 0 ? r.toFixed(1) : "New"}
+      <Icon name="star_fill" size={size} color="#A9770F" />
+      <span className="num font-semibold">{r > 0 ? r.toFixed(1) : "–"}</span>
       {review != null && review > 0 && (
         <span className="text-muted">({review})</span>
       )}
@@ -94,10 +96,10 @@ export function Chip({
     <button
       type="button"
       onClick={onClick}
-      className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition ${
+      className={`press h-9 whitespace-nowrap rounded-xl px-3.5 text-[13px] font-semibold transition ${
         selected
-          ? "border-primary bg-primary text-white"
-          : "border-surface-low bg-white text-on-surface hover:border-primary/40"
+          ? "bg-hero text-white shadow-[var(--shadow-card)]"
+          : "bg-white text-on-surface ring-1 ring-hairline hover:ring-border-strong"
       }`}
     >
       {label}
@@ -118,18 +120,18 @@ export function SectionHeader({
   onAction?: () => void;
 }) {
   return (
-    <div className="mb-3.5 flex items-end justify-between px-4">
-      <h2 className="flex items-center gap-2 text-[17px] font-extrabold tracking-[-0.02em] text-on-surface">
-        <span className="h-4 w-1 rounded-full bg-primary" aria-hidden />
-        {title}
+    <div className="mb-3.5 flex min-h-10 items-center justify-between gap-3 px-4">
+      <h2 className="flex min-w-0 items-center gap-2 text-[17px] font-bold leading-tight text-on-surface">
+        <span className="h-4 w-[3px] shrink-0 rounded-sm bg-primary" aria-hidden />
+        <span className="truncate">{title}</span>
       </h2>
       {actionLabel &&
         (href ? (
-          <Link href={href} className="text-sm font-medium text-primary">
+          <Link href={href} className="see-all shrink-0 text-primary hover:opacity-80">
             {actionLabel}
           </Link>
         ) : (
-          <button onClick={onAction} className="text-sm font-medium text-primary">
+          <button onClick={onAction} className="see-all shrink-0 text-primary hover:opacity-80">
             {actionLabel}
           </button>
         ))}
@@ -151,7 +153,9 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
-      <Icon name={icon} size={72} color="#d4d4d4" />
+      <span className="grid h-24 w-24 place-items-center rounded-full bg-surface-lowest">
+        <Icon name={icon} size={52} color="#BCB4B0" />
+      </span>
       <p className="text-base font-semibold text-on-surface">{title}</p>
       {subtitle && <p className="max-w-sm text-sm text-muted">{subtitle}</p>}
       {children}
@@ -224,7 +228,7 @@ export function Field({
   return (
     <label className="block">
       {label && (
-        <span className="mb-1.5 block text-sm font-medium text-on-surface">
+        <span className="mb-1.5 block text-[13px] font-semibold text-on-surface">
           {label}
         </span>
       )}
@@ -241,7 +245,7 @@ export function Input({
   return (
     <input
       {...props}
-      className={`h-12 w-full rounded-xl border border-surface-low bg-surface-lowest px-4 text-sm outline-none transition focus:border-primary focus:bg-white ${className}`}
+      className={`h-12 w-full rounded-2xl border border-hairline bg-white px-4 text-[15px] outline-none transition placeholder:text-hint focus:border-primary focus:ring-4 focus:ring-primary/10 ${className}`}
     />
   );
 }
@@ -253,7 +257,7 @@ export function Textarea({
   return (
     <textarea
       {...props}
-      className={`w-full rounded-xl border border-surface-low bg-surface-lowest px-4 py-3 text-sm outline-none transition focus:border-primary focus:bg-white ${className}`}
+      className={`w-full rounded-2xl border border-hairline bg-white px-4 py-3 text-[15px] outline-none transition placeholder:text-hint focus:border-primary focus:ring-4 focus:ring-primary/10 ${className}`}
     />
   );
 }

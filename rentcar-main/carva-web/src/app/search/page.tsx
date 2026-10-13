@@ -71,7 +71,7 @@ export default function SearchPage() {
     <AppShell>
       <div className="px-4 py-5">
         <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-xl font-extrabold">{t("web.filters")}</h1>
+          <h1 className="text-[28px] font-bold leading-tight">{t("web.filters")}</h1>
           <button onClick={() => setShowFilters((s) => !s)} className="flex items-center gap-2 text-sm font-medium text-primary md:hidden">
             <Icon name="filter" size={16} color="#B51219" /> {t("web.filters")}
           </button>
@@ -120,21 +120,21 @@ export default function SearchPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <Field label={`${t("labels.year")} (min)`}>
-                <input value={minYear} onChange={(e) => setMinYear(e.target.value)} inputMode="numeric" className="h-11 w-full rounded-xl border border-surface-low bg-surface-lowest px-3 text-sm outline-none focus:border-primary" />
+                <input value={minYear} onChange={(e) => setMinYear(e.target.value)} inputMode="numeric" className="h-11 w-full rounded-2xl border border-hairline bg-white px-3 text-sm outline-none focus:border-primary" />
               </Field>
               <Field label={`${t("labels.year")} (max)`}>
-                <input value={maxYear} onChange={(e) => setMaxYear(e.target.value)} inputMode="numeric" className="h-11 w-full rounded-xl border border-surface-low bg-surface-lowest px-3 text-sm outline-none focus:border-primary" />
+                <input value={maxYear} onChange={(e) => setMaxYear(e.target.value)} inputMode="numeric" className="h-11 w-full rounded-2xl border border-hairline bg-white px-3 text-sm outline-none focus:border-primary" />
               </Field>
             </div>
 
             <div>
               <p className="mb-2 text-sm font-semibold">{t("labels.city")}</p>
-              <select value={cityId ?? ""} onChange={(e) => { setCityId(e.target.value || undefined); setTownId(undefined); }} className="h-11 w-full rounded-xl border border-surface-low bg-surface-lowest px-3 text-sm">
+              <select value={cityId ?? ""} onChange={(e) => { setCityId(e.target.value || undefined); setTownId(undefined); }} className="h-11 w-full rounded-2xl border border-hairline bg-white px-3 text-sm">
                 <option value="">{t("labels.selectACity")}</option>
                 {filters?.cities.map((c) => <option key={c.id} value={c.id}>{tr(c)}</option>)}
               </select>
               {towns.length > 0 && (
-                <select value={townId ?? ""} onChange={(e) => setTownId(e.target.value || undefined)} className="mt-2 h-11 w-full rounded-xl border border-surface-low bg-surface-lowest px-3 text-sm">
+                <select value={townId ?? ""} onChange={(e) => setTownId(e.target.value || undefined)} className="mt-2 h-11 w-full rounded-2xl border border-hairline bg-white px-3 text-sm">
                   <option value="">{t("labels.selectTownOptional")}</option>
                   {towns.map((tw) => <option key={tw.id} value={tw.id}>{tr(tw)}</option>)}
                 </select>

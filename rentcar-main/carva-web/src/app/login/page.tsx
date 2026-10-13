@@ -44,7 +44,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthCard title={t("screens.signIn")} subtitle={t("web.signInSubtitle")}>
+    <AuthCard eyebrow="CARVA" title={t("screens.signIn")} subtitle={t("web.signInSubtitle")}>
       {locked && (
         <div className="mb-5 rounded-2xl bg-red-50 p-4 ring-1 ring-red-200">
           <p className="text-sm leading-relaxed text-red-800">{locked}</p>

@@ -178,7 +178,7 @@ function ChatThread() {
           </a>
         )}
         {phone && (
-          <a href={`tel:${phone}`} className="grid h-10 w-10 place-items-center rounded-full border border-surface-low" aria-label={t("chat.call")}>
+          <a href={`tel:${phone}`} className="grid h-10 w-10 place-items-center rounded-full border border-hairline" aria-label={t("chat.call")}>
             <Icon name="call" size={18} color="#B51219" />
           </a>
         )}
@@ -276,7 +276,7 @@ function ChatThread() {
             rows={1}
             maxLength={2000}
             placeholder={t("chat.inputHint")}
-            className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl border border-surface-low bg-surface-lowest px-4 py-2.5 text-sm outline-none focus:border-primary"
+            className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl border border-hairline bg-white px-4 py-2.5 text-sm outline-none focus:border-primary"
           />
           <button
             type="submit"

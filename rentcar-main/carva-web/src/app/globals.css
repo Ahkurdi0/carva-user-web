@@ -53,14 +53,29 @@
   --color-success: #1F7A46;
   --color-danger: #ef4444;
   --color-ink: #161112;
+  /* App (CarvaColors) extras */
+  --color-hero: #161112;
+  --color-micro: #8A817C;
+  --color-hint: #A29A96;
+  --color-hairline: rgba(23, 18, 20, 0.07);
+  --color-border-strong: rgba(23, 18, 20, 0.12);
+  --color-rating: #A9770F;
+  --color-available: #1F7A46;
+  --color-whatsapp: #22B053;
+  --color-verified: #2F7DE1;
+  --color-featured-border: #E0656B;
+  --color-featured-tint: #FFF6F6;
 
   /* One family for every language, like the app. */
   --font-sans: "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "IBM Plex Sans Arabic", ui-monospace, monospace;
 
-  --radius-card: 18px;
+  --radius-card: 16px;
+  --radius-hero: 18px;
   --shadow-card: 0 14px 30px -22px rgba(20, 14, 16, 0.5);
   --shadow-lift: 0 22px 40px -24px rgba(20, 14, 16, 0.55);
+  --shadow-glass: 0 18px 40px -16px rgba(20, 14, 16, 0.45);
+  --shadow-featured: 0 16px 30px -20px rgba(181, 18, 25, 0.55);
 }
 
 :root {
@@ -170,4 +185,54 @@ body {
   .glass-bar {
     background: rgba(255, 255, 255, 0.86);
   }
+}
+
+/* Glass in two tones, like the app: light over light content, dark over
+   photos and video. */
+.glass {
+  background: rgba(255, 255, 255, 0.42);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+.glass-dark {
+  background: rgba(30, 24, 26, 0.38);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: rgba(255, 255, 255, 0.86); }
+  .glass-dark { background: rgba(30, 24, 26, 0.8); }
+}
+
+/* Small uppercase mono label in brand colour (section "See all"). */
+.see-all {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+[dir="rtl"] .see-all {
+  font-family: var(--font-sans);
+  font-size: 12px;
+}
+
+/* Spring press, like the app's SpringPressable. */
+.press {
+  transition: transform 0.18s cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+/* Sheets slide up like the app's. */
+@keyframes sheet-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sheet-fade { from { opacity: 0; } to { opacity: 1; } }
+.sheet-up { animation: sheet-up 0.28s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.sheet-fade { animation: sheet-fade 0.2s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .sheet-up, .sheet-fade, .press { animation: none; transition: none; }
 }

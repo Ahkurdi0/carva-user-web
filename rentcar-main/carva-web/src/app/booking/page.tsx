@@ -119,11 +119,11 @@ function BookingInner() {
 
   return (
     <div className="px-4 py-5">
-      <h1 className="mb-4 text-xl font-extrabold">{t("screens.Booking")}</h1>
+      <h1 className="mb-4 text-[28px] font-bold leading-tight">{t("screens.Booking")}</h1>
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-5">
           {/* Car summary */}
-          <div className="flex items-center gap-3 rounded-2xl border border-surface-low p-3">
+          <div className="flex items-center gap-3 rounded-2xl bg-white shadow-[var(--shadow-card)] ring-1 ring-hairline p-3">
             <ImageHolder src={car.images?.[0]?.image} className="h-16 w-24" rounded="rounded-xl" />
             <div>
               <p className="font-semibold">{car.title}</p>
@@ -173,7 +173,7 @@ function BookingInner() {
         </div>
 
         {/* Summary card */}
-        <div className="h-fit rounded-2xl border border-surface-low p-5 lg:sticky lg:top-20">
+        <div className="h-fit rounded-2xl bg-white shadow-[var(--shadow-card)] ring-1 ring-hairline p-5 lg:sticky lg:top-20">
           <p className="text-sm font-bold">{t("web.total")}</p>
           <div className="mt-3 space-y-2 text-sm">
             <Row label={e.period(selected.periodType)} value={`${formatNumber(selected.price)} ${e.currency(selected.currency)}`} />

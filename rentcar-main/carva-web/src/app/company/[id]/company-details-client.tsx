@@ -44,7 +44,7 @@ function CompanyCars({ companyId }: { companyId: string }) {
 
   if (loading && cars.length === 0)
     return (
-      <div className="grid grid-cols-2 gap-x-3 gap-y-5 px-4 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 px-4 sm:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => <CarCardSkeleton key={i} />)}
       </div>
     );
@@ -52,12 +52,12 @@ function CompanyCars({ companyId }: { companyId: string }) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-x-3 gap-y-5 px-4 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 px-4 sm:grid-cols-3 lg:grid-cols-4">
         {cars.map((car) => <CarCard key={car.id} car={car} />)}
       </div>
       {!done && (
         <div className="flex justify-center py-5">
-          <button onClick={() => load(cursor)} disabled={loading} className="text-sm font-medium text-primary">
+          <button onClick={() => load(cursor)} disabled={loading} className="press h-10 rounded-full border border-hairline bg-white px-5 text-[13px] font-semibold text-primary">
             {loading ? <Spinner size={16} /> : t("web.loadMore")}
           </button>
         </div>
@@ -80,18 +80,20 @@ export function CompanyDetailsClient() {
     <AppShell>
       <div className="px-4 pt-4">
         {/* Framed cover image */}
-        <div className="relative h-36 w-full overflow-hidden rounded-2xl bg-primary-container sm:h-52">
+        <div className="relative h-40 w-full overflow-hidden rounded-[18px] bg-hero shadow-[var(--shadow-card)] sm:h-56">
           {company.coverImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={imageUrl(company.coverImage)} alt="" className="h-full w-full object-cover" />
           ) : (
-            <div className="h-full w-full bg-gradient-to-br from-primary/15 to-primary-container" />
+            <div className="relative h-full w-full bg-[radial-gradient(120%_160%_at_85%_-30%,#5A090D_0%,#161112_58%)]">
+              <div className="hero-texture absolute inset-0" aria-hidden />
+            </div>
           )}
         </div>
 
         {/* Logo overlaps the cover; name/rating sit below on white (readable) */}
         <div className="flex items-end gap-4">
-          <span className="-mt-10 z-10 h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-4 border-white bg-primary-container shadow-md">
+          <span className="z-10 -mt-10 ms-3 h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 border-canvas bg-white shadow-[var(--shadow-card)]">
             {company.image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={imageUrl(company.image)} alt="" className="h-full w-full object-cover" />
@@ -100,15 +102,16 @@ export function CompanyDetailsClient() {
             )}
           </span>
           <div className="min-w-0 flex-1 pt-3">
-            <h1 className="truncate text-xl font-extrabold text-on-surface">{company.name}</h1>
+            <h1 className="truncate text-[22px] font-bold text-on-surface"><bdi>{company.name}</bdi></h1>
             <div className="mt-1 flex items-center gap-3">
               <Rating rate={company.rate} review={company.review} />
-              {company.cars != null && <span className="text-sm text-muted">· {company.cars} {t("labels.cars")}</span>}
+              {company.cars != null && <span className="text-sm text-muted">· <span className="num">{company.cars}</span> {t("labels.cars")}</span>}
             </div>
             {(loc?.city || loc?.town) && (
-              <p className="mt-1 truncate text-sm text-muted">
-                {[tr(loc.city), tr(loc.town)].filter(Boolean).join("، ")}
-              </p>
+              <span className="mt-1.5 inline-flex max-w-full items-center gap-1 rounded-full bg-primary-container px-2.5 py-1 text-[12.5px] font-semibold text-primary">
+                <Icon name="location_p" size={13} color="#B51219" />
+                <span className="truncate">{[tr(loc.city), tr(loc.town)].filter(Boolean).join("، ")}</span>
+              </span>
             )}
           </div>
           <div className="pt-3">
@@ -116,7 +119,7 @@ export function CompanyDetailsClient() {
           </div>
         </div>
 
-        {company.desc && <p className="mt-4 text-sm text-on-surface/80">{company.desc}</p>}
+        {company.desc && <p className="mt-4 whitespace-pre-line text-[14.5px] leading-relaxed text-on-surface/80">{company.desc}</p>}
 
         <div className="mt-4 flex flex-wrap gap-2">
           <ChatButton companyId={company.id} />
@@ -128,12 +131,12 @@ export function CompanyDetailsClient() {
         {loc?.lat && loc?.long && (
           <div className="mt-5">
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="text-base font-bold text-on-surface">{t("labels.location")}</h3>
+              <h2 className="text-[17px] font-bold text-on-surface">{t("labels.location")}</h2>
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${loc.lat},${loc.long}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1 text-sm font-medium text-primary"
+                className="see-all flex items-center gap-1 text-primary"
               >
                 <Icon name="location_p" size={14} color="#B51219" /> {t("buttons.map")}
               </a>
@@ -142,7 +145,7 @@ export function CompanyDetailsClient() {
               href={`https://www.google.com/maps/search/?api=1&query=${loc.lat},${loc.long}`}
               target="_blank"
               rel="noreferrer"
-              className="block"
+              className="block overflow-hidden rounded-[18px] shadow-[var(--shadow-card)]"
             >
               <MiniMap lat={loc.lat} long={loc.long} height={200} />
             </a>

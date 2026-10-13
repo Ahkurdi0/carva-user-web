@@ -33,7 +33,7 @@ export function CountryList({
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder={t("v2.searchCountry")}
-        className="h-11 w-full rounded-xl border border-surface-low bg-white px-4 text-sm outline-none focus:border-primary"
+        className="h-11 w-full rounded-xl border border-hairline bg-white px-4 text-sm outline-none focus:border-primary"
       />
       <div className="mt-1 overflow-y-auto" style={{ maxHeight: height }}>
         {list.length === 0 && <p className="py-6 text-center text-sm text-muted">{t("v2.noCountry")}</p>}

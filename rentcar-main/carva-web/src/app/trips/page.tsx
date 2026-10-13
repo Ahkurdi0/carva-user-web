@@ -43,7 +43,7 @@ function BookCard({ book, onCancel }: { book: Book; onCancel: (id: string) => vo
   }
 
   return (
-    <div className="rounded-2xl border border-surface-low p-3">
+    <div className="rounded-2xl bg-white shadow-[var(--shadow-card)] ring-1 ring-hairline p-3">
       <div className="flex gap-3">
         {car && (
           <Link href={`/car/${car.carId}`}>
@@ -85,7 +85,7 @@ export default function TripsPage() {
   return (
     <AppShell>
       <div className="px-4 py-5">
-        <h1 className="mb-4 text-xl font-extrabold">{t("web.myTrips")}</h1>
+        <h1 className="mb-4 text-[28px] font-bold leading-tight">{t("web.myTrips")}</h1>
         {loading ? (
           <PageLoading />
         ) : data && data.length > 0 ? (

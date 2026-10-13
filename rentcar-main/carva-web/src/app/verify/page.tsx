@@ -142,7 +142,7 @@ export default function VerifyPage() {
           {state.status === "verified" && (
             <Card>
               <p className="text-4xl">✅</p>
-              <h1 className="mt-3 text-xl font-extrabold">{t("v2.verifiedTitle")}</h1>
+              <h1 className="mt-3 text-xl font-bold">{t("v2.verifiedTitle")}</h1>
               <div className="mt-3">
                 <KycBadge status="verified" level={state.level} />
               </div>
@@ -168,7 +168,7 @@ export default function VerifyPage() {
           {state.status === "pending" && (
             <Card>
               <p className="text-4xl">⏳</p>
-              <h1 className="mt-3 text-xl font-extrabold">{t("v2.pendingTitle")}</h1>
+              <h1 className="mt-3 text-xl font-bold">{t("v2.pendingTitle")}</h1>
               <p className="mt-2 text-sm text-muted">{t("v2.pendingSub")}</p>
               <Button
                 variant="outline"
@@ -191,7 +191,7 @@ export default function VerifyPage() {
           {state.status === "rejected" && state.latest && (
             <Card>
               <p className="text-4xl">⚠️</p>
-              <h1 className="mt-3 text-xl font-extrabold">{t("v2.rejectedTitle")}</h1>
+              <h1 className="mt-3 text-xl font-bold">{t("v2.rejectedTitle")}</h1>
               <ul className="mt-4 space-y-1.5 text-start text-sm">
                 {state.latest.rejectReasons.map((r) => (
                   <li key={r} className="rounded-xl bg-red-50 px-3 py-2 text-red-700">• {t(`v2.rr_${r}`)}</li>
@@ -207,7 +207,7 @@ export default function VerifyPage() {
           {state.status === "none" && (
             <Card>
               <p className="text-4xl">🪪</p>
-              <h1 className="mt-3 text-xl font-extrabold">{t("v2.kycIntroTitle")}</h1>
+              <h1 className="mt-3 text-xl font-bold">{t("v2.kycIntroTitle")}</h1>
               <p className="mt-2 text-sm text-muted">{t("v2.kycIntro")}</p>
               <div className="mt-4 rounded-2xl bg-surface-lowest p-4 text-start text-sm">🔒 {t("v2.kycPrivacy")}</div>
               <Button full className="mt-6" onClick={() => startFlow(false)}>
@@ -315,7 +315,7 @@ export default function VerifyPage() {
             {(["idFront", "idBack", "licenseFront", "licenseBack", "selfie"] as KycSlot[])
               .filter((s) => shots[s] && (needed.includes(s) || (s === "licenseBack" && hasLicense)))
               .map((s) => (
-                <div key={s} className="flex items-center gap-3 rounded-2xl border border-surface-low p-2">
+                <div key={s} className="flex items-center gap-3 rounded-2xl bg-white shadow-[var(--shadow-card)] ring-1 ring-hairline p-2">
                   <Thumb shot={shots[s]!} />
                   <span className="flex-1 text-sm font-medium">
                     {
@@ -359,7 +359,7 @@ export default function VerifyPage() {
 }
 
 function Card({ children }: { children: React.ReactNode }) {
-  return <div className="rounded-3xl border border-surface-low bg-white p-6 text-center shadow-sm">{children}</div>;
+  return <div className="rounded-3xl bg-white p-6 text-center shadow-[var(--shadow-card)] ring-1 ring-hairline">{children}</div>;
 }
 
 function ChoiceButton({ selected, onClick, title }: { selected: boolean; onClick: () => void; title: string }) {
@@ -396,7 +396,7 @@ function CountryPick({ label, value, onChange, codes }: { label: string; value: 
           }}
         />
       ) : (
-        <button type="button" onClick={() => setOpen(true)} className="flex h-12 w-full items-center gap-3 rounded-xl border border-surface-low px-4 text-start">
+        <button type="button" onClick={() => setOpen(true)} className="flex h-12 w-full items-center gap-3 rounded-xl border border-hairline px-4 text-start">
           <span className="text-xl">{value ? flag(value) : "🏳️"}</span>
           <span className="flex-1 text-sm font-medium">{value ? countryName(value, lang) : "—"}</span>
           <span className="text-xs text-primary">✎</span>

@@ -56,7 +56,7 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthCard title={t("screens.sigUp")} subtitle={t("web.signUpSubtitle")}>
+    <AuthCard eyebrow="CARVA" title={t("screens.sigUp")} subtitle={t("web.signUpSubtitle")}>
       <form onSubmit={submit} className="space-y-4">
         <Field label={t("inputLabels.name")}>
           <Input required value={form.name} onChange={set("name")} placeholder={t("inputHintText.yourName")} />

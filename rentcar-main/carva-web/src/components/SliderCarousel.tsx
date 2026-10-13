@@ -27,8 +27,8 @@ export function SliderCarousel({ slides }: { slides: Slider[] }) {
   }
 
   return (
-    <section className="px-4 py-3">
-      <div className="relative aspect-[16/7] w-full overflow-hidden rounded-2xl bg-surface-low sm:aspect-[16/5]">
+    <section className="px-4 pb-1 pt-5">
+      <div className="relative aspect-[16/7] w-full overflow-hidden rounded-[18px] bg-surface-low shadow-[var(--shadow-card)] sm:aspect-[16/5]">
         {valid.map((slide, i) => (
           <button
             key={slide.id}
@@ -46,19 +46,18 @@ export function SliderCarousel({ slides }: { slides: Slider[] }) {
             )}
           </button>
         ))}
-        {valid.length > 1 && (
-          <div className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
-            {valid.map((_, i) => (
-              <span
-                key={i}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === idx ? "w-5 bg-white" : "w-1.5 bg-white/60"
-                }`}
-              />
-            ))}
-          </div>
-        )}
+
       </div>
+      {valid.length > 1 && (
+        <div className="mt-3 flex justify-center gap-1.5">
+          {valid.map((_, i) => (
+            <span
+              key={i}
+              className={`h-[7px] rounded-full transition-all duration-300 ${i === idx ? "w-5 bg-primary" : "w-[7px] bg-hairline"}`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

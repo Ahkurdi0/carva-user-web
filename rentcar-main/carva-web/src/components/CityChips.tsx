@@ -21,7 +21,7 @@ export function CityChips({
   if (cities.length === 0) return null;
 
   const base =
-    "flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition";
+    "press flex h-9 shrink-0 items-center gap-1.5 rounded-xl px-3.5 text-[13px] font-semibold transition";
 
   return (
     <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 py-1">
@@ -29,8 +29,8 @@ export function CityChips({
         onClick={() => onSelect(null)}
         className={`${base} ${
           selectedId === null
-            ? "border-primary bg-primary text-white shadow-sm"
-            : "border-surface-low bg-white text-on-surface hover:border-primary/40"
+            ? "bg-hero text-white shadow-[var(--shadow-card)]"
+            : "bg-white text-on-surface ring-1 ring-hairline hover:ring-border-strong"
         }`}
       >
         {t("web.allCities")}
@@ -43,14 +43,14 @@ export function CityChips({
             onClick={() => onSelect(active ? null : city)}
             className={`${base} ${
               active
-                ? "border-primary bg-primary text-white shadow-sm"
-                : "border-surface-low bg-white text-on-surface hover:border-primary/40"
+                ? "bg-hero text-white shadow-[var(--shadow-card)]"
+                : "bg-white text-on-surface ring-1 ring-hairline hover:ring-border-strong"
             }`}
           >
             <Icon
               name="location_p"
               size={14}
-              color={active ? "#ffffff" : "#B51219"}
+              color={active ? "#FF4D55" : "#B51219"}
             />
             {tr(city)}
           </button>

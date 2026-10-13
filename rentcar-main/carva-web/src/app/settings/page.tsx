@@ -22,10 +22,10 @@ import { countryName, flag } from "@/lib/countries";
 
 function Row({ icon, label, onClick, href, danger }: { icon: IconName; label: string; onClick?: () => void; href?: string; danger?: boolean }) {
   const inner = (
-    <div className={`flex items-center gap-3 rounded-xl px-3 py-3.5 transition hover:bg-surface-lowest ${danger ? "text-danger" : "text-on-surface"}`}>
-      <Icon name={icon} size={20} color={danger ? "#ef4444" : "#B51219"} />
-      <span className="flex-1 text-sm font-medium">{label}</span>
-      <Icon name="arrow_tail" size={16} color="#c4c4c4" />
+    <div className={`press flex min-h-[56px] items-center gap-3 rounded-[18px] border border-hairline bg-white px-4 py-3 transition hover:bg-surface-lowest ${danger ? "text-primary" : "text-on-surface"}`}>
+      <Icon name={icon} size={20} color={danger ? "#B51219" : "#6E6866"} />
+      <span className="flex-1 text-[15px] font-medium">{label}</span>
+      <Icon name="arrow_tail" size={16} color="#BCB4B0" className="ltr:rotate-180" />
     </div>
   );
   if (href) return <Link href={href}>{inner}</Link>;
@@ -148,10 +148,10 @@ export default function SettingsPage() {
   return (
     <AppShell>
       <div className="px-4 py-5">
-        <h1 className="mb-4 text-xl font-extrabold">{t("web.settingsTitle")}</h1>
+        <h1 className="mb-4 text-[28px] font-bold leading-tight">{t("web.settingsTitle")}</h1>
 
         {/* Profile header */}
-        <div className="flex items-center gap-4 rounded-2xl border border-surface-low p-4">
+        <div className="flex items-center gap-4 rounded-[18px] bg-white p-4 shadow-[var(--shadow-card)] ring-1 ring-hairline">
           <button onClick={() => fileRef.current?.click()} className="relative h-16 w-16 overflow-hidden rounded-full bg-primary-container">
             {user.image ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -192,8 +192,8 @@ export default function SettingsPage() {
           </Link>
         )}
 
-        <div className="mt-6 space-y-1">
-          <p className="px-3 pb-1 text-xs font-semibold uppercase text-muted">{t("web.account")}</p>
+        <div className="mt-6 space-y-2">
+          <p className="micro px-1 pb-1 text-micro">{t("web.account")}</p>
           <Row icon="profile" label={t("web.editProfile")} onClick={() => { setName(user.name); setModal("profile"); }} />
           <Row icon="status" label={t("web.changePassword")} onClick={() => setModal("password")} />
           <Row icon="receipt" label={t("web.myTrips")} href="/trips" />
@@ -215,7 +215,7 @@ export default function SettingsPage() {
           <Row icon="receipt" label={t("v2.terms")} href="/terms" />
           <Row icon="status" label={t("v2.privacy")} href="/privacy" />
 
-          <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase text-muted"> </p>
+          <div className="h-3" aria-hidden />
           <Row icon="logout" label={t("web.logout")} onClick={doLogout} danger />
           <Row icon="trash" label={t("web.deleteAccount")} onClick={() => setModal("delete")} danger />
         </div>

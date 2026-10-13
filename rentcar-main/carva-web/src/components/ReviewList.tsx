@@ -57,7 +57,7 @@ export function ReviewList({ kind, id }: { kind: "car" | "company"; id: string }
   return (
     <div className="space-y-3 px-4">
       {reviews.map((r) => (
-        <div key={r.id} className="rounded-2xl border border-surface-low p-4">
+        <div key={r.id} className="rounded-2xl bg-white shadow-[var(--shadow-card)] ring-1 ring-hairline p-4">
           <div className="flex items-center gap-3">
             <span className="h-9 w-9 overflow-hidden rounded-full bg-primary-container">
               {r.profile?.image ? (

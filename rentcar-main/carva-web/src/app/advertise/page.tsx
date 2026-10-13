@@ -37,7 +37,7 @@ export default function AdvertisePageView() {
                 className="pointer-events-none absolute -bottom-4 -end-6 w-64 opacity-[0.07] lg:w-[460px]"
               />
               <p className="relative text-3xl lg:text-4xl">📣</p>
-              <h1 className="relative mt-3 max-w-2xl text-2xl font-extrabold leading-snug lg:text-4xl">{pick(data.headline)}</h1>
+              <h1 className="relative mt-3 max-w-2xl text-2xl font-bold leading-snug lg:text-4xl">{pick(data.headline)}</h1>
               {pick(data.subheadline) && <p className="relative mt-2 max-w-xl text-sm text-white/75 lg:text-base">{pick(data.subheadline)}</p>}
             </section>
 
@@ -46,7 +46,7 @@ export default function AdvertisePageView() {
                 {(data.benefits?.length ?? 0) > 0 && (
                   <ul className="grid gap-2 sm:grid-cols-2 lg:gap-3">
                     {data.benefits!.map((b, i) => (
-                      <li key={i} className="flex items-start gap-3 rounded-2xl border border-surface-low bg-white p-4 text-sm">
+                      <li key={i} className="flex items-start gap-3 rounded-2xl bg-white p-4 text-sm shadow-[var(--shadow-card)] ring-1 ring-hairline">
                         <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">✓</span>
                         {pick(b)}
                       </li>
@@ -59,10 +59,10 @@ export default function AdvertisePageView() {
                     {data.packages!.map((p, i) => (
                       <div
                         key={i}
-                        className={`rounded-3xl bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)] lg:p-6 ${p.highlighted ? "border-2 border-primary shadow-[var(--shadow-card)]" : "border border-surface-low"}`}
+                        className={`rounded-3xl bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)] lg:p-6 ${p.highlighted ? "border-2 border-primary shadow-[var(--shadow-card)]" : "border border-hairline"}`}
                       >
                         <p className="font-bold">{pick(p.name)}</p>
-                        <p className="mt-1 text-2xl font-extrabold text-primary lg:text-3xl">
+                        <p className="mt-1 text-2xl font-bold text-primary lg:text-3xl">
                           <span className="num" dir="ltr">{p.price}</span>{" "}
                           <span className="text-sm font-medium text-muted">/ {pick(p.period)}</span>
                         </p>

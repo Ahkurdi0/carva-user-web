@@ -24,12 +24,12 @@ export function CarRail({
       <div className="no-scrollbar flex gap-3 overflow-x-auto px-4 pb-1">
         {loading
           ? Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="w-44 shrink-0 sm:w-52">
+              <div key={i} className="w-[46vw] max-w-60 shrink-0 sm:w-56">
                 <CarCardSkeleton />
               </div>
             ))
           : cars!.map((car) => (
-              <div key={car.id} className="w-44 shrink-0 sm:w-52">
+              <div key={car.id} className="w-[46vw] max-w-60 shrink-0 sm:w-56">
                 <CarCard car={car} />
               </div>
             ))}
