@@ -5,7 +5,7 @@ import { AppShell } from "@/components/AppShell";
 import { AuthPrompt } from "@/components/AuthPrompt";
 import { KycBadge } from "@/components/KycBadge";
 import { CountryList } from "@/components/ResidencyChoice";
-import { Button, PageLoading } from "@/components/ui";
+import { Button, ErrorState, PageLoading } from "@/components/ui";
 import { toast } from "@/components/toast";
 import { CameraCapture, wantsWebcam } from "@/components/CameraCapture";
 import { useI18n } from "@/i18n";
@@ -39,6 +39,8 @@ export default function VerifyPage() {
   const [licenseCountry, setLicenseCountry] = useState<string | null>("IQ");
   const [shots, setShots] = useState<Partial<Record<KycSlot, Shot>>>({});
   const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
+  const [tries, setTries] = useState(0);
 
   const apply = (s: KycState) => {
     setState(s);
@@ -58,12 +60,14 @@ export default function VerifyPage() {
       .status()
       .then((s) => {
         setState(s);
-        setDocCountry(s.rules.docCountry);
+        setFailed(null);
+        setDocCountry(s.rules?.docCountry ?? null);
       })
-      .catch((e) => toast(e instanceof Error ? e.message : t("alertMessages.someThingWentWrong"), "error"))
+      // Never an endless spinner: say what went wrong, with Try again.
+      .catch((e) => setFailed(e instanceof Error ? e.message : t("alertMessages.someThingWentWrong")))
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.userId]);
+  }, [user?.userId, tries]);
 
   // Release photo previews.
   useEffect(
@@ -76,9 +80,21 @@ export default function VerifyPage() {
   );
 
   if (!user) return <AppShell><AuthPrompt /></AppShell>;
+  if (failed && !state)
+    return (
+      <AppShell>
+        <ErrorState
+          message={failed}
+          onRetry={() => {
+            setLoading(true);
+            setTries((n) => n + 1);
+          }}
+        />
+      </AppShell>
+    );
   if (loading || !state) return <AppShell><PageLoading /></AppShell>;
 
-  const visitor = state.rules.docTypes.includes("passport");
+  const visitor = (state.rules?.docTypes ?? []).includes("passport");
   const reusable = new Set(state.status === "rejected" ? state.reusable : []);
 
   const startFlow = (again: boolean) => {
@@ -204,7 +220,7 @@ export default function VerifyPage() {
             </Card>
           )}
 
-          {state.status === "none" && (
+          {(state.status === "none" || (state.status === "rejected" && !state.latest)) && (
             <Card>
               <p className="text-4xl">🪪</p>
               <h1 className="mt-3 text-xl font-bold">{t("v2.kycIntroTitle")}</h1>

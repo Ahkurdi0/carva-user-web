@@ -794,6 +794,7 @@
     "allCities": "All cities",
     "selectCity": "Select city",
     "confirm": "Confirm",
-    "cities": "cities"
+    "cities": "cities",
+    "verifyShort": "Verify"
   }
 }

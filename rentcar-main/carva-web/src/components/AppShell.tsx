@@ -10,13 +10,13 @@ import { useAuth } from "@/lib/auth-store";
 import { imageUrl } from "@/lib/api";
 import type { Lang } from "@/lib/types";
 import { useChatUnread } from "@/lib/chat-store";
+import { VerifyPill } from "./VerifyEntry";
 
 const TABS: { href: string; key: string; icon: IconName; active: IconName }[] = [
   { href: "/", key: "bottomNavigation.cars", icon: "car", active: "car_active" },
-  { href: "/reels", key: "web.reels", icon: "star", active: "star_active" },
-  { href: "/favorites", key: "bottomNavigation.Favorites", icon: "heart", active: "heart_active" },
-  { href: "/chats", key: "chat.title", icon: "chat", active: "chat_active" },
   { href: "/companies", key: "bottomNavigation.companies", icon: "company", active: "company_fill" },
+  { href: "/chats", key: "chat.title", icon: "chat", active: "chat_active" },
+  { href: "/favorites", key: "bottomNavigation.Favorites", icon: "heart", active: "heart_active" },
   { href: "/settings", key: "bottomNavigation.settings", icon: "settings", active: "settings_active" },
 ];
 
@@ -166,7 +166,8 @@ export function Header() {
           })}
         </nav>
 
-        <div className="ms-auto flex items-center gap-2">
+        <div className="ms-auto flex items-center gap-1.5 sm:gap-2">
+          <VerifyPill />
           <AdvertisePill />
           <Link
             href="/search"

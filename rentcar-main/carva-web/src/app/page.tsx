@@ -10,6 +10,7 @@ import { FeaturedHero } from "@/components/home/FeaturedHero";
 import { ReelsStrip } from "@/components/home/ReelsStrip";
 import { CitySelect, cityKey } from "@/components/home/CitySelect";
 import { useAsync } from "@/lib/useAsync";
+import { VerifyBanner } from "@/components/VerifyEntry";
 import { userApi } from "@/lib/services";
 import { imageUrl } from "@/lib/api";
 import { uniqueById } from "@/lib/format";
@@ -101,13 +102,14 @@ function AllCars({ featured, ads, cities }: { featured: Car[]; ads: Slider[]; ci
       const inCity = cars.filter((c) => picked.has(cityKey(c.location?.city?.en ?? c.company?.location?.city?.en)));
       list = arrange(inCity.filter(isFeatured), inCity.filter((c) => !isFeatured(c)));
     }
-    // An ad after every 7 cars, like the app.
+    // An ad after every 12 cars: 12 fills whole rows at 2, 3 and 4 per row,
+    // so an ad never leaves a gap (a lone car) in the row above it.
     const out: ({ car: Car; featured: boolean; key: string } | { ad: Slider; key: string })[] = [];
     const usable = ads.filter((a) => a.image);
     list.forEach((car, i) => {
       out.push({ car, featured: isFeatured(car), key: `${car.id}-${i}` });
-      if (usable.length && (i + 1) % 7 === 0) {
-        const ad = usable[Math.floor(i / 7) % usable.length];
+      if (usable.length && (i + 1) % 12 === 0) {
+        const ad = usable[Math.floor(i / 12) % usable.length];
         out.push({ ad, key: `ad-${ad.id}-${i}` });
       }
     });
@@ -145,6 +147,7 @@ export default function HomePage() {
     <AppShell>
       {/* The page's title for search engines; the app shows no big heading here. */}
       <h1 className="sr-only">{t("web.heroTitle")}</h1>
+      <VerifyBanner />
 
       <section className="pt-3">
         <SectionHeader title={t("labels.featured")} actionLabel={t("v2.seeAll")} href="/reels" />
