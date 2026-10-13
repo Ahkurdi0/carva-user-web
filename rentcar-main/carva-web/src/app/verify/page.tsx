@@ -59,9 +59,15 @@ export default function VerifyPage() {
     kycApi
       .status()
       .then((s) => {
-        setState(s);
+        // Anything but the identity-check answer (an HTML page, an empty
+        // body…) is shown as an error with what came back, never a blank page.
+        if (!s || typeof s !== "object" || typeof (s as KycState).status !== "string") {
+          const got = typeof s === "string" ? s : JSON.stringify(s ?? null);
+          throw new Error(`${t("alertMessages.someThingWentWrong")} (kyc/status: ${String(got).replace(/\s+/g, " ").slice(0, 140)})`);
+        }
+        setState({ ...s, rules: s.rules ?? { docTypes: ["national_id"], docCountry: "IQ" }, reusable: s.reusable ?? [] });
         setFailed(null);
-        setDocCountry(s.rules?.docCountry ?? null);
+        setDocCountry(s.rules?.docCountry ?? "IQ");
       })
       // Never an endless spinner: say what went wrong, with Try again.
       .catch((e) => setFailed(e instanceof Error ? e.message : t("alertMessages.someThingWentWrong")))
@@ -80,7 +86,7 @@ export default function VerifyPage() {
   );
 
   if (!user) return <AppShell><AuthPrompt /></AppShell>;
-  if (failed && !state)
+  if (failed)
     return (
       <AppShell>
         <ErrorState
@@ -220,7 +226,7 @@ export default function VerifyPage() {
             </Card>
           )}
 
-          {(state.status === "none" || (state.status === "rejected" && !state.latest)) && (
+          {!(state.status === "verified" || state.status === "pending" || (state.status === "rejected" && state.latest)) && (
             <Card>
               <p className="text-4xl">🪪</p>
               <h1 className="mt-3 text-xl font-bold">{t("v2.kycIntroTitle")}</h1>
