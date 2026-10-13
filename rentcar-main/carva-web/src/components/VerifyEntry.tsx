@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useI18n } from "@/i18n";
 import { useAuth } from "@/lib/auth-store";
 
@@ -46,15 +46,16 @@ export function VerifyPill() {
 export function VerifyBanner() {
   const { t } = useI18n();
   const user = useAuth((s) => s.user);
-  const [hidden, setHidden] = useState(true);
-
-  useEffect(() => {
+  // Read once in the browser. The card only shows once the user is known
+  // (after hydration), so server and first client render both show nothing.
+  const [hidden, setHidden] = useState(() => {
+    if (typeof window === "undefined") return true;
     try {
-      setHidden(localStorage.getItem(DISMISS_KEY) === "1");
+      return localStorage.getItem(DISMISS_KEY) === "1";
     } catch {
-      setHidden(false);
+      return false;
     }
-  }, []);
+  });
 
   if (!user || hidden || user.kycStatus === "verified" || user.kycStatus === "pending") return null;
   return (
