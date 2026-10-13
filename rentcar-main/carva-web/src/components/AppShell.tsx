@@ -123,10 +123,12 @@ export function Header() {
         <div className="ms-auto flex items-center gap-2">
           <Link
             href="/advertise"
-            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-on-surface px-3 text-xs font-semibold text-white hover:bg-on-surface/90 sm:px-4 sm:text-sm"
+            title={t("v2.wantAdvertise")}
+            className="inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-on-surface px-3 text-sm font-semibold text-white hover:bg-on-surface/90 sm:px-4 md:px-3 xl:px-4"
           >
             <span aria-hidden>📣</span>
-            <span className="hidden sm:inline">{t("v2.wantAdvertise")}</span>
+            {/* Phones/tablets: text fits; laptops: the tabs need the room until xl. */}
+            <span className="hidden sm:inline md:hidden xl:inline">{t("v2.wantAdvertise")}</span>
           </Link>
           <LangSwitch />
           {user ? (
@@ -160,35 +162,41 @@ export function Header() {
   );
 }
 
+/**
+ * Floating glass tab bar, like the app: a frosted capsule 14px from the
+ * sides, a lighter glass pill slides behind the current tab, the current
+ * icon is red.
+ */
 export function BottomNav() {
   const { t } = useI18n();
   const pathname = usePathname();
+  const current = TABS.findIndex((tab) => isActive(pathname, tab.href));
+  const slot = `((100% - 10px) / ${TABS.length})`;
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-surface-lowest bg-white shadow-[0_-2px_12px_rgba(0,0,0,0.06)] md:hidden">
-      <div className="mx-auto flex max-w-md items-stretch">
+    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-3.5 pb-[max(14px,env(safe-area-inset-bottom))] md:hidden">
+      <div className="glass-bar pointer-events-auto relative mx-auto flex h-[68px] max-w-md items-stretch rounded-[34px] p-[5px]">
+        {current >= 0 && (
+          <span
+            aria-hidden
+            className="glass-pill absolute bottom-[5px] top-[5px] rounded-[29px] transition-[inset-inline-start] duration-500 ease-[cubic-bezier(.34,1.4,.5,1)]"
+            style={{ width: `calc${slot}`, insetInlineStart: `calc(5px + ${current} * ${slot})` }}
+          />
+        )}
         {TABS.map((tab, i) => {
-          const active = isActive(pathname, tab.href);
-          const color = i % 2 === 0 ? "#B51219" : "#23262e";
+          const active = i === current;
           return (
             <Link
               key={tab.href}
               href={tab.href}
-              className="flex flex-1 flex-col items-center gap-1 py-3"
+              aria-current={active ? "page" : undefined}
+              className="relative flex flex-1 flex-col items-center justify-center gap-[3px] active:scale-95 transition-transform"
             >
               <span className="relative inline-flex">
-                <Icon
-                  name={active ? tab.active : tab.icon}
-                  size={24}
-                  color={active ? color : "#9e9e9e"}
-                />
+                <Icon name={active ? tab.active : tab.icon} size={22} color={active ? "#B51219" : "#4A4446"} />
                 <ChatBadge href={tab.href} />
               </span>
               <span
-                className="text-[11px]"
-                style={{
-                  color: active ? "#23262e" : "#9e9e9e",
-                  fontWeight: active ? 600 : 400,
-                }}
+                className={`max-w-full truncate px-0.5 text-[10px] leading-tight ${active ? "font-bold text-on-surface" : "font-semibold text-[#4A4446]"}`}
               >
                 {t(tab.key)}
               </span>
@@ -207,7 +215,7 @@ export function AppShell({ children, bare = false }: { children: React.ReactNode
       <Header />
       <main className={bare ? "" : "mx-auto max-w-6xl"}>{children}</main>
       {!bare && <Footer />}
-      {!bare && <div className="pb-20 md:pb-0" />}
+      {!bare && <div className="pb-24 md:pb-0" />}
       <BottomNav />
     </div>
   );

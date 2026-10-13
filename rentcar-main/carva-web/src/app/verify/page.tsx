@@ -7,6 +7,7 @@ import { KycBadge } from "@/components/KycBadge";
 import { CountryList } from "@/components/ResidencyChoice";
 import { Button, PageLoading } from "@/components/ui";
 import { toast } from "@/components/toast";
+import { CameraCapture, wantsWebcam } from "@/components/CameraCapture";
 import { useI18n } from "@/i18n";
 import { useAuth } from "@/lib/auth-store";
 import { allCountries, countryName, flag, visitorCountries } from "@/lib/countries";
@@ -435,6 +436,9 @@ function PhotoSlot({
   const [busy, setBusy] = useState(false);
   const [warn, setWarn] = useState<{ shot: PhotoResult; msg: string } | null>(null);
   const [tries, setTries] = useState(0);
+  const [cam, setCam] = useState(false);
+  // Computers: live webcam (or a file); phones: their own camera via the input.
+  const open = () => (wantsWebcam() ? setCam(true) : ref.current?.click());
 
   const problem = useMemo(
     () => (r: PhotoResult) => (!r.sharp ? t("v2.tooBlurry") : r.dark ? t("v2.tooDark") : r.glare ? t("v2.glare") : null),
@@ -442,6 +446,7 @@ function PhotoSlot({
   );
 
   async function pick(file: File) {
+    setCam(false);
     setBusy(true);
     try {
       const r = await preparePhoto(file, !!isDoc);
@@ -469,7 +474,7 @@ function PhotoSlot({
           <span className={`grid h-14 w-20 place-items-center rounded-xl bg-surface-lowest text-2xl ${selfie ? "" : ""}`}>{selfie ? "🤳" : "🪪"}</span>
         )}
         <span className="flex-1 text-sm font-semibold">{label}</span>
-        <Button type="button" variant={shot ? "outline" : "primary"} className="h-10 px-4" loading={busy} onClick={() => ref.current?.click()}>
+        <Button type="button" variant={shot ? "outline" : "primary"} className="h-10 px-4" loading={busy} onClick={open}>
           {shot ? t("v2.retake") : t("v2.takePhoto")}
         </Button>
         <input
@@ -481,11 +486,22 @@ function PhotoSlot({
           onChange={(e) => e.target.files?.[0] && pick(e.target.files[0])}
         />
       </div>
+      <CameraCapture
+        open={cam}
+        selfie={selfie}
+        title={label}
+        onShot={pick}
+        onPickFile={() => {
+          setCam(false);
+          ref.current?.click();
+        }}
+        onClose={() => setCam(false)}
+      />
       {warn && (
         <div className="mt-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
           {warn.msg}
           <div className="mt-2 flex gap-2">
-            <Button type="button" className="h-9 px-4" onClick={() => ref.current?.click()}>
+            <Button type="button" className="h-9 px-4" onClick={open}>
               {t("v2.retake")}
             </Button>
             {tries >= 2 && (

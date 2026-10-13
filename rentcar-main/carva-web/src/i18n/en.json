@@ -777,6 +777,12 @@
     "updatedOn": "Last updated: {date}",
     "verifyCardBtn": "Verify now",
     "verifyPendingCard": "Your request arrived — it will be checked soon.",
-    "verifyFooter": "Verify your account"
+    "verifyFooter": "Verify your account",
+    "getAppTitle": "Get the CARVA app",
+    "getAppSub": "Find a car, chat with rental offices and catch every deal — all in one app.",
+    "cameraDenied": "Camera access was blocked. Allow it in the browser bar, or choose a file.",
+    "cameraHintSelfie": "Put your face inside the circle, in good light.",
+    "cameraHintDoc": "Fit the document inside the frame with all edges showing.",
+    "chooseFile": "Choose a file"
   }
 }

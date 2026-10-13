@@ -143,7 +143,7 @@ function Reel({ car, active, near }: { car: Car; active: boolean; near: boolean 
       )}
 
       {/* Side actions */}
-      <div className="absolute bottom-48 end-3 z-10 flex flex-col items-center gap-3">
+      <div className="absolute bottom-60 end-3 z-10 md:bottom-48 flex flex-col items-center gap-3">
         <FavoriteButton car={car} />
         <button
           onClick={share}
@@ -155,7 +155,7 @@ function Reel({ car, active, near }: { car: Car; active: boolean; near: boolean 
       </div>
 
       {/* Bottom info */}
-      <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-4 pb-4 pt-24">
+      <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-4 pb-[100px] pt-24 md:pb-4">
         {car.company && (
           <Link
             href={`/company/${car.companyId}`}
@@ -281,7 +281,7 @@ export default function ReelsPage() {
       ) : cars.length === 0 ? (
         <EmptyState icon="no_cars" title={t("empty.noData")} />
       ) : (
-        <div className="relative flex h-[calc(100dvh-4rem-4.75rem)] justify-center bg-ink md:h-[calc(100dvh-4rem)] md:py-5">
+        <div className="relative flex h-[calc(100dvh-4rem)] justify-center bg-ink md:h-[calc(100dvh-4rem)] md:py-5">
           <div
             ref={feed}
             className="h-full w-full max-w-[440px] snap-y snap-mandatory overflow-y-auto overscroll-contain md:rounded-[28px] md:shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] md:ring-1 md:ring-white/10 [&::-webkit-scrollbar]:hidden"

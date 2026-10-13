@@ -73,7 +73,7 @@ export function NotificationPrompt() {
   }
 
   return (
-    <div className="fixed inset-x-3 bottom-20 z-50 mx-auto max-w-md rounded-2xl border border-surface-low bg-white p-4 shadow-xl md:bottom-6">
+    <div className="fixed inset-x-3 bottom-[100px] z-50 mx-auto max-w-md rounded-2xl border border-surface-low bg-white p-4 shadow-xl md:bottom-6">
       <div className="flex items-start gap-3">
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary-container">
           <Icon name="notification" size={20} color="#B51219" />

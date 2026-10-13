@@ -43,12 +43,12 @@ function StoreButton({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="flex items-center gap-3 rounded-xl bg-secondary px-4 py-2.5 text-white transition hover:opacity-90"
+      className="flex h-[52px] items-center gap-3 rounded-2xl bg-white/10 px-4 text-white ring-1 ring-white/20 backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/15"
     >
       <span className="grid h-6 w-6 place-items-center">{mark}</span>
       <span className="text-start leading-tight">
         <span className="block text-[10px] opacity-80">{top}</span>
-        <span className="block text-sm font-semibold">{bottom}</span>
+        <span className="block text-[15px] font-semibold" dir="ltr">{bottom}</span>
       </span>
     </a>
   );
@@ -58,20 +58,40 @@ function StoreButton({
 export function Footer() {
   const { t } = useI18n();
   return (
-    <footer className="mt-10 border-t border-surface-lowest bg-surface-lowest">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 px-4 py-10 sm:flex-row sm:justify-between">
-        <div className="text-center sm:text-start">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/images/carva.png" alt="Carva" className="mx-auto h-9 w-auto sm:mx-0" />
-          <p className="mt-2 max-w-sm text-sm text-muted">{t("web.getTheApp")}</p>
+    <footer className="mt-10 bg-surface-lowest">
+      {/* Get the app: CARVA's dark showroom look, same as the home hero */}
+      <section className="relative overflow-hidden bg-[radial-gradient(120%_160%_at_85%_-30%,#5A090D_0%,#161112_58%)] text-white">
+        <div className="hero-texture pointer-events-none absolute inset-0" aria-hidden />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/assets/images/carva-logo-white.png"
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute -bottom-6 -start-8 w-72 opacity-[0.06] sm:w-[420px]"
+        />
+        <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-10 text-center md:flex-row md:justify-between md:py-12 md:text-start">
+          <div className="flex flex-col items-center gap-4 md:flex-row">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/images/app-icon.png"
+              alt="CARVA"
+              className="h-16 w-16 rounded-[18px] shadow-[0_14px_30px_-12px_rgba(0,0,0,0.7)] ring-1 ring-white/15"
+            />
+            <div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/assets/images/carva-logo-white.png" alt="CARVA" className="mx-auto h-6 w-auto md:mx-0" />
+              <p className="mt-2 text-xl font-bold sm:text-2xl">{t("v2.getAppTitle")}</p>
+              <p className="mt-1 max-w-md text-sm text-white/65">{t("v2.getAppSub")}</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <StoreButton href={APP_STORE_URL} top={t("web.downloadOn")} bottom="App Store" mark={<AppleMark />} />
+            <StoreButton href={PLAY_STORE_URL} top={t("web.getItOn")} bottom="Google Play" mark={<PlayMark />} />
+          </div>
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <StoreButton href={APP_STORE_URL} top={t("web.downloadOn")} bottom="App Store" mark={<AppleMark />} />
-          <StoreButton href={PLAY_STORE_URL} top={t("web.getItOn")} bottom="Google Play" mark={<PlayMark />} />
-        </div>
-      </div>
+      </section>
       {/* Internal links: homepage ↔ sections ↔ city-filtered listings */}
-      <div className="mx-auto grid max-w-6xl gap-8 border-t border-surface-low px-4 py-8 sm:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:grid-cols-3">
         <div>
           <p className="mb-3 text-sm font-bold text-on-surface">Carva</p>
           <ul className="space-y-2 text-sm text-muted">
