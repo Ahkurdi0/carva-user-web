@@ -80,6 +80,12 @@ export default function SignupPage() {
           <p className="mb-3 text-xs text-muted">{t("v2.whereLiveSub")}</p>
           <ResidencyChoice value={residency} onChange={setResidency} />
         </div>
+        <p className="text-center text-xs leading-relaxed text-muted">
+          {t("v2.agreePrefix")}
+          <Link href="/terms" target="_blank" className="font-semibold text-primary">{t("v2.terms")}</Link>
+          {t("v2.and")}
+          <Link href="/privacy" target="_blank" className="font-semibold text-primary">{t("v2.privacy")}</Link>
+        </p>
         <Button type="submit" full loading={loading}>
           {t("buttons.createAccount")}
         </Button>

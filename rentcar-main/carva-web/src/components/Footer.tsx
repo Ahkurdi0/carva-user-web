@@ -79,6 +79,7 @@ export function Footer() {
             <li><Link className="hover:text-primary" href="/reels">{t("web.reels")}</Link></li>
             <li><Link className="hover:text-primary" href="/companies">{t("bottomNavigation.companies")}</Link></li>
             <li><Link className="hover:text-primary" href="/search">{t("inputHintText.searchCar")}</Link></li>
+            <li><Link className="hover:text-primary" href="/verify">{t("v2.verifyFooter")}</Link></li>
           </ul>
         </div>
         <div>
@@ -97,8 +98,10 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-surface-low py-4 text-center text-xs text-muted">
-        © {new Date().getFullYear()} {SITE.name} — Car rental in Iraq &amp; Kurdistan
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-surface-low py-4 text-center text-xs text-muted">
+        <span>© {new Date().getFullYear()} {SITE.name} — Car rental in Iraq &amp; Kurdistan</span>
+        <Link className="hover:text-primary" href="/terms">{t("v2.terms")}</Link>
+        <Link className="hover:text-primary" href="/privacy">{t("v2.privacy")}</Link>
       </div>
     </footer>
   );

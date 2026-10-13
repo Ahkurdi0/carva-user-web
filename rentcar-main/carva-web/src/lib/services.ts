@@ -2,6 +2,7 @@
 import { api, ApiError, tokens } from "./api";
 import type { AnalyticsSummary } from "./analytics-store";
 import type {
+  LegalPage,
   AuthResult,
   Book,
   BookStatus,
@@ -315,6 +316,10 @@ export interface KycState {
   } | null;
   reusable: KycSlot[];
 }
+export const legalApi = {
+  page: (page: "terms" | "privacy") => api.json<LegalPage>("/user/legal", { page }, { noAuth: true }),
+};
+
 export const kycApi = {
   status: () => api.json<KycState>("/user/kyc/status", {}),
   submit: (form: FormData) => api.form<KycState>("/user/kyc/submit", form),

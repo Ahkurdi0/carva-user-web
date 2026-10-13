@@ -13,10 +13,10 @@ import { useI18n, LANG_NAMES } from "@/i18n";
 import { authApi, userApi } from "@/lib/services";
 import { imageUrl } from "@/lib/api";
 import { toast } from "@/components/toast";
-import { useAsync } from "@/lib/useAsync";
-import type { Lang, Support } from "@/lib/types";
+import type { Lang } from "@/lib/types";
 import { disablePush, enablePush, pushConfigured, pushState, type PushState } from "@/lib/push";
 import { KycBadge } from "@/components/KycBadge";
+import { SupportModal } from "@/components/SupportModal";
 import { ResidencyChoice, residencyComplete, type Residency } from "@/components/ResidencyChoice";
 import { countryName, flag } from "@/lib/countries";
 
@@ -32,32 +32,6 @@ function Row({ icon, label, onClick, href, danger }: { icon: IconName; label: st
   return <button onClick={onClick} className="w-full text-start">{inner}</button>;
 }
 
-function SupportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { t, tr } = useI18n();
-  const { data } = useAsync<Support[]>(() => userApi.supports(), [], open);
-  return (
-    <Modal open={open} onClose={onClose} title={t("buttons.supprt")}>
-      <div className="space-y-2">
-        {(data ?? []).map((s) => (
-          <a
-            key={s.id}
-            href={s.content}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between gap-3 rounded-xl border border-surface-low p-3 transition hover:border-primary hover:bg-surface-lowest"
-          >
-            <div className="min-w-0">
-              <p className="font-semibold">{tr(s)}</p>
-              <p className="mt-1 truncate text-sm text-muted">{s.content}</p>
-            </div>
-            <Icon name="arrow" size={18} color="#9e9e9e" />
-          </a>
-        ))}
-        {data && data.length === 0 && <p className="text-sm text-muted">{t("empty.noData")}</p>}
-      </div>
-    </Modal>
-  );
-}
 
 export default function SettingsPage() {
   const { t, lang, setLang } = useI18n();
@@ -65,8 +39,9 @@ export default function SettingsPage() {
   const user = useAuth((s) => s.user);
   const setUser = useAuth((s) => s.setUser);
   const logout = useAuth((s) => s.logout);
+  const signOutLocal = useAuth((s) => s.signOutLocal);
 
-  const [modal, setModal] = useState<null | "profile" | "password" | "lang" | "support" | "residency">(null);
+  const [modal, setModal] = useState<null | "profile" | "password" | "lang" | "support" | "residency" | "delete">(null);
   const [residency, setResidency] = useState<Residency>({ residency: null, homeCountry: null });
   const [name, setName] = useState(user?.name ?? "");
   const [oldPwd, setOldPwd] = useState("");
@@ -154,14 +129,19 @@ export default function SettingsPage() {
     router.push("/");
   }
 
+  // Same as the app: a clear warning first; once deleted, signed out here at once.
   async function deleteAccount() {
-    if (!confirm(t("alertMessages.deleteAccount"))) return;
+    setBusy(true);
     try {
       await authApi.deleteAccount();
-      setUser(null);
-      router.push("/");
+      signOutLocal();
+      setModal(null);
+      toast(t("v2.accountDeleted"), "success");
+      router.replace("/");
     } catch (err) {
       toast(err instanceof Error ? err.message : t("alertMessages.someThingWentWrong"), "error");
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -191,6 +171,27 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Identity check: easy to find until it's done */}
+        {user.kycStatus !== "verified" && (
+          <Link
+            href="/verify"
+            className="mt-4 flex items-center gap-3 rounded-2xl bg-sky-500/10 p-4 ring-1 ring-sky-500/20 transition hover:bg-sky-500/15"
+          >
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-sky-600 text-white">
+              <Icon name="checked" size={20} color="#fff" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-bold text-on-surface">{t("v2.kycIntroTitle")}</span>
+              <span className="mt-0.5 block text-sm text-muted">
+                {user.kycStatus === "pending" ? t("v2.verifyPendingCard") : t("v2.kycIntro")}
+              </span>
+            </span>
+            {user.kycStatus !== "pending" && (
+              <span className="hidden shrink-0 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white sm:inline">{t("v2.verifyCardBtn")}</span>
+            )}
+          </Link>
+        )}
+
         <div className="mt-6 space-y-1">
           <p className="px-3 pb-1 text-xs font-semibold uppercase text-muted">{t("web.account")}</p>
           <Row icon="profile" label={t("web.editProfile")} onClick={() => { setName(user.name); setModal("profile"); }} />
@@ -211,10 +212,12 @@ export default function SettingsPage() {
           <Row icon="language" label={`${t("web.language")} · ${LANG_NAMES[lang]}`} onClick={() => setModal("lang")} />
           {push && <Row icon="notification" label={`${t("web.notifications")} · ${pushLabel}`} onClick={togglePush} />}
           <Row icon="support" label={t("web.support")} onClick={() => setModal("support")} />
+          <Row icon="receipt" label={t("v2.terms")} href="/terms" />
+          <Row icon="status" label={t("v2.privacy")} href="/privacy" />
 
           <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase text-muted"> </p>
           <Row icon="logout" label={t("web.logout")} onClick={doLogout} danger />
-          <Row icon="trash" label={t("web.deleteAccount")} onClick={deleteAccount} danger />
+          <Row icon="trash" label={t("web.deleteAccount")} onClick={() => setModal("delete")} danger />
         </div>
       </div>
 
@@ -264,6 +267,20 @@ export default function SettingsPage() {
       </Modal>
 
       <SupportModal open={modal === "support"} onClose={() => setModal(null)} />
+
+      {/* Delete account: clear warning */}
+      <Modal open={modal === "delete"} onClose={() => !busy && setModal(null)} title={t("web.deleteAccount")}>
+        <div className="flex flex-col items-center text-center">
+          <span className="grid h-14 w-14 place-items-center rounded-full bg-red-50">
+            <Icon name="trash" size={26} color="#ef4444" />
+          </span>
+          <p className="mt-4 text-[15px] leading-relaxed text-on-surface">{t("v2.deleteConfirm")}</p>
+        </div>
+        <div className="mt-6 grid grid-cols-2 gap-2.5">
+          <Button variant="outline" full disabled={busy} onClick={() => setModal(null)}>{t("v2.cancel")}</Button>
+          <Button variant="danger" full loading={busy} onClick={deleteAccount}>{t("v2.deleteBtn")}</Button>
+        </div>
+      </Modal>
     </AppShell>
   );
 }

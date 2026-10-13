@@ -757,6 +757,26 @@
     "rr_selfie_mismatch": "The selfie doesn't match the ID",
     "rr_wrong_document": "Wrong document",
     "rr_not_original": "Photo of a screen or a copy",
-    "rr_other": "Other reason"
+    "rr_other": "Other reason",
+    "rented": "Rented",
+    "availableFrom": "Available from {date}",
+    "rentedNow": "This car is rented right now",
+    "popularPill": "Popular · {n} views this week",
+    "deleteConfirm": "This account will be deleted. You can only get it back by contacting CARVA support.",
+    "deleteBtn": "Delete",
+    "cancel": "Cancel",
+    "accountDeleted": "Your account was deleted",
+    "contactSupport": "Contact support",
+    "terms": "Terms & conditions",
+    "privacy": "Privacy policy",
+    "legalSoon": "Coming soon",
+    "legalError": "Couldn't load it. Try again.",
+    "retry": "Try again",
+    "agreePrefix": "By creating an account, you agree to the ",
+    "and": " and ",
+    "updatedOn": "Last updated: {date}",
+    "verifyCardBtn": "Verify now",
+    "verifyPendingCard": "Your request arrived — it will be checked soon.",
+    "verifyFooter": "Verify your account"
   }
 }

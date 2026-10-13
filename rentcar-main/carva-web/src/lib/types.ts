@@ -169,6 +169,19 @@ export interface Car {
   isFavorite?: boolean | null;
   featuredCars?: { id: string } | null;
   promotion?: { startDate: string; endDate: string }[] | null;
+  /** Marked rented by the company; rented now while rentedUntil is unset or ahead. */
+  rentedAt?: string | null;
+  rentedUntil?: string | null;
+  /** Server's own "rented now" flag (lists and details). */
+  rented?: boolean;
+  /** Car details only. */
+  popularity?: { views7d: number; popular: boolean } | null;
+}
+
+export interface LegalPage {
+  page: "terms" | "privacy";
+  body: { ku: string; ar: string; en: string };
+  updatedAt: string | null;
 }
 
 export interface Slider {

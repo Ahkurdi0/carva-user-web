@@ -14,6 +14,8 @@ interface AuthState {
   /** Re-validate the session on app start using the stored refresh token. */
   hydrate: () => Promise<void>;
   logout: (allDevices?: boolean) => Promise<void>;
+  /** Forget the session on this device only (after the account is deleted). */
+  signOutLocal: () => void;
   /** Convenience permission check (admins implicitly allowed). */
   can: (permission: string) => boolean;
   isAdmin: () => boolean;
@@ -60,6 +62,11 @@ export const useAuth = create<AuthState>((set, get) => ({
     }
     tokens.clear();
     set({ user: null });
+  },
+
+  signOutLocal: () => {
+    tokens.clear();
+    set({ user: null, loading: false });
   },
 
   can: (permission) => {

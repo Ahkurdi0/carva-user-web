@@ -1,40 +1,37 @@
 @import "tailwindcss";
 
-/* ---- Plus Jakarta Sans (same family the app uses for English) ---- */
+/* ---- Fonts: the same files as the app, served from this site ----
+   IBM Plex Sans Arabic for every language (Kurdish, Arabic and English share
+   one look); JetBrains Mono for prices and numbers. Bold also covers 800/900
+   so "extrabold" uses the real bold instead of a fake, smeared one. */
 @font-face {
-  font-family: "Plus Jakarta";
-  src: url("/fonts/plus-jakarta/PlusJakartaSans-Light.ttf") format("truetype");
-  font-weight: 300;
+  font-family: "IBM Plex Sans Arabic";
+  src: url("/fonts/ibm-plex-sans-arabic/IBMPlexSansArabic-Regular.ttf") format("truetype");
+  font-weight: 100 400;
   font-display: swap;
 }
 @font-face {
-  font-family: "Plus Jakarta";
-  src: url("/fonts/plus-jakarta/PlusJakartaSans-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Plus Jakarta";
-  src: url("/fonts/plus-jakarta/PlusJakartaSans-Medium.ttf") format("truetype");
+  font-family: "IBM Plex Sans Arabic";
+  src: url("/fonts/ibm-plex-sans-arabic/IBMPlexSansArabic-Medium.ttf") format("truetype");
   font-weight: 500;
   font-display: swap;
 }
 @font-face {
-  font-family: "Plus Jakarta";
-  src: url("/fonts/plus-jakarta/PlusJakartaSans-SemiBold.ttf") format("truetype");
+  font-family: "IBM Plex Sans Arabic";
+  src: url("/fonts/ibm-plex-sans-arabic/IBMPlexSansArabic-SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-display: swap;
 }
 @font-face {
-  font-family: "Plus Jakarta";
-  src: url("/fonts/plus-jakarta/PlusJakartaSans-Bold.ttf") format("truetype");
-  font-weight: 700;
+  font-family: "IBM Plex Sans Arabic";
+  src: url("/fonts/ibm-plex-sans-arabic/IBMPlexSansArabic-Bold.ttf") format("truetype");
+  font-weight: 700 900;
   font-display: swap;
 }
 @font-face {
-  font-family: "Plus Jakarta";
-  src: url("/fonts/plus-jakarta/PlusJakartaSans-ExtraBold.ttf") format("truetype");
-  font-weight: 800;
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono/JetBrainsMono-Variable.ttf") format("truetype");
+  font-weight: 100 800;
   font-display: swap;
 }
 
@@ -57,9 +54,9 @@
   --color-danger: #ef4444;
   --color-ink: #161112;
 
-  /* Latin text in Plus Jakarta; Kurdish/Arabic glyphs fall through to IBM Plex Sans Arabic. */
-  --font-sans: "Plus Jakarta", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  /* One family for every language, like the app. */
+  --font-sans: "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Sans Arabic", ui-monospace, monospace;
 
   --radius-card: 18px;
   --shadow-card: 0 14px 30px -22px rgba(20, 14, 16, 0.5);
@@ -132,6 +129,21 @@ body {
   letter-spacing: 0;
   font-family: var(--font-sans);
   font-size: 11px;
+}
+
+/* Kurdish/Arabic letters join each other: any letter-spacing breaks the
+   joins, and the script needs a bit more line height than Latin. */
+[dir="rtl"] body {
+  line-height: 1.65;
+}
+[dir="rtl"] [class*="tracking-"],
+[dir="rtl"] .uppercase {
+  letter-spacing: 0;
+}
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3 {
+  line-height: 1.45;
 }
 
 /* Faint diagonal texture used on the kit's dark hero and photo placeholders. */

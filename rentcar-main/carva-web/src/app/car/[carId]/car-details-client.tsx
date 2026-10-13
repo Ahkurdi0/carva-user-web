@@ -12,7 +12,6 @@ import { ContactButton } from "@/components/ContactButtons";
 import { ChatButton } from "@/components/ChatButton";
 import { ActionButton } from "@/components/ActionButton";
 import { Modal } from "@/components/Modal";
-import { GetAppBanner } from "@/components/GetAppBanner";
 import { ShareButton } from "@/components/ShareButton";
 import { DetailSponsorStrip } from "@/components/DetailSponsorStrip";
 import { SimilarCars } from "@/components/SimilarCars";
@@ -25,6 +24,7 @@ import { imageUrl } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
 import { toast } from "@/components/toast";
 import type { Car } from "@/lib/types";
+import { isRented } from "@/lib/car-status";
 
 function Spec({ icon, label, value }: { icon: IconName; label: string; value?: string | number | null }) {
   if (value === null || value === undefined || value === "") return null;
@@ -41,7 +41,7 @@ function Spec({ icon, label, value }: { icon: IconName; label: string; value?: s
 
 export function CarDetailsClient() {
   const { carId } = useParams<{ carId: string }>();
-  const { t, tr, num } = useI18n();
+  const { t, tr, num, lang } = useI18n();
   const e = useEnumLabel();
   const { data: car, loading, error } = useAsync<Car>(() => userApi.carDetails(carId), [carId]);
   const [contacting, setContacting] = useState(false);
@@ -56,6 +56,8 @@ export function CarDetailsClient() {
     );
 
   const images = car.images ?? [];
+  const rented = isRented(car);
+  const until = rented && car.rentedUntil ? new Date(car.rentedUntil) : null;
   const f = car.feature;
   // Cars without their own location fall back to the company office,
   // exactly like the app's details map.
@@ -110,6 +112,25 @@ export function CarDetailsClient() {
               <span className="text-sm text-muted">· {num(car.trips)} {t("bottomNavigation.trips")}</span>
               {car.brand && <span className="text-sm text-muted">· {tr(car.brand)}</span>}
             </div>
+
+            {(rented || car.popularity?.popular) && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {rented && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-800">
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden />
+                    {until
+                      ? t("v2.availableFrom", { date: until.toLocaleDateString(lang === "en" ? "en-GB" : "ar-IQ", { day: "numeric", month: "long" }) })
+                      : t("v2.rentedNow")}
+                  </span>
+                )}
+                {car.popularity?.popular && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-container px-3 py-1.5 text-xs font-semibold text-primary">
+                    <span aria-hidden>🔥</span>
+                    {t("v2.popularPill", { n: num(car.popularity.views7d) })}
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* Rental plans */}
             <div className="mt-5">
@@ -205,7 +226,6 @@ export function CarDetailsClient() {
 
         <SimilarCars car={car} />
 
-        <GetAppBanner />
 
         {/* Reviews */}
         <section className="mt-8 pb-4">

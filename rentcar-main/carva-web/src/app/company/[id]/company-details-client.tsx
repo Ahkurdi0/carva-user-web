@@ -11,7 +11,6 @@ import { ContactButton } from "@/components/ContactButtons";
 import { ChatButton } from "@/components/ChatButton";
 import { ShareButton } from "@/components/ShareButton";
 import { SocialLinks } from "@/components/SocialLinks";
-import { GetAppBanner } from "@/components/GetAppBanner";
 import { ReviewList } from "@/components/ReviewList";
 import { Rating, PageLoading, EmptyState, SectionHeader, Spinner } from "@/components/ui";
 import { useAsync } from "@/lib/useAsync";
@@ -155,10 +154,6 @@ export function CompanyDetailsClient() {
         <SectionHeader title={t("labels.cars")} />
         <CompanyCars companyId={company.id} />
       </section>
-
-      <div className="px-4">
-        <GetAppBanner />
-      </div>
 
       <section className="mt-6 pb-6">
         <SectionHeader title={t("labels.reviews")} />

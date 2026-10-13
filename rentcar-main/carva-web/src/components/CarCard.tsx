@@ -11,6 +11,7 @@ import { useI18n } from "@/i18n";
 import { useAuth } from "@/lib/auth-store";
 import { userApi } from "@/lib/services";
 import { formatNumber } from "@/lib/format";
+import { isRented } from "@/lib/car-status";
 import { toast } from "./toast";
 
 function displayPlan(car: Car) {
@@ -67,6 +68,7 @@ export function CarCard({ car, className = "" }: { car: Car; className?: string 
   const e = useEnumLabel();
   const plan = displayPlan(car);
   const city = car.location?.city ?? car.company?.location?.city;
+  const rented = isRented(car);
 
   return (
     <Link
@@ -78,13 +80,18 @@ export function CarCard({ car, className = "" }: { car: Car; className?: string 
           src={car.images?.[0]?.image}
           alt={car.title}
           rounded="rounded-none"
-          className="aspect-[4/3] w-full [&_img]:transition [&_img]:duration-500 group-hover:[&_img]:scale-[1.04]"
+          className={`aspect-[4/3] w-full [&_img]:transition [&_img]:duration-500 group-hover:[&_img]:scale-[1.04] ${rented ? "[&_img]:opacity-75 [&_img]:grayscale-[35%]" : ""}`}
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/35 to-transparent" />
         <div className="absolute end-2.5 top-2.5">
           <FavoriteButton car={car} />
         </div>
-        {car.featuredCars && (
+        {rented ? (
+          <span className="absolute start-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-on-surface shadow-sm backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden />
+            {t("v2.rented")}
+          </span>
+        ) : car.featuredCars && (
           <span className="micro absolute start-2.5 top-2.5 rounded-md bg-ink/85 px-2 py-1 !text-[9px] text-white backdrop-blur">
             VIP · {t("labels.featured")}
           </span>

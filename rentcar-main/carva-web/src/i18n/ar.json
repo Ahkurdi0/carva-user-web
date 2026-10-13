@@ -757,6 +757,26 @@
     "rr_selfie_mismatch": "الصورة الشخصية لا تطابق الهوية",
     "rr_wrong_document": "وثيقة غير صحيحة",
     "rr_not_original": "صورة من شاشة أو نسخة",
-    "rr_other": "سبب آخر"
+    "rr_other": "سبب آخر",
+    "rented": "مؤجّرة",
+    "availableFrom": "متاحة من {date}",
+    "rentedNow": "هذه السيارة مؤجّرة حالياً",
+    "popularPill": "الأكثر مشاهدة · {n} مشاهدة هذا الأسبوع",
+    "deleteConfirm": "سيتم حذف هذا الحساب ولا يمكنك استعادته إلا بالتواصل مع دعم كارڤا.",
+    "deleteBtn": "حذف",
+    "cancel": "إلغاء",
+    "accountDeleted": "تم حذف حسابك",
+    "contactSupport": "تواصل مع الدعم",
+    "terms": "الشروط والأحكام",
+    "privacy": "سياسة الخصوصية",
+    "legalSoon": "قريبًا",
+    "legalError": "تعذّر التحميل. حاول مرة أخرى.",
+    "retry": "حاول مرة أخرى",
+    "agreePrefix": "بإنشاء حساب، فإنك توافق على ",
+    "and": " و",
+    "updatedOn": "آخر تحديث: {date}",
+    "verifyCardBtn": "وثّق الآن",
+    "verifyPendingCard": "وصل طلبك وستتم مراجعته قريباً.",
+    "verifyFooter": "توثيق الحساب"
   }
 }
