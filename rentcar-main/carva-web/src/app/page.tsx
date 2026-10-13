@@ -10,7 +10,6 @@ import { FeaturedHero } from "@/components/home/FeaturedHero";
 import { ReelsStrip } from "@/components/home/ReelsStrip";
 import { CitySelect, cityKey } from "@/components/home/CitySelect";
 import { useAsync } from "@/lib/useAsync";
-import { VerifyBanner } from "@/components/VerifyEntry";
 import { userApi } from "@/lib/services";
 import { imageUrl } from "@/lib/api";
 import { uniqueById } from "@/lib/format";
@@ -147,7 +146,6 @@ export default function HomePage() {
     <AppShell>
       {/* The page's title for search engines; the app shows no big heading here. */}
       <h1 className="sr-only">{t("web.heroTitle")}</h1>
-      <VerifyBanner />
 
       <section className="pt-3">
         <SectionHeader title={t("labels.featured")} actionLabel={t("v2.seeAll")} href="/reels" />

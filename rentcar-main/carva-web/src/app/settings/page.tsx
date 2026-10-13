@@ -171,27 +171,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Identity check: easy to find until it's done */}
-        {user.kycStatus !== "verified" && (
-          <Link
-            href="/verify"
-            className="mt-4 flex items-center gap-3 rounded-2xl bg-sky-500/10 p-4 ring-1 ring-sky-500/20 transition hover:bg-sky-500/15"
-          >
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-sky-600 text-white">
-              <Icon name="checked" size={20} color="#fff" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block font-bold text-on-surface">{t("v2.kycIntroTitle")}</span>
-              <span className="mt-0.5 block text-sm text-muted">
-                {user.kycStatus === "pending" ? t("v2.verifyPendingCard") : t("v2.kycIntro")}
-              </span>
-            </span>
-            {user.kycStatus !== "pending" && (
-              <span className="hidden shrink-0 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white sm:inline">{t("v2.verifyCardBtn")}</span>
-            )}
-          </Link>
-        )}
-
         <div className="mt-6 space-y-2">
           <p className="micro px-1 pb-1 text-micro">{t("web.account")}</p>
           <Row icon="profile" label={t("web.editProfile")} onClick={() => { setName(user.name); setModal("profile"); }} />

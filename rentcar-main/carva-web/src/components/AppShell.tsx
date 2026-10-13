@@ -10,7 +10,6 @@ import { useAuth } from "@/lib/auth-store";
 import { imageUrl } from "@/lib/api";
 import type { Lang } from "@/lib/types";
 import { useChatUnread } from "@/lib/chat-store";
-import { VerifyPill } from "./VerifyEntry";
 
 const TABS: { href: string; key: string; icon: IconName; active: IconName }[] = [
   { href: "/", key: "bottomNavigation.cars", icon: "car", active: "car_active" },
@@ -167,7 +166,6 @@ export function Header() {
         </nav>
 
         <div className="ms-auto flex items-center gap-1.5 sm:gap-2">
-          <VerifyPill />
           <AdvertisePill />
           <Link
             href="/search"

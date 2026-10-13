@@ -99,7 +99,6 @@ export function Footer() {
             <li><Link className="hover:text-primary" href="/reels">{t("web.reels")}</Link></li>
             <li><Link className="hover:text-primary" href="/companies">{t("bottomNavigation.companies")}</Link></li>
             <li><Link className="hover:text-primary" href="/search">{t("inputHintText.searchCar")}</Link></li>
-            <li><Link className="hover:text-primary" href="/verify">{t("v2.verifyFooter")}</Link></li>
           </ul>
         </div>
         <div>
