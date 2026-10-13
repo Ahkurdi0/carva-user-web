@@ -260,16 +260,29 @@ export function BottomNav() {
  * `bare` drops the footer and max-width for full-screen pages (Reels).
  * `bottomBar` (car page): on phones it floats where the tab bar would be,
  * like the app's contact bar on a pushed page.
+ * `focused` (a chat): a pushed page — no footer, no tab bar, and on phones
+ * no site header either (the page has its own bar).
  */
 export function AppShell({
   children,
   bare = false,
   bottomBar,
+  focused = false,
 }: {
   children: React.ReactNode;
   bare?: boolean;
   bottomBar?: React.ReactNode;
+  focused?: boolean;
 }) {
+  if (focused)
+    return (
+      <div className="min-h-dvh bg-canvas">
+        <div className="hidden md:block">
+          <Header />
+        </div>
+        <main>{children}</main>
+      </div>
+    );
   return (
     <div className="min-h-screen bg-canvas">
       <Header />

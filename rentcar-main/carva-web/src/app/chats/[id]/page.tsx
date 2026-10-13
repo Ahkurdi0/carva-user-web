@@ -1,18 +1,22 @@
 "use client";
 
-import { Fragment, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { AuthPrompt } from "@/components/AuthPrompt";
 import { Icon } from "@/components/Icon";
 import { Button } from "@/components/ui";
-import { ChatCarCard, CompanyAvatar, MessageBubble, ReachOutCard, useChatTime } from "@/components/chat/ChatParts";
+import { Modal } from "@/components/Modal";
+import { displayPlan, usePrice } from "@/components/CarCard";
+import { ChatCarCard, CompanyAvatar, ComposerCarCard, DaySeparator, MessageBubble, ReachOutCard, useChatTime } from "@/components/chat/ChatParts";
 import { useI18n } from "@/i18n";
 import { useAuth } from "@/lib/auth-store";
 import { chatApi, phoneOf, whatsappUrl, type ChatCar, type ChatMessage, type ChatPage } from "@/lib/chat";
 import { useChatUnread } from "@/lib/chat-store";
 import { userApi } from "@/lib/services";
+import { imageUrl } from "@/lib/api";
+import type { Car } from "@/lib/types";
 
 const QUICK = ["available", "price", "monthly", "days", "deposit", "documents", "delivery", "insurance", "pickup"];
 const POLL_MS = 4000;
@@ -38,7 +42,13 @@ function ChatThread() {
   const [text, setText] = useState("");
   const [olderBusy, setOlderBusy] = useState(false);
   const [askedCar, setAskedCar] = useState<ChatCar | null>(null);
+  const [hideAsked, setHideAsked] = useState(false);
+  const [picker, setPicker] = useState(false);
+  const [pickerCars, setPickerCars] = useState<Car[] | null>(null);
+  const [composerH, setComposerH] = useState(120);
+  const composerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const price = usePrice();
   const lastId = useRef<string | null>(null);
 
   const lastRealId = (list: ChatMessage[]) => [...list].reverse().find((m) => !m.pending && !m.failed)?.id ?? null;
@@ -97,6 +107,38 @@ function ChatThread() {
     }, POLL_MS);
     return () => window.clearInterval(timer);
   }, [id, user, loaded, refreshUnread]);
+
+  // Room the list leaves for the floating composer (measured, like the app).
+  useLayoutEffect(() => {
+    const el = composerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setComposerH(el.offsetHeight));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // "Send a car": the company's available cars.
+  useEffect(() => {
+    if (!picker || pickerCars || !header?.company) return;
+    userApi
+      .getCars(header.company.id)
+      .then((cars) => setPickerCars(cars.filter((c) => c.available !== false)))
+      .catch(() => setPickerCars([]));
+  }, [picker, pickerCars, header?.company]);
+
+  async function shareCar(car: Car) {
+    setPicker(false);
+    try {
+      const created = await chatApi.shareCar(id, car.carId);
+      setMessages((cur) => {
+        const known = new Set(cur.map((m) => m.id));
+        return [...cur, ...created.filter((m) => !known.has(m.id))];
+      });
+      lastId.current = created[created.length - 1]?.id ?? lastId.current;
+    } catch {
+      /* the picker can be opened again */
+    }
+  }
 
   const newest = messages[messages.length - 1]?.id;
   useEffect(() => {
@@ -157,76 +199,83 @@ function ChatThread() {
   const asked = messages.some((m) => m.sender === "user" && m.type === "text");
   const carInChat = !!askedCar && messages.some((m) => m.car?.id === askedCar.id);
 
+  // The customer's latest text carries the Sent / Seen label.
+  const lastMine = [...messages].reverse().find((m) => m.sender === "user" && m.type === "text")?.id;
+
   return (
-    <div className="mx-auto flex h-[calc(100dvh-8.5rem)] max-w-3xl flex-col md:h-[calc(100dvh-5rem)] md:py-3">
-      {/* Header */}
-      <div className="flex items-center gap-3 border-b border-surface-lowest bg-white px-3 py-2.5 md:rounded-t-2xl md:border md:border-surface-low">
-        <Link href="/chats" className="grid h-9 w-9 place-items-center rounded-full hover:bg-surface-lowest" aria-label={t("chat.title")}>
-          <Icon name="arrow" size={18} className="rtl:rotate-180" />
+    <div className="relative mx-auto h-[100dvh] max-w-3xl md:h-[calc(100dvh-4rem)]">
+      {/* Glass bar: back, company, WhatsApp and call — messages scroll under it */}
+      <div className="glass absolute inset-x-0 top-0 z-20 flex h-16 items-center gap-2.5 !border-x-0 !border-t-0 border-b !border-b-hairline px-3 md:top-2 md:mx-2 md:rounded-full md:!border md:!border-white/70 md:shadow-[var(--shadow-card)]">
+        <Link
+          href="/chats"
+          className="press glass grid h-10 w-10 shrink-0 place-items-center rounded-full shadow-[var(--shadow-card)]"
+          aria-label={t("chat.title")}
+        >
+          <Icon name="arrow" size={18} color="#171214" className="rtl:rotate-180" />
         </Link>
         {company ? (
-          <Link href={`/company/${company.id}`} className="flex min-w-0 flex-1 items-center gap-2.5">
+          <Link href={`/company/${company.id}`} className="flex min-w-0 flex-1 items-center gap-3">
             <CompanyAvatar company={company} size={40} />
-            <span className="truncate font-bold">{company.name}</span>
+            <span className="truncate text-[16px] font-bold"><bdi>{company.name}</bdi></span>
           </Link>
         ) : (
-          <span className="h-10 flex-1 animate-pulse rounded-xl bg-surface-lowest" />
+          <span className="h-10 flex-1 animate-pulse rounded-full bg-surface-lowest" />
         )}
         {whatsapp && (
-          <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="grid h-10 w-10 place-items-center rounded-full bg-[#25D366]" aria-label="WhatsApp">
-            <Icon name="whatsapp" size={20} color="#fff" />
+          <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="press grid h-10 w-10 shrink-0 place-items-center rounded-full bg-whatsapp/10" aria-label="WhatsApp">
+            <Icon name="whatsapp" size={20} color="#22B053" />
           </a>
         )}
         {phone && (
-          <a href={`tel:${phone}`} className="grid h-10 w-10 place-items-center rounded-full border border-hairline" aria-label={t("chat.call")}>
-            <Icon name="call" size={18} color="#B51219" />
+          <a href={`tel:${phone}`} className="press grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ink/10" aria-label={t("chat.call")}>
+            <Icon name="call" size={19} color="#171214" />
           </a>
         )}
       </div>
 
-      {header?.awaitingReplySince && messages.length > 0 && (
-        <div className="flex items-center gap-2 bg-amber-50 px-4 py-1.5 text-xs font-medium text-amber-800">
-          <Icon name="clock" size={14} color="#92400e" /> {t("chat.waiting")}
-        </div>
-      )}
-
       {/* Messages */}
-      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto bg-surface-lowest/50 px-3 py-4 md:border-x md:border-surface-low">
+      <div className="no-scrollbar h-full overflow-y-auto px-4" style={{ paddingTop: 80, paddingBottom: composerH + 12 }}>
         {error && !loaded ? null : error && messages.length === 0 ? (
-          <div className="py-16 text-center">
-            <p className="text-sm text-muted">{t("chat.error")}</p>
-            <Button className="mt-3" onClick={load}>{t("chat.retry")}</Button>
+          <div className="flex h-full flex-col items-center justify-center text-center">
+            <p className="text-[15px]">{t("chat.error")}</p>
+            <Button className="mt-4 w-48" onClick={load}>{t("chat.retry")}</Button>
           </div>
         ) : !loaded ? (
-          <div className="grid place-items-center py-16">
-            <span className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <div className="space-y-3 pt-4">
+            {[56, 72, 40, 64].map((w, i) => (
+              <div key={i} className={`flex ${i % 2 ? "justify-end" : "justify-start"}`}>
+                <div className="skeleton h-12 rounded-[20px]" style={{ width: `${w}%` }} />
+              </div>
+            ))}
           </div>
-        ) : messages.length === 0 ? (
-          <div className="mx-auto max-w-sm py-10 text-center">
-            {company && <div className="mx-auto mb-3 w-fit"><CompanyAvatar company={company} size={64} /></div>}
-            <p className="font-bold">{t("chat.startTitle", { name: company?.name ?? "" })}</p>
-            <p className="mt-1 text-sm text-muted">{t("chat.startBody")}</p>
+        ) : messages.length === 0 && !(askedCar && !hideAsked) ? (
+          <div className="mx-auto flex h-full max-w-sm flex-col items-center justify-center px-4 text-center">
+            <span className="rounded-full border-2 border-primary/25 p-1.5">
+              <CompanyAvatar company={company} size={88} />
+            </span>
+            <p className="mt-4 text-[20px] font-bold">{t("chat.startTitle", { name: company?.name ?? "" })}</p>
+            <p className="mt-2 text-[14.5px] leading-relaxed text-muted">{t("chat.startBody")}</p>
           </div>
         ) : (
           <>
             {hasMore && (
-              <div className="flex justify-center">
-                <Button variant="secondary" loading={olderBusy} onClick={loadOlder}>{t("web.viewAll")}</Button>
+              <div className="flex justify-center py-2">
+                <Button variant="outline" className="!h-9 !rounded-full !px-4 !text-[13px]" loading={olderBusy} onClick={loadOlder}>
+                  {t("web.viewAll")}
+                </Button>
               </div>
             )}
             {messages.map((m, i) => {
               const newDay = i === 0 || new Date(m.createdAt).toDateString() !== new Date(messages[i - 1].createdAt).toDateString();
               return (
                 <Fragment key={m.id}>
-                  {newDay && <p className="py-2 text-center text-[11px] font-semibold text-muted">{dayLabel(m.createdAt)}</p>}
+                  {newDay && <DaySeparator label={dayLabel(m.createdAt)} />}
                   {m.type === "car" && m.car ? (
-                    <div className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}>
-                      <ChatCarCard car={m.car} mine={m.sender === "user"} label={m.sender === "user" ? undefined : t("chat.carShared")} />
-                    </div>
+                    <ChatCarCard car={m.car} mine={m.sender === "user"} label={m.sender === "user" ? undefined : t("chat.carShared")} />
                   ) : m.type === "quickContact" || m.type === "autoReply" ? (
                     <ReachOutCard message={m} company={company} whatsapp={whatsapp} phone={phone} time={time(m.createdAt)} />
                   ) : (
-                    <MessageBubble message={m} time={time(m.createdAt)} onRetry={() => send(m.body ?? "", m.id)} />
+                    <MessageBubble message={m} time={time(m.createdAt)} status={m.id === lastMine} onRetry={() => send(m.body ?? "", m.id)} />
                   )}
                 </Fragment>
               );
@@ -236,65 +285,120 @@ function ChatThread() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Composer */}
-      <div className="border-t border-surface-lowest bg-white px-3 pb-3 pt-2 md:rounded-b-2xl md:border md:border-surface-low">
-        {askedCar && !carInChat && (
-          <div className="mb-2">
-            <ChatCarCard car={askedCar} mine />
-          </div>
-        )}
-        {loaded && !asked && (
-          <div className="-mx-1 mb-2 flex gap-2 overflow-x-auto px-1 pb-1">
+      {/* Floating composer: quick questions, the car being asked about, glass input */}
+      <div ref={composerRef} className="absolute inset-x-0 bottom-0 z-20 pb-[max(10px,env(safe-area-inset-bottom))]">
+        {loaded && !asked && !text.trim() && (
+          <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-1 pt-2.5">
             {QUICK.map((k) => (
               <button
                 key={k}
                 onClick={() => send(t(`chat.quick.${k}`))}
-                className="shrink-0 rounded-full border border-primary/30 bg-primary-container px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-primary hover:text-white"
+                className="press h-10 shrink-0 rounded-full border border-border-strong bg-white px-3.5 text-[13.5px] text-on-surface shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
               >
                 {t(`chat.quick.${k}`)}
               </button>
             ))}
           </div>
         )}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void send(text);
-          }}
-          className="flex items-end gap-2"
-        >
-          <textarea
-            dir="auto"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                void send(text);
-              }
+        <div className="px-3 pt-2">
+          {askedCar && !carInChat && !hideAsked && (
+            <div className="mb-2">
+              <ComposerCarCard car={askedCar} onClose={() => setHideAsked(true)} />
+            </div>
+          )}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void send(text);
             }}
-            rows={1}
-            maxLength={2000}
-            placeholder={t("chat.inputHint")}
-            className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl border border-hairline bg-white px-4 py-2.5 text-sm outline-none focus:border-primary"
-          />
-          <button
-            type="submit"
-            disabled={!text.trim() || !loaded}
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary transition hover:opacity-90 disabled:opacity-40"
-            aria-label="Send"
+            className="glass flex items-end gap-1.5 rounded-[30px] p-1.5 shadow-[var(--shadow-glass)]"
           >
-            <Icon name="arrow" size={18} color="#fff" className="rotate-180 rtl:rotate-0" />
-          </button>
-        </form>
+            {company && (
+              <button
+                type="button"
+                onClick={() => setPicker(true)}
+                aria-label={t("chat.shareCar")}
+                title={t("chat.shareCar")}
+                className="press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/70 bg-white/70"
+              >
+                <Icon name="car" size={22} color="#171214" />
+              </button>
+            )}
+            <textarea
+              dir="auto"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  void send(text);
+                }
+              }}
+              rows={1}
+              maxLength={2000}
+              placeholder={t("chat.inputHint")}
+              className="max-h-32 min-h-12 flex-1 resize-none rounded-3xl border border-white/70 bg-white/70 px-4 py-3 text-[15px] leading-6 outline-none placeholder:text-hint focus:bg-white"
+            />
+            <button
+              type="submit"
+              disabled={!text.trim() || !loaded}
+              className={`press grid h-12 w-12 shrink-0 place-items-center rounded-full transition ${
+                text.trim() && loaded ? "bg-primary shadow-[var(--shadow-card)]" : "bg-surface-lowest"
+              }`}
+              aria-label="Send"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill={text.trim() && loaded ? "#fff" : "#A29A96"} className="rtl:-scale-x-100" aria-hidden>
+                <path d="M3.4 20.4 20.85 12.92a1 1 0 0 0 0-1.84L3.4 3.6a.99.99 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z" />
+              </svg>
+            </button>
+          </form>
+        </div>
       </div>
+
+      {/* "Send a car" picker */}
+      <Modal open={picker} onClose={() => setPicker(false)} title={t("chat.shareCar")}>
+        {!pickerCars ? (
+          <div className="grid place-items-center py-10">
+            <span className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          </div>
+        ) : pickerCars.length === 0 ? (
+          <p className="py-8 text-center text-sm text-muted">{t("empty.cars")}</p>
+        ) : (
+          <div className="-mx-2 max-h-[60vh] divide-y divide-hairline overflow-y-auto">
+            {pickerCars.map((car) => {
+              const plan = displayPlan(car);
+              return (
+                <button key={car.id} onClick={() => shareCar(car)} className="flex w-full items-center gap-3 px-2 py-2.5 text-start hover:bg-surface-lowest">
+                  {car.images?.[0]?.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={imageUrl(car.images[0].image)} alt="" className="h-12 w-16 shrink-0 rounded-xl object-cover" />
+                  ) : (
+                    <span className="h-12 w-16 shrink-0 rounded-xl bg-surface-lowest" />
+                  )}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[15px] font-bold"><bdi>{car.title}</bdi></span>
+                    {plan && Number(plan.price) > 0 && (
+                      <span className="num block text-[13px] font-semibold">
+                        {price.amount(plan)} <span className="font-normal text-muted">/ {price.unit(plan)}</span>
+                      </span>
+                    )}
+                  </span>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#B51219" aria-hidden className="shrink-0">
+                    <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                  </svg>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
 
 export default function ChatThreadPage() {
   return (
-    <AppShell>
+    <AppShell focused>
       <Suspense fallback={null}>
         <ChatThread />
       </Suspense>

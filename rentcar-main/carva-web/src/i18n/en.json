@@ -681,7 +681,8 @@
       "delivery": "Do you deliver to my location?",
       "insurance": "Is insurance included?",
       "pickup": "Where do I pick up the car?"
-    }
+    },
+    "shareCar": "Send a car"
   },
   "v2": {
     "whereLive": "Where do you live?",
