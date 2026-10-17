@@ -32,8 +32,14 @@ export function ImageHolder({
         <img
           src={url}
           alt={alt}
+          loading="lazy"
           onError={() => setError(true)}
-          className={`h-full w-full ${cover ? "object-cover" : "object-contain"}`}
+          onLoad={(e) => e.currentTarget.setAttribute("data-loaded", "")}
+          ref={(el) => {
+            // Already in the cache: show at once.
+            if (el?.complete && el.naturalWidth) el.setAttribute("data-loaded", "");
+          }}
+          className={`img-fade h-full w-full ${cover ? "object-cover" : "object-contain"}`}
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center">

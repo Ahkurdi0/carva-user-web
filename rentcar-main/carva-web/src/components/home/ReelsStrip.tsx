@@ -13,6 +13,7 @@ export function ReelsStrip({ cars }: { cars: Car[] }) {
         <Link
           key={car.id}
           href={`/reels?car=${encodeURIComponent(car.carId)}`}
+          data-reveal
           className="press relative aspect-[34/54] w-[34vw] max-w-[150px] shrink-0 overflow-hidden rounded-[18px] border border-hairline bg-[#1A1517]"
         >
           {car.images?.[0]?.image && (

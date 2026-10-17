@@ -76,6 +76,14 @@ export default function RootLayout({
     // Kurdish is the default language, so the first paint is already right-to-left.
     <html lang="ku" dir="rtl" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full">
+        {/* Hide revealable cards before the first paint (no flash); they
+            appear on scroll, or after 1.5s at the latest (CSS fallback). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('reveal-on')}catch(e){}",
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

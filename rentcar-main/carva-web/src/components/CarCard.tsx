@@ -16,6 +16,7 @@ import { isRented } from "@/lib/car-status";
 import { carName } from "@/lib/car-name";
 import { RentedBadge } from "./CarBadges";
 import { toast } from "./toast";
+import { useLongPress, usePreview } from "./ContextPreview";
 
 export function displayPlan(car: Car) {
   return (
@@ -40,8 +41,18 @@ export function FavoriteButton({ car, onPhoto = false }: { car: Car; onPhoto?: b
   const { t } = useI18n();
   const router = useRouter();
   const user = useAuth((s) => s.user);
-  const [fav, setFav] = useState(!!car.isFavorite);
+  const [own, setOwn] = useState(!!car.isFavorite);
+  // A save / unsave from the long-press preview wins over the card's own state.
+  const synced = usePreview((s) => s.fav[car.id]);
+  const setSynced = usePreview((s) => s.setFav);
+  const fav = synced ?? own;
+  const setFav = (f: (v: boolean) => boolean) => {
+    const next = f(fav);
+    setOwn(next);
+    setSynced(car.id, next);
+  };
   const [busy, setBusy] = useState(false);
+  const [pop, setPop] = useState(0);
 
   async function toggle(e: React.MouseEvent) {
     e.preventDefault();
@@ -51,6 +62,7 @@ export function FavoriteButton({ car, onPhoto = false }: { car: Car; onPhoto?: b
       return;
     }
     setBusy(true);
+    if (!fav) setPop((n) => n + 1);
     setFav((v) => !v);
     try {
       await userApi.toggleFavorite(car.id);
@@ -71,11 +83,13 @@ export function FavoriteButton({ car, onPhoto = false }: { car: Car; onPhoto?: b
         onPhoto ? "bg-ink/45 hover:bg-ink/60" : "bg-white/90 shadow-sm hover:bg-white"
       }`}
     >
-      <Icon
-        name={fav ? "favorited" : "heart"}
-        size={16}
-        color={fav ? (onPhoto ? "#FF4D55" : "#B51219") : onPhoto ? "#fff" : "#171214"}
-      />
+      <span key={pop} className={pop ? "heart-pop inline-flex" : "inline-flex"}>
+        <Icon
+          name={fav ? "favorited" : "heart"}
+          size={16}
+          color={fav ? (onPhoto ? "#FF4D55" : "#B51219") : onPhoto ? "#fff" : "#171214"}
+        />
+      </span>
     </button>
   );
 }
@@ -158,6 +172,7 @@ export function CarCard({
   const odo = f?.odometer ? num(f.odometer).trim() : "";
   const year = f?.year ? num(f.year) : "";
   const s = wide ? 12 : 11;
+  const hold = useLongPress(() => ({ kind: "car", car }));
 
   const photo = (
     <div className={`relative overflow-hidden bg-[#1A1517] ${wide ? "w-[132px] shrink-0 sm:w-44" : "aspect-[3/2] w-full"}`}>
@@ -254,7 +269,9 @@ export function CarCard({
   return (
     <Link
       href={`/car/${car.carId}`}
-      className={`press group relative flex overflow-hidden rounded-[18px] bg-white transition-shadow duration-300 hover:shadow-[var(--shadow-lift)] ${
+      data-reveal
+      {...hold}
+      className={`press no-callout group relative flex overflow-hidden rounded-[18px] bg-white transition-shadow duration-300 hover:shadow-[var(--shadow-lift)] ${
         wide ? "min-h-[168px] flex-row" : "h-full flex-col"
       } ${isFeatured ? "shadow-[var(--shadow-featured)]" : "shadow-[var(--shadow-card)]"} ${className}`}
     >

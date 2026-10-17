@@ -6,13 +6,17 @@ import { imageUrl } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Rating } from "./ui";
 import { useI18n } from "@/i18n";
+import { useLongPress } from "./ContextPreview";
 
 export function CompanyCard({ company }: { company: Company }) {
   const { t } = useI18n();
+  const hold = useLongPress(() => ({ kind: "company", company }));
   return (
     <Link
       href={`/company/${company.id}`}
-      className="press group block overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card)] ring-1 ring-hairline transition-shadow hover:shadow-[var(--shadow-lift)]"
+      data-reveal
+      {...hold}
+      className="press no-callout group block overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card)] ring-1 ring-hairline transition-shadow hover:shadow-[var(--shadow-lift)]"
     >
       <div className="relative h-28 bg-hero bg-[radial-gradient(120%_160%_at_85%_-30%,#5A090D_0%,#161112_58%)]">
         <div className="hero-texture absolute inset-0" aria-hidden />

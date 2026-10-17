@@ -46,7 +46,7 @@ export default function AdvertisePageView() {
                 {(data.benefits?.length ?? 0) > 0 && (
                   <ul className="grid gap-2 sm:grid-cols-2 lg:gap-3">
                     {data.benefits!.map((b, i) => (
-                      <li key={i} className="flex items-start gap-3 rounded-2xl bg-white p-4 text-sm shadow-[var(--shadow-card)] ring-1 ring-hairline">
+                      <li key={i} data-reveal className="flex items-start gap-3 rounded-2xl bg-white p-4 text-sm shadow-[var(--shadow-card)] ring-1 ring-hairline">
                         <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">✓</span>
                         {pick(b)}
                       </li>
@@ -59,6 +59,7 @@ export default function AdvertisePageView() {
                     {data.packages!.map((p, i) => (
                       <div
                         key={i}
+                        data-reveal
                         className={`rounded-3xl bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)] lg:p-6 ${p.highlighted ? "border-2 border-primary shadow-[var(--shadow-card)]" : "border border-hairline"}`}
                       >
                         <p className="font-bold">{pick(p.name)}</p>

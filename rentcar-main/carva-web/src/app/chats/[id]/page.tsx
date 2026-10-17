@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
@@ -50,6 +50,8 @@ function ChatThread() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const price = usePrice();
   const lastId = useRef<string | null>(null);
+  // Messages already there when the chat opened don't animate; new ones pop in.
+  const [initial, setInitial] = useState<Set<string> | null>(null);
 
   const lastRealId = (list: ChatMessage[]) => [...list].reverse().find((m) => !m.pending && !m.failed)?.id ?? null;
 
@@ -60,6 +62,7 @@ function ChatThread() {
         .then((page) => {
           setHeader(page.conversation);
           setMessages(page.messages);
+          setInitial((cur) => cur ?? new Set(page.messages.map((m) => m.id)));
           setHasMore(page.hasMore);
           lastId.current = lastRealId(page.messages);
           setError(false);
@@ -267,8 +270,10 @@ function ChatThread() {
             )}
             {messages.map((m, i) => {
               const newDay = i === 0 || new Date(m.createdAt).toDateString() !== new Date(messages[i - 1].createdAt).toDateString();
+              // Your message pops in once (while sending); replies when they arrive.
+              const fresh = !!m.pending || (!!initial && !initial.has(m.id) && m.sender !== "user");
               return (
-                <Fragment key={m.id}>
+                <div key={m.id} className={fresh ? `bubble-in ${m.sender === "user" ? "mine" : ""}` : undefined}>
                   {newDay && <DaySeparator label={dayLabel(m.createdAt)} />}
                   {m.type === "car" && m.car ? (
                     <ChatCarCard car={m.car} mine={m.sender === "user"} label={m.sender === "user" ? undefined : t("chat.carShared")} />
@@ -277,7 +282,7 @@ function ChatThread() {
                   ) : (
                     <MessageBubble message={m} time={time(m.createdAt)} status={m.id === lastMine} onRetry={() => send(m.body ?? "", m.id)} />
                   )}
-                </Fragment>
+                </div>
               );
             })}
           </>

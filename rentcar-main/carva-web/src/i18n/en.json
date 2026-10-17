@@ -796,6 +796,21 @@
     "selectCity": "Select city",
     "confirm": "Confirm",
     "cities": "cities",
-    "verifyShort": "Verify"
+    "verifyShort": "Verify",
+    "linkCopied": "Link copied"
+  },
+  "actions": {
+    "preview": "Preview",
+    "viewCar": "View car",
+    "save": "Add to favorites",
+    "unsave": "Remove from favorites",
+    "share": "Share",
+    "whatsapp": "WhatsApp",
+    "call": "Call",
+    "removedFavorite": "Removed from favorites",
+    "undo": "Undo",
+    "companyPage": "Company page",
+    "more": "More",
+    "openChat": "Open chat"
   }
 }

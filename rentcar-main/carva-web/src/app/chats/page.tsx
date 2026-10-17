@@ -124,7 +124,7 @@ export default function ChatsPage() {
                     ? t("chat.carShared")
                     : `${c.lastSender === "user" ? t("chat.you") : ""}${c.lastMessage}`;
               return (
-                <li key={c.id}>
+                <li key={c.id} data-reveal>
                   {i > 0 && <div className="ms-[84px] me-4 h-px bg-hairline" />}
                   <Link href={`/chats/${c.id}`} className="flex items-center gap-3 px-4 py-3 transition hover:bg-white/60 md:rounded-2xl">
                     <CompanyAvatar company={c.company} size={56} />

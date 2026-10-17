@@ -22,7 +22,7 @@ import { countryName, flag } from "@/lib/countries";
 
 function Row({ icon, label, onClick, href, danger }: { icon: IconName; label: string; onClick?: () => void; href?: string; danger?: boolean }) {
   const inner = (
-    <div className={`press flex min-h-[56px] items-center gap-3 rounded-[18px] border border-hairline bg-white px-4 py-3 transition hover:bg-surface-lowest ${danger ? "text-primary" : "text-on-surface"}`}>
+    <div data-reveal className={`press flex min-h-[56px] items-center gap-3 rounded-[18px] border border-hairline bg-white px-4 py-3 transition hover:bg-surface-lowest ${danger ? "text-primary" : "text-on-surface"}`}>
       <Icon name={icon} size={20} color={danger ? "#B51219" : "#6E6866"} />
       <span className="flex-1 text-[15px] font-medium">{label}</span>
       <Icon name="arrow_tail" size={16} color="#BCB4B0" className="ltr:rotate-180" />

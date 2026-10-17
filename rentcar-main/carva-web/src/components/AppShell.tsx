@@ -240,7 +240,9 @@ export function BottomNav() {
               className="relative flex flex-1 flex-col items-center justify-center gap-[3px] active:scale-95 transition-transform"
             >
               <span className="relative inline-flex">
-                <Icon name={active ? tab.active : tab.icon} size={22} color={active ? (dark ? "#FF4D55" : "#B51219") : idle} />
+                <span key={active ? "on" : "off"} className={active ? "tab-pop inline-flex" : "inline-flex"}>
+                  <Icon name={active ? tab.active : tab.icon} size={22} color={active ? (dark ? "#FF4D55" : "#B51219") : idle} />
+                </span>
                 <ChatBadge href={tab.href} />
               </span>
               <span
@@ -274,19 +276,20 @@ export function AppShell({
   bottomBar?: React.ReactNode;
   focused?: boolean;
 }) {
+  const pathname = usePathname();
   if (focused)
     return (
       <div className="min-h-dvh bg-canvas">
         <div className="hidden md:block">
           <Header />
         </div>
-        <main>{children}</main>
+        <main key={pathname} className="page-enter">{children}</main>
       </div>
     );
   return (
     <div className="min-h-screen bg-canvas">
       <Header />
-      <main className={bare ? "" : "mx-auto max-w-6xl"}>{children}</main>
+      <main key={pathname} className={`page-enter ${bare ? "" : "mx-auto max-w-6xl"}`}>{children}</main>
       {!bare && <Footer />}
       {!bare && <div className="pb-24 md:pb-0" />}
       {bottomBar ? (

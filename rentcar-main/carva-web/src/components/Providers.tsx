@@ -1,5 +1,8 @@
 "use client";
 
+import { RevealObserver } from "./Motion";
+import { ContextPreviewHost } from "./ContextPreview";
+
 import { useEffect } from "react";
 import { I18nProvider } from "@/i18n";
 import { useAuth } from "@/lib/auth-store";
@@ -26,6 +29,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <I18nProvider>
       <SessionGate>{children}</SessionGate>
       <VisitTracker />
+      <RevealObserver />
+      <ContextPreviewHost />
       <NotificationPrompt />
       <ResidencyPrompt />
     </I18nProvider>

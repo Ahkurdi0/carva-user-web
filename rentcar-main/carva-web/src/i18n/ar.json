@@ -796,6 +796,21 @@
     "selectCity": "اختر المدينة",
     "confirm": "تأكيد",
     "cities": "مدن",
-    "verifyShort": "توثيق الحساب"
+    "verifyShort": "توثيق الحساب",
+    "linkCopied": "تم نسخ الرابط"
+  },
+  "actions": {
+    "preview": "معاينة",
+    "viewCar": "عرض السيارة",
+    "save": "إضافة إلى المفضلة",
+    "unsave": "إزالة من المفضلة",
+    "share": "مشاركة",
+    "whatsapp": "واتساب",
+    "call": "اتصال",
+    "removedFavorite": "تمت الإزالة من المفضلة",
+    "undo": "تراجع",
+    "companyPage": "صفحة الشركة",
+    "more": "المزيد",
+    "openChat": "فتح المحادثة"
   }
 }

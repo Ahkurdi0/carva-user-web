@@ -8,6 +8,7 @@ import { imageUrl } from "@/lib/api";
 import { isRented } from "@/lib/car-status";
 import { FavoriteButton, OfficeLogo, displayPlan, usePrice } from "../CarCard";
 import { RentedBadge } from "../CarBadges";
+import { useLongPress } from "../ContextPreview";
 import { useEnumLabel } from "../ui";
 
 /**
@@ -67,9 +68,9 @@ export function FeaturedHero({ cars }: { cars: Car[] }) {
         ref={track}
         className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4"
       >
-        {cars.map((car) => (
+        {cars.map((car, i) => (
           <div key={car.id} className="w-full shrink-0 snap-start lg:w-[calc(50%-6px)]">
-            <HeroCard car={car} />
+            <HeroCard car={car} active={i === active} />
           </div>
         ))}
       </div>
@@ -89,7 +90,8 @@ export function FeaturedHero({ cars }: { cars: Car[] }) {
   );
 }
 
-function HeroCard({ car }: { car: Car }) {
+function HeroCard({ car, active }: { car: Car; active: boolean }) {
+  const hold = useLongPress(() => ({ kind: "car", car }));
   const { t, num } = useI18n();
   const e = useEnumLabel();
   const price = usePrice();
@@ -99,14 +101,15 @@ function HeroCard({ car }: { car: Car }) {
   return (
     <Link
       href={`/car/${car.carId}`}
-      className="press group relative block h-[78vw] max-h-[440px] min-h-[280px] overflow-hidden rounded-[18px] bg-[#1A1517] shadow-[var(--shadow-card)] sm:h-[400px]"
+      {...hold}
+      className="press no-callout group relative block h-[78vw] max-h-[440px] min-h-[280px] overflow-hidden rounded-[18px] bg-[#1A1517] shadow-[var(--shadow-card)] sm:h-[400px]"
     >
       {car.images?.[0]?.image && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={imageUrl(car.images[0].image)}
           alt={car.title}
-          className={`absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03] ${isRented(car) ? "opacity-85" : ""}`}
+          className={`absolute inset-0 h-full w-full object-cover ${active ? "ken-burns" : ""} ${isRented(car) ? "opacity-85" : ""}`}
         />
       )}
       <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.85)_0%,rgba(0,0,0,0.38)_32%,rgba(0,0,0,0.05)_50%,transparent_100%)]" />

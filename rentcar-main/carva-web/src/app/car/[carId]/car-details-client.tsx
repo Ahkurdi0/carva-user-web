@@ -28,7 +28,7 @@ import type { Car } from "@/lib/types";
 function Spec({ icon, label, value }: { icon: IconName; label: string; value?: string | number | null }) {
   if (value === null || value === undefined || value === "") return null;
   return (
-    <div className="flex flex-col items-center gap-2 rounded-[14px] border border-hairline bg-white px-1.5 py-3 text-center">
+    <div data-reveal className="flex flex-col items-center gap-2 rounded-[14px] border border-hairline bg-white px-1.5 py-3 text-center">
       <span className="grid h-10 w-10 place-items-center rounded-full bg-primary-container">
         <Icon name={icon} size={19} color="#B51219" />
       </span>
@@ -178,6 +178,7 @@ export function CarDetailsClient() {
                   return (
                     <div
                       key={p.id}
+                      data-reveal
                       className={`rounded-2xl px-3.5 py-3 ${main ? "bg-primary-container ring-1 ring-primary/30" : "bg-white ring-1 ring-hairline"}`}
                     >
                       <p className="text-[12px] font-semibold text-muted">{e.period(p.periodType)}</p>
