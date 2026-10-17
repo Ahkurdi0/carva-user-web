@@ -14,7 +14,7 @@ import { allCountries, countryName, flag, visitorCountries } from "@/lib/countri
 import { preparePhoto, type PhotoResult } from "@/lib/photo-check";
 import { kycApi, type KycSlot, type KycState } from "@/lib/services";
 
-type Shot = PhotoResult | "kept";
+type Shot = PhotoResult;
 type Step = "intro" | "doc" | "license" | "selfie" | "review";
 const STEP_LABEL: Record<Step, string> = { intro: "v2.start", doc: "v2.stepDoc", license: "v2.stepLicense", selfie: "v2.stepSelfie", review: "v2.stepReview" };
 
@@ -79,7 +79,7 @@ export default function VerifyPage() {
   useEffect(
     () => () =>
       Object.values(shots).forEach((s) => {
-        if (s && s !== "kept") URL.revokeObjectURL(s.url);
+        if (s) URL.revokeObjectURL(s.url);
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -101,16 +101,15 @@ export default function VerifyPage() {
   if (loading || !state) return <AppShell><PageLoading /></AppShell>;
 
   const visitor = (state.rules?.docTypes ?? []).includes("passport");
-  const reusable = new Set(state.status === "rejected" ? state.reusable : []);
-
-  const startFlow = (again: boolean) => {
-    const kept: Partial<Record<KycSlot, Shot>> = {};
-    if (again && state.latest) {
-      for (const s of reusable) kept[s] = "kept";
-      setDocType((state.latest.docType as "national_id" | "passport") ?? "national_id");
-      setHasLicense(state.latest.hasLicense);
-    }
-    setShots(kept);
+  // Always from the beginning — after a rejection too: every photo and
+  // answer again. Only where the person lives (and so which document, and a
+  // visitor's country) carries over, from their profile.
+  const startFlow = () => {
+    setShots({});
+    setDocType("national_id");
+    setDocCountry(state.rules?.docCountry ?? null);
+    setHasLicense(null);
+    setLicenseCountry("IQ");
     setFlow(true);
     setStep("doc");
   };
@@ -132,20 +131,15 @@ export default function VerifyPage() {
       if (visitor && docCountry) fd.append("docCountry", docCountry);
       fd.append("hasLicense", String(hasLicense));
       if (hasLicense && licenseCountry) fd.append("licenseCountry", licenseCountry);
-      const keep: KycSlot[] = [];
       const checks: Record<string, unknown> = { client: "web" };
       for (const [slot, shot] of Object.entries(shots) as [KycSlot, Shot][]) {
         if (!needed.includes(slot) && slot !== "licenseBack") continue;
         if (slot === "licenseBack" && !hasLicense) continue;
-        if (shot === "kept") keep.push(slot);
-        else {
-          fd.append(slot, shot.blob, `${slot}.jpg`);
-          checks[`${slot}.sharp`] = shot.sharp;
-          checks[`${slot}.dark`] = shot.dark;
-          if (slot !== "selfie") checks[`${slot}.glare`] = shot.glare;
-        }
+        fd.append(slot, shot.blob, `${slot}.jpg`);
+        checks[`${slot}.sharp`] = shot.sharp;
+        checks[`${slot}.dark`] = shot.dark;
+        if (slot !== "selfie") checks[`${slot}.glare`] = shot.glare;
       }
-      if (keep.length) fd.append("keep", JSON.stringify(keep));
       fd.append("checks", JSON.stringify(checks));
       apply(await kycApi.submit(fd));
       setFlow(false);
@@ -192,21 +186,6 @@ export default function VerifyPage() {
               <p className="text-4xl">⏳</p>
               <h1 className="mt-3 text-xl font-bold">{t("v2.pendingTitle")}</h1>
               <p className="mt-2 text-sm text-muted">{t("v2.pendingSub")}</p>
-              <Button
-                variant="outline"
-                full
-                className="mt-6"
-                onClick={async () => {
-                  if (!confirm(t("v2.cancelConfirm"))) return;
-                  try {
-                    apply(await kycApi.cancel());
-                  } catch (e) {
-                    toast(e instanceof Error ? e.message : t("alertMessages.someThingWentWrong"), "error");
-                  }
-                }}
-              >
-                {t("v2.cancelRequest")}
-              </Button>
             </Card>
           )}
 
@@ -220,7 +199,8 @@ export default function VerifyPage() {
                 ))}
               </ul>
               {state.latest.rejectNote && <p className="mt-3 text-start text-sm">“{state.latest.rejectNote}”</p>}
-              <Button full className="mt-6" onClick={() => startFlow(true)}>
+              <p className="mt-4 rounded-xl bg-surface-lowest px-3 py-2 text-start text-sm text-muted">{t("v2.startOverHint")}</p>
+              <Button full className="mt-6" onClick={startFlow}>
                 {t("v2.sendAgain")}
               </Button>
             </Card>
@@ -232,7 +212,7 @@ export default function VerifyPage() {
               <h1 className="mt-3 text-xl font-bold">{t("v2.kycIntroTitle")}</h1>
               <p className="mt-2 text-sm text-muted">{t("v2.kycIntro")}</p>
               <div className="mt-4 rounded-2xl bg-surface-lowest p-4 text-start text-sm">🔒 {t("v2.kycPrivacy")}</div>
-              <Button full className="mt-6" onClick={() => startFlow(false)}>
+              <Button full className="mt-6" onClick={startFlow}>
                 {t("v2.start")}
               </Button>
             </Card>
@@ -247,7 +227,6 @@ export default function VerifyPage() {
   const idx = steps.indexOf(step);
   const go = (d: 1 | -1) => setStep(steps[Math.max(0, Math.min(steps.length - 1, idx + d))]);
   const setShot = (slot: KycSlot) => (s: Shot | undefined) => setShots((cur) => ({ ...cur, [slot]: s }));
-  const bad = new Set(state.status === "rejected" ? state.latest?.badSlots ?? [] : []);
 
   const canNext =
     step === "doc"
@@ -272,7 +251,6 @@ export default function VerifyPage() {
             </div>
           ))}
         </div>
-        {bad.size > 0 && <p className="mb-4 rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-800">{t("v2.redoThese")}</p>}
 
         {step === "doc" && (
           <div className="space-y-4">
@@ -296,9 +274,9 @@ export default function VerifyPage() {
               <h2 className="text-lg font-bold">{t("v2.iraqiId")} 🇮🇶</h2>
             )}
             <p className="text-xs text-muted">{t("v2.docHint")}</p>
-            <PhotoSlot label={t("v2.front")} shot={shots.idFront} onChange={setShot("idFront")} document redo={bad.has("idFront")} />
+            <PhotoSlot label={t("v2.front")} shot={shots.idFront} onChange={setShot("idFront")} document />
             {docType === "national_id" && (
-              <PhotoSlot label={t("v2.backSide")} shot={shots.idBack} onChange={setShot("idBack")} document redo={bad.has("idBack")} />
+              <PhotoSlot label={t("v2.backSide")} shot={shots.idBack} onChange={setShot("idBack")} document />
             )}
           </div>
         )}
@@ -312,13 +290,13 @@ export default function VerifyPage() {
             {hasLicense && (
               <>
                 <CountryPick label={t("v2.licenseCountry")} value={licenseCountry} onChange={setLicenseCountry} codes={allCountries(lang)} />
-                <PhotoSlot label={t("v2.front")} shot={shots.licenseFront} onChange={setShot("licenseFront")} document redo={bad.has("licenseFront")} />
+                <PhotoSlot label={t("v2.front")} shot={shots.licenseFront} onChange={setShot("licenseFront")} document />
                 <PhotoSlot
                   label={`${t("v2.backSide")} (${t("v2.optional")})`}
                   shot={shots.licenseBack}
                   onChange={setShot("licenseBack")}
                   document
-                  redo={bad.has("licenseBack")}
+                 
                 />
               </>
             )}
@@ -328,7 +306,7 @@ export default function VerifyPage() {
         {step === "selfie" && (
           <div className="space-y-4">
             <p className="text-sm text-muted">{t("v2.selfieHint")}</p>
-            <PhotoSlot label={t("v2.stepSelfie")} shot={shots.selfie} onChange={setShot("selfie")} selfie redo={bad.has("selfie")} />
+            <PhotoSlot label={t("v2.stepSelfie")} shot={shots.selfie} onChange={setShot("selfie")} selfie />
           </div>
         )}
 
@@ -429,10 +407,6 @@ function CountryPick({ label, value, onChange, codes }: { label: string; value: 
 }
 
 function Thumb({ shot }: { shot: Shot }) {
-  const { t } = useI18n();
-  if (shot === "kept") {
-    return <span className="grid h-14 w-20 place-items-center rounded-xl bg-emerald-50 text-[11px] font-semibold text-emerald-700">✓ {t("v2.kept")}</span>;
-  }
   // eslint-disable-next-line @next/next/no-img-element
   return <img src={shot.url} alt="" className="h-14 w-20 rounded-xl object-cover" />;
 }
@@ -444,14 +418,12 @@ function PhotoSlot({
   onChange,
   document: isDoc,
   selfie,
-  redo,
 }: {
   label: string;
   shot: Shot | undefined;
   onChange: (s: Shot | undefined) => void;
   document?: boolean;
   selfie?: boolean;
-  redo?: boolean;
 }) {
   const { t } = useI18n();
   const ref = useRef<HTMLInputElement>(null);
@@ -488,7 +460,7 @@ function PhotoSlot({
   }
 
   return (
-    <div className={`rounded-2xl border p-3 ${redo && (!shot || shot === "kept") ? "border-red-400" : "border-surface-low"}`}>
+    <div className="rounded-2xl border border-hairline bg-white p-3">
       <div className="flex items-center gap-3">
         {shot ? (
           <Thumb shot={shot} />

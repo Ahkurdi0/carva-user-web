@@ -797,7 +797,8 @@
     "confirm": "تأكيد",
     "cities": "مدن",
     "verifyShort": "توثيق الحساب",
-    "linkCopied": "تم نسخ الرابط"
+    "linkCopied": "تم نسخ الرابط",
+    "startOverHint": "ستعيد كل الصور والخطوات من البداية."
   },
   "actions": {
     "preview": "معاينة",

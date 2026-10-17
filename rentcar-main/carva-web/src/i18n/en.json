@@ -797,7 +797,8 @@
     "confirm": "Confirm",
     "cities": "cities",
     "verifyShort": "Verify",
-    "linkCopied": "Link copied"
+    "linkCopied": "Link copied",
+    "startOverHint": "You will fill in every step and take every photo again."
   },
   "actions": {
     "preview": "Preview",
