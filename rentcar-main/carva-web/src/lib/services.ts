@@ -316,16 +316,6 @@ export interface KycState {
   } | null;
   reusable: KycSlot[];
 }
-export interface AboutNumbers {
-  cars: number;
-  companies: number;
-  cities: { id: string; en: string; ku: string; ar: string; companies: number }[];
-}
-
-export const aboutApi = {
-  numbers: () => api.json<AboutNumbers>("/user/about", {}, { noAuth: true }),
-};
-
 export const legalApi = {
   page: (page: "terms" | "privacy") => api.json<LegalPage>("/user/legal", { page }, { noAuth: true }),
 };

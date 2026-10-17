@@ -8,7 +8,7 @@ export const APP_STORE_URL = "https://apps.apple.com/app/carva/id6753580784";
 export const PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=com.carvarent";
 
-export function AppleMark() {
+function AppleMark() {
   return (
     <svg viewBox="0 0 24 24" width="24" height="24" fill="#fff" aria-hidden>
       <path d="M16.365 1.43c0 1.14-.46 2.23-1.21 3.04-.79.86-2.08 1.53-3.13 1.45-.13-1.1.42-2.27 1.17-3.06.78-.83 2.16-1.45 3.17-1.43zM20.5 17.36c-.55 1.27-.82 1.84-1.53 2.97-.99 1.57-2.39 3.53-4.12 3.54-1.54.02-1.94-1-4.03-.99-2.09.01-2.53 1.01-4.07.99-1.73-.02-3.05-1.78-4.04-3.35C-.02 16.07-.32 10.6 1.78 7.69c1.04-1.46 2.68-2.38 4.22-2.38 1.57 0 2.56 1.02 3.86 1.02 1.26 0 2.03-1.02 3.85-1.02 1.37 0 2.83.75 3.86 2.04-3.39 1.86-2.84 6.7.93 8.01z" />
@@ -16,7 +16,7 @@ export function AppleMark() {
   );
 }
 
-export function PlayMark() {
+function PlayMark() {
   return (
     <svg viewBox="0 0 512 512" width="22" height="22" aria-hidden>
       <path fill="#fff" d="M48 26v460c0 7 4 13 11 16l257-246L59 10c-7 3-11 9-11 16z" />
@@ -27,7 +27,7 @@ export function PlayMark() {
   );
 }
 
-export function StoreButton({
+function StoreButton({
   href,
   top,
   bottom,
@@ -99,7 +99,6 @@ export function Footer() {
             <li><Link className="hover:text-primary" href="/reels">{t("web.reels")}</Link></li>
             <li><Link className="hover:text-primary" href="/companies">{t("bottomNavigation.companies")}</Link></li>
             <li><Link className="hover:text-primary" href="/search">{t("inputHintText.searchCar")}</Link></li>
-            <li><Link className="hover:text-primary" href="/about">{t("about.nav")}</Link></li>
           </ul>
         </div>
         <div>
